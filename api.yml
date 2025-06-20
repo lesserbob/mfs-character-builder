@@ -24,141 +24,109 @@ paths:
                 items:
                   $ref: '#/components/schemas/creature'
     post:
-      summary: Create a new character
-      description: Create a new character with basic information
-      operationId: createCharacter
+      summary: Create a new create
+      description: Create a new creature with basic information
+      operationId: createCreature
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCharacterRequest'
+              $ref: '#/components/schemas/createCreatureRequest'
       responses:
         '201':
-          description: Character created successfully
+          description: Creature created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Character'
-  /characters/{id}:
+                $ref: '#/components/schemas/creature'
+  /creature/{id}:
     get:
-      summary: Get character by ID
-      description: Retrieve a specific character by their ID
-      operationId: getCharacterById
+      summary: Get creature by ID
+      description: Retrieve a specific creature by their ID
+      operationId: getCreatureById
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
-          description: Character ID
+          description: Creature ID
       responses:
         '200':
-          description: Character found
+          description: Creature found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Character'
+                $ref: '#/components/schemas/creature'
         '404':
-          description: Character not found
+          description: creature not found
     put:
-      summary: Update character
-      description: Update an existing character's information
-      operationId: updateCharacter
+      summary: Update creature
+      description: Update an existing creature's information
+      operationId: updateCreature
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
-          description: Character ID
+          description: Creature ID
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateCharacterRequest'
+              $ref: '#/components/schemas/updateCreatureRequest'
       responses:
         '200':
-          description: Character updated successfully
+          description: Creature updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Character'
+                $ref: '#/components/schemas/creature'
     delete:
-      summary: Delete character
-      description: Delete a character and all associated data
-      operationId: deleteCharacter
+      summary: Delete creature
+      description: Delete a creature and all associated data
+      operationId: deleteCreature
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
-          description: Character ID
+          description: Creature ID
       responses:
         '204':
-          description: Character deleted successfully
+          description: Creature deleted successfully
 components:
   schemas:
-    Character:
+    creature:
       type: object
       properties:
         id:
           type: integer
-          description: Unique identifier for the character
+          description: Unique identifier for the creature
         name:
           type: string
-          description: Character name
+          description: creature name
         level:
           type: integer
-          description: Character level
+          description: creature level
           default: 1
-        class:
-          type: string
-          description: Character class (e.g., Warrior, Mage, Rogue)
-        createdAt:
-          type: string
-          format: date-time
-          description: When the character was created
-        updatedAt:
-          type: string
-          format: date-time
-          description: When the character was last updated
       required:
         - name
-        - class
-    CreateCharacterRequest:
+        - level
+    createCreatureRequest:
       type: object
       properties:
         name:
           type: string
-          description: Character name
+          description: Creature name
         level:
           type: integer
-          description: Character level
+          description: Creature level
           default: 1
-        class:
-          type: string
-          description: Character class
-      required:
-        - name
-        - class
-    UpdateCharacterRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Character name
-        level:
-          type: integer
-          description: Character level
-        class:
-          type: string
-          description: Character class
-    CreatureStatsRequest:
-      type: object
-      properties:
         might:
           type: integer
           description: Might attribute
@@ -176,7 +144,14 @@ components:
           description: Spirist attribute
           default: 0
       required:
-        - might
-        - agility
-        - itellect
-        - spirit
+        - name
+        - level
+    updateCreatureRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Creature name
+        level:
+          type: integer
+          description: Creature level
