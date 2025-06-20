@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  title: Character Builder API
+  description: API for managing characters and their stats
+  version: 1.0.0
+  contact:
+    name: Character Builder Team
+servers:
+  - url: http://localhost:3001
+    description: Development server
+paths:
+  /creature:
+    get:
+      summary: Get all creature
+      description: Retrieve a list of all creatures
+      operationId: getCreatures
+      responses:
+        '200':
+          description: List of creatures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/creature'
+    post:
+      summary: Create a new character
+      description: Create a new character with basic information
+      operationId: createCharacter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCharacterRequest'
+      responses:
+        '201':
+          description: Character created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+  /characters/{id}:
+    get:
+      summary: Get character by ID
+      description: Retrieve a specific character by their ID
+      operationId: getCharacterById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Character ID
+      responses:
+        '200':
+          description: Character found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+        '404':
+          description: Character not found
+    put:
+      summary: Update character
+      description: Update an existing character's information
+      operationId: updateCharacter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Character ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCharacterRequest'
+      responses:
+        '200':
+          description: Character updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Character'
+    delete:
+      summary: Delete character
+      description: Delete a character and all associated data
+      operationId: deleteCharacter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Character ID
+      responses:
+        '204':
+          description: Character deleted successfully
+components:
+  schemas:
+    Character:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the character
+        name:
+          type: string
+          description: Character name
+        level:
+          type: integer
+          description: Character level
+          default: 1
+        class:
+          type: string
+          description: Character class (e.g., Warrior, Mage, Rogue)
+        createdAt:
+          type: string
+          format: date-time
+          description: When the character was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the character was last updated
+      required:
+        - name
+        - class
+    CreateCharacterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Character name
+        level:
+          type: integer
+          description: Character level
+          default: 1
+        class:
+          type: string
+          description: Character class
+      required:
+        - name
+        - class
+    UpdateCharacterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Character name
+        level:
+          type: integer
+          description: Character level
+        class:
+          type: string
+          description: Character class
+    CreatureStatsRequest:
+      type: object
+      properties:
+        might:
+          type: integer
+          description: Might attribute
+          default: 0
+        agility:
+          type: integer
+          description: Agility attribute
+          default: 0
+        intellect:
+          type: integer
+          description: Intellect attribute
+          default: 0
+        spirit:
+          type: integer
+          description: Spirist attribute
+          default: 0
+      required:
+        - might
+        - agility
+        - itellect
+        - spirit
