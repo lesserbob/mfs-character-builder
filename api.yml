@@ -24,7 +24,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/creature'
     post:
-      summary: Create a new create
+      summary: Create a new creature
       description: Create a new creature with basic information
       operationId: createCreature
       requestBody:
@@ -39,7 +39,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/creature'
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier for the creature
   /creature/{id}:
     get:
       summary: Get creature by ID
@@ -81,10 +85,6 @@ paths:
       responses:
         '200':
           description: Creature updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/creature'
     delete:
       summary: Delete creature
       description: Delete a creature and all associated data
@@ -99,33 +99,85 @@ paths:
       responses:
         '204':
           description: Creature deleted successfully
+  /class:
+    get:
+      summary: Get all classes
+      description: Retrieve a list of all classes
+      operationId: getClasses
+      parameters:
+        - name: classification
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [RACE, PATH, SPECIALISATION]
+          description: Filter classes by classification type
+        - name: includeLevels
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Include class levels in the response
+      responses:
+        '200':
+          description: List of classes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/class'
+  /class/{id}:
+    get:
+      summary: Get class by ID
+      description: Retrieve a specific class by ID with optional levels
+      operationId: getClassById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Class ID
+        - name: includeLevels
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: Include class levels in the response
+      responses:
+        '200':
+          description: Class found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/class'
+        '404':
+          description: Class not found
+
 components:
   schemas:
     creature:
+      allOf:
+        - $ref: '#/components/schemas/creatureBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the creature
+          required:
+            - id
+    creatureBase:
       type: object
       properties:
-        id:
-          type: integer
-          description: Unique identifier for the creature
         name:
           type: string
           description: creature name
         level:
           type: integer
           description: creature level
-          default: 1
-      required:
-        - name
-        - level
-    createCreatureRequest:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Creature name
-        level:
-          type: integer
-          description: Creature level
           default: 1
         might:
           type: integer
@@ -141,17 +193,96 @@ components:
           default: 0
         spirit:
           type: integer
-          description: Spirist attribute
+          description: Spirit attribute
           default: 0
       required:
         - name
         - level
+    createCreatureRequest:
+      $ref: '#/components/schemas/creatureBase'
     updateCreatureRequest:
+      $ref: '#/components/schemas/creatureBase'
+    class:
       type: object
       properties:
+        id:
+          type: integer
+          description: Unique identifier for the class
         name:
           type: string
-          description: Creature name
+          description: class name
+        classification:
+          type: string
+          description: class classification
+          enum: [RACE, PATH, SPECIALISATION]
+        minMight:
+          type: integer
+          nullable: true
+          description: minimum might required to select this class
+        minAgility:
+          type: integer
+          nullable: true
+          description: minimum agility required to select this class
+        minIntellect:
+          type: integer
+          nullable: true
+          description: minimum intellect required to select this class
+        minSpirit:
+          type: integer
+          nullable: true
+          description: minimum spirit required to select this class
+        classLevels:
+          type: array
+          description: List of levels for this class
+          items:
+            $ref: '#/components/schemas/classLevel'
+      required:
+        - id
+        - name
+        - classification
+    classLevel:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the class level
+        classId:
+          type: integer
+          description: ID of the class this level belongs to
         level:
           type: integer
-          description: Creature level
+          description: The level number
+        health:
+          type: integer
+          description: Health points at this level
+        statBonus:
+          type: integer
+          description: Stat bonus at this level
+          default: 0
+        classFeatures:
+          type: array
+          description: List of features available at this level
+          items:
+            $ref: '#/components/schemas/classFeature'
+      required:
+        - id
+        - classId
+        - level
+        - health
+    classFeature:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the class feature
+        name:
+          type: string
+          description: Name of the feature
+        Description:
+          type: string
+          description: Description of the feature
+      required:
+        - id
+        - name
+        - Description
+ 

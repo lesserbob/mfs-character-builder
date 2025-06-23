@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,25 +7,55 @@ datasource db {
   url      = "file:../database.sqlite"
 }
 
+enum ClassClassification {
+  RACE
+  PATH
+  SPECIALISATION
+}
+
 model Creature {
-  id        Int      @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   name      String
-  level     Int      @default(1)
-  might       Int      @default(10)
-  agility     Int     @default(10)
-  intellect   Int     @default(10)
-  spirit      Int     @default(10)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  level     Int    @default(1)
+  might     Int    @default(0)
+  agility   Int    @default(0)
+  intellect Int    @default(0)
+  spirit    Int    @default(0)
 }
 
 model Class {
-  id              Int       @id @default(autoincrement())
-  classification  String // Will hold enum. Race class or specilalistion
-  minMight   Int? // Only for race
-  minAgility Int? // Only for race
-  minIntellect Int? // Only for race
-  minSpirit  Int? // Only for race
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id             Int                 @id @default(autoincrement())
+  name           String
+  classification ClassClassification
+  minMight       Int?
+  minAgility     Int?
+  minIntellect   Int?
+  minSpirit      Int?
+  
+  // Relationship to ClassLevel
+  classLevels    ClassLevel[]
+}
+
+model ClassLevel {
+  id             Int    @id @default(autoincrement())
+  classId        Int
+  level          Int
+  health         Int
+  statBonus      Int  @default(0)
+  
+  // Relationship to Class
+  class          Class  @relation(fields: [classId], references: [id])
+  
+  // Relationship to ClassFeature
+  classFeatures  ClassFeature[]
+}
+
+model ClassFeature {
+  id          Int    @id @default(autoincrement())
+  name        String
+  Description String
+  classLevelId Int
+  
+  // Relationship to ClassLevel
+  classLevel  ClassLevel @relation(fields: [classLevelId], references: [id])
 }

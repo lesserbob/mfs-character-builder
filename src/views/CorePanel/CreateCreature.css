@@ -1,0 +1,24 @@
+.create-creature-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.create-creature-title {
+  margin-bottom: 16px;
+}
+
+.create-creature-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-creature-button-group {
+  display: flex;
+  gap: 16px;
+}
+
+.create-creature-button-group button {
+  flex: 1;
+}

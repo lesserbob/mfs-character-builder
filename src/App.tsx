@@ -1,39 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Button from '@mui/material/Button'
+import { useState } from 'react';
+import './App.css';
+import Button from '@mui/material/Button';
+import { Box } from '@mui/material';
+import { apiClient } from './api/client';
+import OptionPanel from './views/OptionPanel';
+import CreateCreature from './views/CorePanel/CreateCreature';
+import { CorePanel } from './views/CorePanel';
+import { CorePanelProvider } from './context/CorePanelContext';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [creature, setCreature] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const fetchCreature = () => {
+    setLoading(true);
+    return apiClient
+      .getCreatureById(1)
+      .then((response) => {
+        console.log(creature);
+        setCreature(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching creature:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
-    <>
-      <Button variant="contained" color="primary">
-        Hello Material UI
-      </Button>
+    <CorePanelProvider>
+      <CorePanel />
+      {/* <OptionPanel />
+      <Box sx={{ marginLeft: '240px', p: 3 }}>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+          <Button 
+            variant="contained" 
+            onClick={fetchCreature}
+            disabled={loading}
+          >
+            {loading ? 'Loading...' : 'Fetch Creature (ID: 1)'}
+          </Button>
+          {creature && (
+            <div style={{ marginTop: '20px' }}>
+              <h3>Creature Data:</h3>
+              <pre>{JSON.stringify(creature, null, 2)}</pre>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+          )}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+        <CreateCreature />
+      </Box> */}
+    </CorePanelProvider>
+  );
 }
 
-export default App
+export default App;
