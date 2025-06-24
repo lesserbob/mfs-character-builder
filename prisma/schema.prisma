@@ -21,6 +21,21 @@ model Creature {
   agility   Int    @default(0)
   intellect Int    @default(0)
   spirit    Int    @default(0)
+
+  // Relationship to CreatureClass
+  classes   CreatureClass[]
+}
+
+model CreatureClass {
+  id          Int    @id @default(autoincrement())
+  creatureId  Int
+  classId     Int
+  
+  // Relationship to Creature
+  creature    Creature @relation(fields: [creatureId], references: [id])
+  
+  // Relationship to Class
+  class       Class    @relation(fields: [classId], references: [id])
 }
 
 model Class {
@@ -34,6 +49,9 @@ model Class {
   
   // Relationship to ClassLevel
   classLevels    ClassLevel[]
+
+  // Relationship to CreatureClass
+  creatureClasses CreatureClass[]
 }
 
 model ClassLevel {

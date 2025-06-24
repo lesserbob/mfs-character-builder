@@ -3,20 +3,24 @@ import { apiClass } from '../types/ClassApiTypes';
 
 const prisma = new PrismaClient();
 
-export const getClasses = async (classification?: ClassClassification): Promise<apiClass[]> => {
+export const getClasses = async (
+  classification?: ClassClassification
+): Promise<apiClass[]> => {
   const classes = await prisma.class.findMany({
-    where: classification ? {
-      classification: classification
-    } : undefined,
+    where: classification
+      ? {
+          classification: classification,
+        }
+      : undefined,
     include: {
       classLevels: {
         include: {
-          classFeatures: true
-        }
-      }
-    }
+          classFeatures: true,
+        },
+      },
+    },
   });
-  
+
   return classes.map((cl) => ({
     id: cl.id,
     name: cl.name,
@@ -35,7 +39,7 @@ export const getClasses = async (classification?: ClassClassification): Promise<
         id: feature.id,
         classLevelId: feature.classLevelId,
         name: feature.name,
-        Description: feature.Description,
+        description: feature.Description,
       })),
     })),
   }));
@@ -75,7 +79,7 @@ export const getClassById = async (id: number): Promise<apiClass | null> => {
         id: feature.id,
         classLevelId: feature.classLevelId,
         name: feature.name,
-        Description: feature.Description,
+        description: feature.Description,
       })),
     })),
   };

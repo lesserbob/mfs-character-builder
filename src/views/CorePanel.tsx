@@ -1,31 +1,31 @@
 import { Box } from '@mui/material';
+import { Routes, Route } from 'react-router-dom';
 import OptionPanel from './OptionPanel';
 import CreateCreature from './CorePanel/CreateCreature';
 import ViewCreature from './CorePanel/ViewCreature';
-import { useCorePanel, CorePanelState } from '../context/CorePanelContext';
 import { LandingPage } from './LandingPage';
+import SearchCreatures from './CorePanel/SearchCreatures';
+import LevelUpCharacter from './CorePanel/LevelUpCharacter';
 
 export const CorePanel = (): React.JSX.Element => {
-  const { currentState, creatureId } = useCorePanel();
-
-  const renderContent = () => {
-    switch (currentState) {
-      case CorePanelState.CREATE_CREATURE:
-        return <CreateCreature />;
-      case CorePanelState.VIEW_CREATURE:
-        return creatureId ? <ViewCreature creatureId={creatureId} /> : <LandingPage />;
-      case CorePanelState.LANDING_PAGE:
-        return <LandingPage />;
-      default:
-        return <LandingPage />;
-    }
-  };
-
   return (
     <div>
       <OptionPanel />
-      <Box sx={{ marginLeft: '240px', p: 3 }}>
-        {renderContent()}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          marginLeft: '240px',
+          padding: 3,
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/create" element={<CreateCreature />} />
+          <Route path="/creature/:id" element={<ViewCreature />} />
+          <Route path="/search" element={<SearchCreatures />} />
+          <Route path="/levelup/:id/:level" element={<LevelUpCharacter />} />
+        </Routes>
       </Box>
     </div>
   );

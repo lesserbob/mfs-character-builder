@@ -28,5 +28,5 @@ export interface apiClassLevelFeature {
   id: number;
   classLevelId: number;
   name: string;
-  Description: string;
+  description: string;
 }

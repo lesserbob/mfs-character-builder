@@ -36,6 +36,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.1",
+    "react-router-dom": "^7.6.2",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "yup": "^1.6.1"

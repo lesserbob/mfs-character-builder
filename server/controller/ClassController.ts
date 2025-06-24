@@ -5,7 +5,9 @@ const router = Router();
 
 router.get('/class', async (req, res, next) => {
   try {
-    const classification = req.query.classification as ClassClassification | undefined;
+    const classification = req.query.classification as
+      | ClassClassification
+      | undefined;
     const classes = await getClasses(classification);
     res.json(classes);
   } catch (error) {

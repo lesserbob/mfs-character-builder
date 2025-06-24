@@ -1,16 +1,21 @@
 import React from 'react';
 import { Drawer, Box, Typography, Button, Stack } from '@mui/material';
-import { useCorePanel, CorePanelState } from '../context/CorePanelContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const OptionPanel = (): React.JSX.Element => {
-  const { currentState, setCurrentState } = useCorePanel();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleCreateNew = () => {
-    setCurrentState(CorePanelState.CREATE_CREATURE);
+    navigate('/create');
   };
 
   const handleHome = () => {
-    setCurrentState(CorePanelState.LANDING_PAGE);
+    navigate('/');
+  };
+
+  const handleSearchCreatures = () => {
+    navigate('/search');
   };
 
   return (
@@ -38,7 +43,7 @@ const OptionPanel = (): React.JSX.Element => {
           </Typography>
           <Stack spacing={1} sx={{ ml: 2 }}>
             <Button
-              variant="text"
+              variant={location.pathname === '/' ? 'contained' : 'text'}
               fullWidth
               sx={{ justifyContent: 'flex-start' }}
               onClick={handleHome}
@@ -46,56 +51,20 @@ const OptionPanel = (): React.JSX.Element => {
               Home
             </Button>
             <Button
-              variant="text"
+              variant={location.pathname === '/create' ? 'contained' : 'text'}
               fullWidth
               sx={{ justifyContent: 'flex-start' }}
               onClick={handleCreateNew}
             >
               Create New
             </Button>
-          </Stack>
-        </Box>
-
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-            Stats
-          </Typography>
-          <Stack spacing={1} sx={{ ml: 2 }}>
             <Button
-              variant="text"
+              variant={location.pathname === '/search' ? 'contained' : 'text'}
               fullWidth
               sx={{ justifyContent: 'flex-start' }}
+              onClick={handleSearchCreatures}
             >
-              View All
-            </Button>
-            <Button
-              variant="text"
-              fullWidth
-              sx={{ justifyContent: 'flex-start' }}
-            >
-              Create New
-            </Button>
-          </Stack>
-        </Box>
-
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
-            Settings
-          </Typography>
-          <Stack spacing={1} sx={{ ml: 2 }}>
-            <Button
-              variant="text"
-              fullWidth
-              sx={{ justifyContent: 'flex-start' }}
-            >
-              Preferences
-            </Button>
-            <Button
-              variant="text"
-              fullWidth
-              sx={{ justifyContent: 'flex-start' }}
-            >
-              About
+              Search Creatures
             </Button>
           </Stack>
         </Box>

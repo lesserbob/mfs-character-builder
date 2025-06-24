@@ -1,12 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { apiCreature } from '../types/CreatureApiTypes';
 
 const prisma = new PrismaClient();
 
 // Returns a creature type given id
 export const getCreature = async (id: number): Promise<apiCreature> => {
-    const deCreature = await prisma.creature.findUnique({
-        where: {
+  const deCreature = await prisma.creature.findUnique({
+    where: {
       id: id,
     },
   });
@@ -15,19 +15,50 @@ export const getCreature = async (id: number): Promise<apiCreature> => {
     throw new Error(`Creature with id ${id} not found`);
   }
 
-    const result: apiCreature = {
-        name: deCreature.name,
-        level: deCreature.level,
-        might: deCreature.might,
-        agility: deCreature.agility,
-        intellect: deCreature.intellect,
-        spirit: deCreature.spirit,
-  };
-    return result;
+  // Get creature classes separately
+  const creatureClasses = await prisma.creatureClass.findMany({
+    where: { creatureId: id },
+  });
+
+  const result = mapDeCreatureToApiCreature(deCreature, creatureClasses);
+  return result;
 };
 
-export const createCreature = async (creature: apiCreature): Promise<number> => {
-  const newCreature =await prisma.creature.create({
+export const getCreatures = async (): Promise<apiCreature[]> => {
+  const deCreatures = await prisma.creature.findMany();
+
+  // TODO: This is a hack to get the creature classes. We should find a better way to do this.
+  const allCreatureClasses = await prisma.creatureClass.findMany();
+
+  return deCreatures.map((deCreature) => {
+    const creatureClasses = allCreatureClasses.filter(
+      (cc: any) => cc.creatureId === deCreature.id
+    );
+    return mapDeCreatureToApiCreature(deCreature, creatureClasses);
+  });
+};
+
+export const mapDeCreatureToApiCreature = (
+  deCreature: Prisma.CreatureGetPayload<{}>,
+  creatureClasses: any[]
+): apiCreature => {
+  const result: apiCreature = {
+    id: deCreature.id,
+    name: deCreature.name,
+    level: deCreature.level,
+    might: deCreature.might,
+    agility: deCreature.agility,
+    intellect: deCreature.intellect,
+    spirit: deCreature.spirit,
+    classes: creatureClasses.map((cc) => cc.classId),
+  };
+  return result;
+};
+
+export const createCreature = async (
+  creature: apiCreature
+): Promise<number> => {
+  const newCreature = await prisma.creature.create({
     data: {
       name: creature.name,
       level: creature.level,
@@ -40,5 +71,61 @@ export const createCreature = async (creature: apiCreature): Promise<number> => 
       id: true,
     },
   });
+
+  // Create CreatureClass records for each class ID
+  if (creature.classes && creature.classes.length > 0) {
+    await prisma.creatureClass.createMany({
+      data: creature.classes.map((classId) => ({
+        creatureId: newCreature.id,
+        classId: classId,
+      })),
+    });
+  }
+
   return newCreature.id;
+};
+
+export const updateCreature = async (id: number, creature: apiCreature) => {
+  await prisma.creature.update({
+    where: { id },
+    data: {
+      name: creature.name,
+      level: creature.level,
+      might: creature.might,
+      agility: creature.agility,
+      intellect: creature.intellect,
+      spirit: creature.spirit,
+    },
+  });
+
+  // 1. Get current class IDs for this creature
+  const existing = await prisma.creatureClass.findMany({
+    where: { creatureId: id },
+  });
+  const existingClassIds = existing.map((cc) => cc.classId);
+
+  // 2. Find which to add and which to remove
+  const newClassIds = creature.classes ?? [];
+  const toAdd = newClassIds.filter((cid) => !existingClassIds.includes(cid));
+  const toRemove = existingClassIds.filter((cid) => !newClassIds.includes(cid));
+
+  // 3. Remove only those not needed (optional: check for children before deleting)
+  if (toRemove.length > 0) {
+    await prisma.creatureClass.deleteMany({
+      where: {
+        creatureId: id,
+        classId: { in: toRemove },
+      },
+    });
+  }
+
+  // 4. Add new ones
+  if (toAdd.length > 0) {
+    await prisma.creatureClass.createMany({
+      data: toAdd.map((classId) => ({
+        creatureId: id,
+        classId,
+      })),
+    });
+  }
 };

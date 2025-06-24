@@ -22,7 +22,7 @@ export const StatEditor = ({
   setValue,
   error,
   helperText,
-  disableIncrement = false
+  disableIncrement = false,
 }: StatEditorProps): React.JSX.Element => {
   const handleIncrement = () => {
     if (value < max) {

@@ -4,6 +4,7 @@ export enum CorePanelState {
   CREATE_CREATURE = 'CREATE_CREATURE',
   VIEW_CREATURE = 'VIEW_CREATURE',
   LANDING_PAGE = 'LANDING_PAGE',
+  SEARCH_CREATURES = 'SEARCH_CREATURES',
 }
 
 interface CorePanelContextType {
@@ -13,14 +14,20 @@ interface CorePanelContextType {
   setCreatureId: (id: number) => void;
 }
 
-const CorePanelContext = createContext<CorePanelContextType | undefined>(undefined);
+const CorePanelContext = createContext<CorePanelContextType | undefined>(
+  undefined
+);
 
 interface CorePanelProviderProps {
   children: ReactNode;
 }
 
-export const CorePanelProvider: React.FC<CorePanelProviderProps> = ({ children }) => {
-  const [currentState, setCurrentState] = useState<CorePanelState>(CorePanelState.LANDING_PAGE);
+export const CorePanelProvider: React.FC<CorePanelProviderProps> = ({
+  children,
+}) => {
+  const [currentState, setCurrentState] = useState<CorePanelState>(
+    CorePanelState.LANDING_PAGE
+  );
   const [creatureId, setCreatureId] = useState<number | undefined>(undefined);
 
   const value: CorePanelContextType = {
@@ -43,4 +50,4 @@ export const useCorePanel = (): CorePanelContextType => {
     throw new Error('useCorePanel must be used within a CorePanelProvider');
   }
   return context;
-}; 
+};

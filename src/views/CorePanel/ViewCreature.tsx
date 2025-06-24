@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Typography, 
-  Card, 
-  CardContent, 
-  Chip, 
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Typography,
   Box,
   CircularProgress,
-  Alert
+  Alert,
+  Grid,
+  Stack,
+  Button,
 } from '@mui/material';
 import { apiClient } from '../../api/client';
 import { Creature } from '../../api/generated';
+import { ReadOnlyField } from './ViewCreature/ReadOnlyField';
+import './ViewCreature.css';
+import { useClasses } from '../../context/ClassContext';
+import { getClassDescription } from '../../util/CreatureUtils';
+import { CharacterCapabilities } from '../../components/CharacterCapabilities';
 
-interface ViewCreatureProps {
-  creatureId: number;
-}
+const ViewCreature: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const creatureId = id ? parseInt(id, 10) : 0;
+  const { classes, loading: classesLoading } = useClasses();
 
-const ViewCreature: React.FC<ViewCreatureProps> = ({ creatureId }) => {
   const [creature, setCreature] = useState<Creature | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCreature();
@@ -38,9 +46,15 @@ const ViewCreature: React.FC<ViewCreatureProps> = ({ creatureId }) => {
     }
   };
 
+  // TODO : Should generecise this
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
         <CircularProgress />
       </Box>
     );
@@ -62,114 +76,66 @@ const ViewCreature: React.FC<ViewCreatureProps> = ({ creatureId }) => {
     );
   }
 
-  const totalStats = (creature.might || 0) + (creature.agility || 0) + (creature.intellect || 0) + (creature.spirit || 0);
-
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <div>
+      <Typography variant="h5" component="h2">
         {creature.name}
       </Typography>
-      
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                Basic Information
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                <strong>Level:</strong> {creature.level}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                <strong>Total Stats:</strong> {totalStats}
-              </Typography>
-            </Box>
-            
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                Statistics
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Chip 
-                    label={`Might: ${creature.might || 0}`} 
-                    color="primary" 
-                    variant="outlined"
-                    size="small"
-                  />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Chip 
-                    label={`Agility: ${creature.agility || 0}`} 
-                    color="secondary" 
-                    variant="outlined"
-                    size="small"
-                  />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Chip 
-                    label={`Intellect: ${creature.intellect || 0}`} 
-                    color="success" 
-                    variant="outlined"
-                    size="small"
-                  />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Chip 
-                    label={`Spirit: ${creature.spirit || 0}`} 
-                    color="warning" 
-                    variant="outlined"
-                    size="small"
-                  />
-                </Box>
-              </Box>
-            </Box>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 6 }}>
+          <Box
+            sx={{
+              border: '1px solid',
+              borderColor: 'grey.400',
+              borderRadius: 1,
+              padding: 2,
+            }}
+          >
+            <Stack spacing={2}>
+              <ReadOnlyField label="Name" value={creature.name} />
+              <ReadOnlyField
+                label="Level"
+                value={
+                  creature.level.toString() +
+                  ' ' +
+                  getClassDescription(creature, classes)
+                }
+              />
+              <ReadOnlyField
+                label="Might"
+                value={creature.might?.toString() ?? '0'}
+              />
+              <ReadOnlyField
+                label="Agility"
+                value={creature.agility?.toString() ?? '0'}
+              />
+              <ReadOnlyField
+                label="Intellect"
+                value={creature.intellect?.toString() ?? '0'}
+              />
+              <ReadOnlyField
+                label="Spirit"
+                value={creature.spirit?.toString() ?? '0'}
+              />
+            </Stack>
           </Box>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Stat Distribution
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="primary">
-                {creature.might || 0}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Might
-              </Typography>
-            </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="secondary">
-                {creature.agility || 0}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Agility
-              </Typography>
-            </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="success.main">
-                {creature.intellect || 0}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Intellect
-              </Typography>
-            </Box>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="warning.main">
-                {creature.spirit || 0}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Spirit
-              </Typography>
-            </Box>
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
+        </Grid>
+        <Grid size={{ xs: 6 }}>
+          <CharacterCapabilities creature={creature} />
+        </Grid>
+      </Grid>
+      <div className="view-creature-button-group">
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={() =>
+            navigate(`/levelup/${creatureId}/${creature.level + 1}`)
+          }
+        >
+          Level Up
+        </Button>
+      </div>
+    </div>
   );
 };
 

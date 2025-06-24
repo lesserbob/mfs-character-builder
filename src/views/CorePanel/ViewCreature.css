@@ -1,0 +1,12 @@
+.view-creature-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.view-creature-button-group {
+  display: flex;
+  gap: 16px;
+  width: 300px; /* fixed width */
+  margin-left: auto; /* push to right */
+}

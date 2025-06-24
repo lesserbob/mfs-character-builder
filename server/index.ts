@@ -10,12 +10,14 @@ const app = express();
 const port = 3001;
 
 // Configure CORS with specific options
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'], // Allow your frontend URLs
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow all methods including OPTIONS
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow common headers
-  credentials: true // Allow credentials if needed
-}));
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'http://localhost:3000'], // Allow your frontend URLs
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow all methods including OPTIONS
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow common headers
+    credentials: true, // Allow credentials if needed
+  })
+);
 
 app.use(express.json());
 
@@ -45,4 +47,3 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
- 

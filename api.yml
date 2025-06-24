@@ -195,13 +195,19 @@ components:
           type: integer
           description: Spirit attribute
           default: 0
+        classes:
+          type: array
+          description: List of class IDs the creature has
+          items:
+            type: integer
+            description: Class ID
       required:
         - name
         - level
     createCreatureRequest:
       $ref: '#/components/schemas/creatureBase'
     updateCreatureRequest:
-      $ref: '#/components/schemas/creatureBase'
+      $ref: '#/components/schemas/creature'
     class:
       type: object
       properties:
@@ -259,7 +265,7 @@ components:
           type: integer
           description: Stat bonus at this level
           default: 0
-        classFeatures:
+        features:
           type: array
           description: List of features available at this level
           items:
@@ -278,11 +284,10 @@ components:
         name:
           type: string
           description: Name of the feature
-        Description:
+        description:
           type: string
           description: Description of the feature
       required:
         - id
         - name
-        - Description
- 
+        - description
