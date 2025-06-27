@@ -15,7 +15,9 @@ import { ReadOnlyField } from './ViewCreature/ReadOnlyField';
 import './ViewCreature.css';
 import { useClasses } from '../../context/ClassContext';
 import { getClassDescription } from '../../util/CreatureUtils';
-import { CharacterCapabilities } from '../../components/CharacterCapabilities';
+import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
+import { CreatureAbiltities } from '../../components/CreatureAbilities';
+import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
 
 const ViewCreature: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -121,9 +123,15 @@ const ViewCreature: React.FC = () => {
           </Box>
         </Grid>
         <Grid size={{ xs: 6 }}>
-          <CharacterCapabilities creature={creature} />
+          <CreatureDerivedStatBlock creature={creature} />
         </Grid>
       </Grid>
+      <Box sx={{ py: 2 }}>
+        <CreatureAbiltities creature={creature} />
+      </Box>
+      <Box sx={{ py: 2 }}>
+        <FeatureSelectionPanel creature={creature} />
+      </Box>
       <div className="view-creature-button-group">
         <Button
           variant="contained"

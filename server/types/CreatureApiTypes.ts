@@ -7,4 +7,5 @@ export interface apiCreature {
   intellect: number;
   spirit: number;
   classes: number[];
+  features: number[];
 }

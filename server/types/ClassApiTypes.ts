@@ -24,9 +24,30 @@ export interface apiClassLevel {
   features: apiClassLevelFeature[];
 }
 
+export enum ClassFeatureType {
+  BASE = 'BASE',
+  SELECT = 'SELECT',
+}
+
 export interface apiClassLevelFeature {
   id: number;
   classLevelId: number;
+  name: string;
+  description: string;
+  type: ClassFeatureType;
+  selectableListId?: number;
+  selectableCount?: number;
+}
+
+export interface apiSelectableList {
+  id: number;
+  name: string;
+  items: apiSelectableListItem[];
+}
+
+export interface apiSelectableListItem {
+  id: number;
+  selectableListId: number;
   name: string;
   description: string;
 }

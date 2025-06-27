@@ -9,14 +9,17 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Box,
+  Tooltip,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import './CreateCreature.css';
 import { StatEditor } from './CreateCreature/StatEditor';
 import { apiClient } from '../../api/client';
-import { Class } from '../../api/generated';
+import { Class, ClassClassificationEnum } from '../../api/generated';
 import { useClasses } from '../../context/ClassContext';
-import { CharacterCapabilities } from '../../components/CharacterCapabilities';
+import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
+import { CreatureAbiltities } from '../../components/CreatureAbilities';
 
 type FormData = {
   name: string;
@@ -64,6 +67,10 @@ const CreateCreature = (): React.JSX.Element => {
 
   const totalStats = might + agility + intellect + spirit;
   const disbleIncrement = totalStats >= 3;
+
+  const racialClasses = classes.filter(
+    (cls) => cls.classification === ClassClassificationEnum.Race
+  );
 
   useEffect(() => {
     if (classId) {
@@ -140,36 +147,53 @@ const CreateCreature = (): React.JSX.Element => {
               <Controller
                 name="name"
                 control={control}
+                rules={{ required: 'Name is required' }}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Name"
-                    fullWidth
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                  />
+                  <Tooltip
+                    title={errors.name?.message || ''}
+                    open={!!errors.name}
+                    disableHoverListener={!errors.name}
+                    placement="right"
+                    arrow
+                  >
+                    <TextField
+                      {...field}
+                      label="Name"
+                      fullWidth
+                      error={!!errors.name}
+                    />
+                  </Tooltip>
                 )}
               />
 
               <Controller
                 name="selectedClassId"
                 control={control}
+                rules={{ required: 'Class selection is required' }}
                 render={({ field }) => (
-                  <FormControl fullWidth>
-                    <InputLabel>Select Class</InputLabel>
-                    <Select
-                      {...field}
-                      value={field.value ?? ''}
-                      label="Select Class"
-                      disabled={loading}
-                    >
-                      {classes.map((cls) => (
-                        <MenuItem key={cls.name} value={cls.id}>
-                          {cls.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  <Tooltip
+                    title={errors.selectedClassId?.message || ''}
+                    open={!!errors.selectedClassId}
+                    disableHoverListener={!errors.selectedClassId}
+                    placement="right"
+                    arrow
+                  >
+                    <FormControl fullWidth error={!!errors.selectedClassId}>
+                      <InputLabel>Select Class</InputLabel>
+                      <Select
+                        {...field}
+                        value={field.value ?? ''}
+                        label="Select Class"
+                        disabled={loading}
+                      >
+                        {racialClasses.map((cls) => (
+                          <MenuItem key={cls.name} value={cls.id}>
+                            {cls.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Tooltip>
                 )}
               />
 
@@ -249,16 +273,15 @@ const CreateCreature = (): React.JSX.Element => {
                   />
                 )}
               />
-
-              <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
-                Total Stats: {totalStats}
-              </Typography>
             </div>
           </Grid>
           <Grid size={{ xs: 6 }}>
-            <CharacterCapabilities creature={getCreature()} />
+            <CreatureDerivedStatBlock creature={getCreature()} />
           </Grid>
         </Grid>
+        <Box sx={{ py: 2 }}>
+          <CreatureAbiltities creature={getCreature()} />
+        </Box>
         <div className="create-creature-button-group">
           <Button
             type="submit"

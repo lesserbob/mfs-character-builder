@@ -156,7 +156,27 @@ paths:
                 $ref: '#/components/schemas/class'
         '404':
           description: Class not found
-
+  /class/selectable/{id}:
+    get:
+      summary: Get selectable list by ID
+      description: Retrieve a specific selectable list by ID
+      operationId: getSelectableListById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Selectable List ID
+      responses:
+        '200':
+          description: Selectable list found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/selectableList'
+        '404':
+          description: Selectable list not found
 components:
   schemas:
     creature:
@@ -201,6 +221,12 @@ components:
           items:
             type: integer
             description: Class ID
+        features:
+          type: array
+          description: List of feature IDs the creature has
+          items:
+            type: integer
+            description: Feature ID
       required:
         - name
         - level
@@ -287,6 +313,51 @@ components:
         description:
           type: string
           description: Description of the feature
+        type:
+          type: string
+          description: Type of the feature
+          enum: [BASE, SELECT]
+        selectableListId:
+          type: integer
+          nullable: true
+          description: ID of the selectable list for this feature
+        selectableCount:
+          type: integer
+          nullable: true
+          description: Number of selectable items for this feature
+      required:
+        - id
+        - name
+        - description
+    selectableList:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the selectable list
+        name:
+          type: string
+          description: Name of the selectable list
+        items:
+          type: array
+          description: List of selectable items
+          items:
+            $ref: '#/components/schemas/selectable'
+      required:
+        - id
+        - name
+    selectable:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the selectable
+        name:
+          type: string
+          description: Name of the selectable
+        description:
+          type: string
+          description: Description of the selectable
       required:
         - id
         - name

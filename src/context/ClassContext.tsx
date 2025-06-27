@@ -28,19 +28,13 @@ export const ClassProvider: React.FC<ClassProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchClasses = async () => {
-    if (classes.length > 0) {
-      // Return cached data if available
-      return;
-    }
-
+    if (classes.length > 0) return;
     setLoading(true);
     setError(null);
-
     try {
       const response = await apiClient.getClasses();
       setClasses(response.data);
     } catch (err) {
-      console.error('Error fetching classes:', err);
       setError('Failed to fetch classes');
     } finally {
       setLoading(false);
@@ -50,19 +44,16 @@ export const ClassProvider: React.FC<ClassProviderProps> = ({ children }) => {
   const refreshClasses = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const response = await apiClient.getClasses();
       setClasses(response.data);
     } catch (err) {
-      console.error('Error refreshing classes:', err);
       setError('Failed to refresh classes');
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch classes on mount
   useEffect(() => {
     fetchClasses();
   }, []);

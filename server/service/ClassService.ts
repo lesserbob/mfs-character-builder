@@ -1,5 +1,5 @@
 import { PrismaClient, ClassClassification } from '@prisma/client';
-import { apiClass } from '../types/ClassApiTypes';
+import { apiClass, apiSelectableList } from '../types/ClassApiTypes';
 
 const prisma = new PrismaClient();
 
@@ -39,7 +39,10 @@ export const getClasses = async (
         id: feature.id,
         classLevelId: feature.classLevelId,
         name: feature.name,
-        description: feature.Description,
+        description: feature.description,
+        type: feature.type as any,
+        selectableListId: feature.selectableListId ?? undefined,
+        selectableCount: feature.selectableCount ?? undefined,
       })),
     })),
   }));
@@ -79,8 +82,37 @@ export const getClassById = async (id: number): Promise<apiClass | null> => {
         id: feature.id,
         classLevelId: feature.classLevelId,
         name: feature.name,
-        description: feature.Description,
+        description: feature.description,
+        type: feature.type as any,
+        selectableListId: feature.selectableListId ?? undefined,
+        selectableCount: feature.selectableCount ?? undefined,
       })),
+    })),
+  };
+};
+
+export const getSelectableListById = async (
+  id: number
+): Promise<apiSelectableList | null> => {
+  const list = await prisma.selectableList.findUnique({
+    where: { id },
+    include: {
+      selectableItems: true,
+    },
+  });
+
+  if (!list) {
+    return null;
+  }
+
+  return {
+    id: list.id,
+    name: list.name,
+    items: list.selectableItems.map((item) => ({
+      id: item.id,
+      selectableListId: item.selectableListId,
+      name: item.name,
+      description: item.description,
     })),
   };
 };

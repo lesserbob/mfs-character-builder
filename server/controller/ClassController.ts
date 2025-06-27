@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getClasses } from '../service/ClassService';
+import { getClasses, getSelectableListById } from '../service/ClassService';
 import { ClassClassification } from '@prisma/client';
 const router = Router();
 
@@ -10,6 +10,15 @@ router.get('/class', async (req, res, next) => {
       | undefined;
     const classes = await getClasses(classification);
     res.json(classes);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/class/selectable/:id', async (req, res, next) => {
+  try {
+    const list = await getSelectableListById(parseInt(req.params.id as string));
+    res.json(list);
   } catch (error) {
     next(error);
   }

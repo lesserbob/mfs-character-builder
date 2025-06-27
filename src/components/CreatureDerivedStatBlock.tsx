@@ -1,8 +1,12 @@
-import { Box, List, ListItem, ListItemText, Typography } from '@mui/material';
-import { Class, ClassFeature, Creature } from '../api/generated';
+import { Box, Typography } from '@mui/material';
+import { Creature } from '../api/generated';
 import { useClasses } from '../context/ClassContext';
 
-export const CharacterCapabilities = ({ creature }: { creature: Creature }) => {
+export const CreatureDerivedStatBlock = ({
+  creature,
+}: {
+  creature: Creature;
+}) => {
   const { classes, loading: classesLoading } = useClasses();
 
   const creatureClassLevels = classes
@@ -10,7 +14,6 @@ export const CharacterCapabilities = ({ creature }: { creature: Creature }) => {
     .flatMap((c) => c.classLevels)
     .filter((cl) => cl!.level <= creature.level);
 
-  const classFeatures = creatureClassLevels.flatMap((cl) => cl!.features);
   const getHealth = () => {
     const baseHealth =
       creatureClassLevels.reduce(
@@ -89,27 +92,6 @@ export const CharacterCapabilities = ({ creature }: { creature: Creature }) => {
           Ranged: {getRangedDescription()}
         </Typography>
       </div>
-
-      {classFeatures.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <List dense sx={{ listStyleType: 'disc', pl: 2 }}>
-            {classFeatures.map(
-              (feature: ClassFeature | undefined) =>
-                feature && (
-                  <ListItem
-                    key={feature.id}
-                    sx={{ display: 'list-item', p: 0 }}
-                  >
-                    <ListItemText
-                      primary={feature.name}
-                      secondary={feature.description}
-                    />
-                  </ListItem>
-                )
-            )}
-          </List>
-        </Box>
-      )}
     </Box>
   );
 };
