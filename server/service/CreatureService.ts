@@ -92,6 +92,16 @@ export const createCreature = async (
     });
   }
 
+  // Create CreatureSelectedFeature records for each feature ID
+  if (creature.features && creature.features.length > 0) {
+    await prisma.creatureSelectedFeature.createMany({
+      data: creature.features.map((featureId) => ({
+        creatureId: newCreature.id,
+        featureId: featureId,
+      })),
+    });
+  }
+
   return newCreature.id;
 };
 

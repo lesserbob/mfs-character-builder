@@ -26,3 +26,8 @@ dist-ssr
 /src/generated/prisma
 
 /src/api/generated
+
+# Database files
+database.sqlite
+*.sqlite
+*.sqlite3

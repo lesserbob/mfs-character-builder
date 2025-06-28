@@ -6,7 +6,11 @@ import {
   Typography,
   Checkbox,
 } from '@mui/material';
-import { Creature, SelectableList } from '../api/generated';
+import {
+  Creature,
+  SelectableFeature,
+  SelectableFeatureList,
+} from '../api/generated';
 import { useClasses } from '../context/ClassContext';
 import { apiClient } from '../api/client';
 import { useEffect, useState } from 'react';
@@ -22,7 +26,8 @@ const FeaturePanel = ({
   creatureBeforeLevelUp: Creature;
   onSelectionChange: (selectedIds: number[]) => void;
 }) => {
-  const [selectableList, setSelectableList] = useState<SelectableList | null>();
+  const [selectableList, setSelectableList] =
+    useState<SelectableFeatureList | null>();
   const [selectedItemIds, setSelectedItemIds] = useState<number[]>([]);
 
   const { classes } = useClasses();
@@ -33,7 +38,9 @@ const FeaturePanel = ({
 
   const fetchSelectableList = async () => {
     try {
-      const response = await apiClient.getSelectableListById(selectableId!);
+      const response = await apiClient.getSelectableFeatureListById(
+        selectableId!
+      );
       setSelectableList(response.data);
     } catch (err) {
       console.error('Error fetching selectable list:', err);
@@ -49,12 +56,14 @@ const FeaturePanel = ({
     onSelectionChange(newSelectedIds);
   };
 
-  const existingSelection = selectableList?.items
+  const existingSelection = selectableList?.features
     ?.filter((i) => creatureBeforeLevelUp?.features?.includes(i.id))
     .map((i) => i.id);
 
   const existingSelectionLength = existingSelection?.length || 0;
-
+  console.log(creatureBeforeLevelUp?.features);
+  console.log(existingSelection);
+  console.log(existingSelectionLength);
   const totalFeatureRequired =
     creature?.classes
       ?.map((clid) => classes.find((cl) => cl.id === clid))
@@ -66,24 +75,40 @@ const FeaturePanel = ({
 
   const totalToAllocate = totalFeatureRequired - existingSelectionLength;
 
+  const displayFeature = (feature: SelectableFeature) => {
+    return (
+      // This is a feature you already have (always display)
+      existingSelection?.includes(feature.id) ||
+      // We have items to allocate
+      (totalToAllocate > 0 &&
+        // Item either has no requirement, or the creature has the requirement
+        (!feature.requiredSelectableFeatureId ||
+          creature.features?.find(
+            (cf) => cf === feature.requiredSelectableFeatureId
+          )))
+    );
+  };
+
   return (
     <Box
       sx={{
         border: '1px solid',
         borderColor: 'grey.400',
         borderRadius: 1,
-        padding: 2,
+        padding: 0,
+        mt: 1,
       }}
     >
-      <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+      <Typography variant="h6" sx={{ pl: 1, mt: 1, mb: 0 }}>
         {selectableList?.name}
       </Typography>
       <List dense sx={{ listStyleType: 'none', pl: 2 }}>
-        {selectableList?.items?.map((item: any) => (
+        {selectableList?.features?.map((feature: any) => (
           <div>
-            {(totalToAllocate > 0 || existingSelection?.includes(item.id)) && (
+            {/* {(totalToAllocate > 0 || existingSelection?.includes(feature.id)) && ( */}
+            {displayFeature(feature) && (
               <ListItem
-                key={item.id}
+                key={feature.id}
                 sx={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -95,23 +120,23 @@ const FeaturePanel = ({
                     checked={[
                       ...existingSelection!,
                       ...selectedItemIds,
-                    ]?.includes(item.id)}
+                    ]?.includes(feature.id)}
                     onChange={(e) =>
-                      handleCheckboxChange(item.id, e.target.checked)
+                      handleCheckboxChange(feature.id, e.target.checked)
                     }
                     //                  Disable if
                     // a. This is an existing selection (cant be removed)
                     // b> we have selected enough AND this is NOT a selected item
                     disabled={
-                      existingSelection?.includes(item.id) ||
+                      existingSelection?.includes(feature.id) ||
                       (selectedItemIds.length === totalToAllocate &&
-                        !selectedItemIds.includes(item.id))
+                        !selectedItemIds.includes(feature.id))
                     }
                   />
                 )}
                 <ListItemText
-                  primary={item.name}
-                  secondary={item.description}
+                  primary={feature.name}
+                  secondary={feature.description}
                 />
               </ListItem>
             )}
@@ -132,7 +157,9 @@ export const FeatureSelectionPanel = ({
   onSelectionChange?: (selectedIds: number[]) => void;
 }) => {
   const { classes } = useClasses();
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<
+    Map<number, number[]>
+  >(new Map());
 
   // Flatten all classLevels for the creature's classes
   const selectableListIds = [
@@ -146,10 +173,22 @@ export const FeatureSelectionPanel = ({
     ),
   ];
 
-  const handleSelectionChange = (selectedIds: number[]) => {
-    setSelectedItems(selectedIds);
-    onSelectionChange?.(selectedIds);
+  const handleSelectionChange = (listId: number, selectedIds: number[]) => {
+    const newSelectedFeatures = new Map(selectedFeatures);
+    newSelectedFeatures.set(listId, selectedIds);
+    setSelectedFeatures(newSelectedFeatures);
   };
+
+  useEffect(() => {
+    // We need to return
+    // a. All current selected features from the current character
+    // b. All selected features from the all lists
+    const allSelectedFeatures = Array.from(selectedFeatures.values()).flat();
+    onSelectionChange?.([
+      ...(creatureBeforeLevelUp?.features || []),
+      ...allSelectedFeatures,
+    ]);
+  }, [selectedFeatures]);
 
   return (
     <div>
@@ -159,7 +198,9 @@ export const FeatureSelectionPanel = ({
           selectableId={id!}
           creature={creature}
           creatureBeforeLevelUp={creatureBeforeLevelUp ?? creature}
-          onSelectionChange={handleSelectionChange}
+          onSelectionChange={(featureIds) =>
+            handleSelectionChange(id!, featureIds)
+          }
         />
       ))}
     </div>

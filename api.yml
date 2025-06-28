@@ -156,27 +156,27 @@ paths:
                 $ref: '#/components/schemas/class'
         '404':
           description: Class not found
-  /class/selectable/{id}:
+  /class/selectableFeatureList/{id}:
     get:
-      summary: Get selectable list by ID
-      description: Retrieve a specific selectable list by ID
-      operationId: getSelectableListById
+      summary: Get selectable feature list by ID
+      description: Retrieve a specific selectable feature list by ID
+      operationId: getSelectableFeatureListById
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
-          description: Selectable List ID
+          description: Selectable Feature List ID
       responses:
         '200':
-          description: Selectable list found
+          description: Selectable feature list found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/selectableList'
+                $ref: '#/components/schemas/selectableFeatureList'
         '404':
-          description: Selectable list not found
+          description: Selectable feature list not found
 components:
   schemas:
     creature:
@@ -329,35 +329,39 @@ components:
         - id
         - name
         - description
-    selectableList:
+    selectableFeatureList:
       type: object
       properties:
         id:
           type: integer
-          description: Unique identifier for the selectable list
+          description: Unique identifier for the selectable feature list
         name:
           type: string
-          description: Name of the selectable list
-        items:
+          description: Name of the selectable feature list
+        features:
           type: array
-          description: List of selectable items
+          description: List of selectable features
           items:
-            $ref: '#/components/schemas/selectable'
+            $ref: '#/components/schemas/selectableFeature'
       required:
         - id
         - name
-    selectable:
+    selectableFeature:
       type: object
       properties:
         id:
           type: integer
-          description: Unique identifier for the selectable
+          description: Unique identifier for the selectable feature
         name:
           type: string
-          description: Name of the selectable
+          description: Name of the selectable feature
         description:
           type: string
-          description: Description of the selectable
+          description: Description of the selectable feature
+        requiredSelectableFeatureId:
+          type: integer
+          nullable: true
+          description: ID of the required selectable feature
       required:
         - id
         - name

@@ -20,6 +20,7 @@ import { Class, ClassClassificationEnum } from '../../api/generated';
 import { useClasses } from '../../context/ClassContext';
 import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
+import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
 
 type FormData = {
   name: string;
@@ -72,6 +73,8 @@ const CreateCreature = (): React.JSX.Element => {
     (cls) => cls.classification === ClassClassificationEnum.Race
   );
 
+  const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
+
   useEffect(() => {
     if (classId) {
       const creatureClass = classes.find((cls) => cls.id === classId);
@@ -102,6 +105,7 @@ const CreateCreature = (): React.JSX.Element => {
       intellect: intellect,
       spirit: spirit,
       classes: classId ? [classId] : [],
+      features: selectedFeatures,
     };
   };
 
@@ -116,8 +120,10 @@ const CreateCreature = (): React.JSX.Element => {
       intellect: data.intellect,
       spirit: data.spirit,
       classes: [data.selectedClassId],
+      features: selectedFeatures,
     };
 
+    // console.log(creature);
     try {
       const response = await apiClient.createCreature(creature);
       const newCreatureId = response.data.id;
@@ -279,8 +285,15 @@ const CreateCreature = (): React.JSX.Element => {
             <CreatureDerivedStatBlock creature={getCreature()} />
           </Grid>
         </Grid>
-        <Box sx={{ py: 2 }}>
+        <Box sx={{ py: 1 }}>
           <CreatureAbiltities creature={getCreature()} />
+        </Box>
+        <Box sx={{ py: 0 }}>
+          <FeatureSelectionPanel
+            creature={getCreature()}
+            creatureBeforeLevelUp={{ ...getCreature(), features: [] }}
+            onSelectionChange={setSelectedFeatures}
+          />
         </Box>
         <div className="create-creature-button-group">
           <Button

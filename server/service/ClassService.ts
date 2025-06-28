@@ -1,5 +1,5 @@
 import { PrismaClient, ClassClassification } from '@prisma/client';
-import { apiClass, apiSelectableList } from '../types/ClassApiTypes';
+import { apiClass, apiSelectableFeatureList } from '../types/ClassApiTypes';
 
 const prisma = new PrismaClient();
 
@@ -41,8 +41,8 @@ export const getClasses = async (
         name: feature.name,
         description: feature.description,
         type: feature.type as any,
-        selectableListId: feature.selectableListId ?? undefined,
-        selectableCount: feature.selectableCount ?? undefined,
+        selectableListId: feature.selectableFeatureListId ?? undefined,
+        selectableCount: feature.selectableFeatureCount ?? undefined,
       })),
     })),
   }));
@@ -84,20 +84,20 @@ export const getClassById = async (id: number): Promise<apiClass | null> => {
         name: feature.name,
         description: feature.description,
         type: feature.type as any,
-        selectableListId: feature.selectableListId ?? undefined,
-        selectableCount: feature.selectableCount ?? undefined,
+        selectableListId: feature.selectableFeatureListId ?? undefined,
+        selectableCount: feature.selectableFeatureCount ?? undefined,
       })),
     })),
   };
 };
 
-export const getSelectableListById = async (
+export const getSelectableFeatureListById = async (
   id: number
-): Promise<apiSelectableList | null> => {
-  const list = await prisma.selectableList.findUnique({
+): Promise<apiSelectableFeatureList | null> => {
+  const list = await prisma.selectableFeatureList.findUnique({
     where: { id },
     include: {
-      selectableItems: true,
+      selectableFeatures: true,
     },
   });
 
@@ -108,11 +108,12 @@ export const getSelectableListById = async (
   return {
     id: list.id,
     name: list.name,
-    items: list.selectableItems.map((item) => ({
+    features: list.selectableFeatures.map((item) => ({
       id: item.id,
-      selectableListId: item.selectableListId,
       name: item.name,
       description: item.description,
+      requiredSelectableFeatureId:
+        item.requiredSelectableFeatureId ?? undefined,
     })),
   };
 };

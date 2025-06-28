@@ -39,15 +39,15 @@ export interface apiClassLevelFeature {
   selectableCount?: number;
 }
 
-export interface apiSelectableList {
+export interface apiSelectableFeatureList {
   id: number;
   name: string;
-  items: apiSelectableListItem[];
+  features: apiSelectableFeature[];
 }
 
-export interface apiSelectableListItem {
+export interface apiSelectableFeature {
   id: number;
-  selectableListId: number;
   name: string;
   description: string;
+  requiredSelectableFeatureId?: number;
 }

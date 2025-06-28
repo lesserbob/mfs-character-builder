@@ -42,8 +42,8 @@ model CreatureSelectedFeature {
     // Relationship to Creature
     creature      Creature @relation(fields: [creatureId], references: [id])
 
-    // Relationship to Creature
-    feature           SelectableListItem @relation(fields: [featureId], references: [id])
+    // Relationship to SelectableFeature
+    feature       SelectableFeature @relation(fields: [featureId], references: [id])
 }
 
 model CreatureClass {
@@ -89,36 +89,41 @@ model ClassLevel {
 }
 
 model ClassFeature {
-  id               Int    @id @default(autoincrement())
-  name             String
-  description      String
-  classLevelId     Int
-  type             classFeatureType
-  selectableListId Int?
-  selectableCount  Int?
+  id                      Int    @id @default(autoincrement())
+  name                    String
+  description             String
+  classLevelId            Int
+  type                    classFeatureType
+  selectableFeatureListId Int?
+  selectableFeatureCount  Int?
   
   // Relationship to ClassLevel
   classLevel  ClassLevel @relation(fields: [classLevelId], references: [id])
 
-  // Relationship to SelectableList
-  selectableList SelectableList? @relation(fields: [selectableListId], references: [id])
+  // Relationship to SelectableFeatureList
+  selectableFeatureList SelectableFeatureList? @relation(fields: [selectableFeatureListId], references: [id])
 }
 
-model SelectableList {
-  id              Int    @id @default(autoincrement())
-  name            String
+model SelectableFeatureList {
+  id                  Int    @id @default(autoincrement())
+  name                String
 
-  selectableItems SelectableListItem[]
-  classFeatures   ClassFeature[]
+  selectableFeatures  SelectableFeature[]
+  classFeatures       ClassFeature[]
 }
 
-model SelectableListItem {
-  id                Int    @id @default(autoincrement())
-  name              String
-  description       String
-  selectableListId  Int
+model SelectableFeature {
+  id                          Int    @id @default(autoincrement())
+  name                        String
+  description                 String
+  selectableFeatureListId     Int
+  requiredSelectableFeatureId Int?
 
-  selectableList  SelectableList @relation(fields: [selectableListId], references: [id])
+  selectableFeatureList  SelectableFeatureList @relation(fields: [selectableFeatureListId], references: [id])
+
+  // Self-referencing relationship for required features
+  requiredFeature        SelectableFeature?  @relation("FeatureRequirements", fields: [requiredSelectableFeatureId], references: [id])
+  requiredByFeatures     SelectableFeature[] @relation("FeatureRequirements")
 
   // Relationship to CreatureSelectedFeature
   selectedFeatures  CreatureSelectedFeature[]

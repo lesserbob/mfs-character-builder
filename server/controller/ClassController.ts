@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { getClasses, getSelectableListById } from '../service/ClassService';
+import {
+  getClasses,
+  getSelectableFeatureListById,
+} from '../service/ClassService';
 import { ClassClassification } from '@prisma/client';
 const router = Router();
 
@@ -15,9 +18,11 @@ router.get('/class', async (req, res, next) => {
   }
 });
 
-router.get('/class/selectable/:id', async (req, res, next) => {
+router.get('/class/selectableFeatureList/:id', async (req, res, next) => {
   try {
-    const list = await getSelectableListById(parseInt(req.params.id as string));
+    const list = await getSelectableFeatureListById(
+      parseInt(req.params.id as string)
+    );
     res.json(list);
   } catch (error) {
     next(error);

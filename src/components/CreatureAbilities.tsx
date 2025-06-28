@@ -18,14 +18,14 @@ export const CreatureAbiltities = ({ creature }: { creature: Creature }) => {
         border: '1px solid',
         borderColor: 'grey.400',
         borderRadius: 1,
-        padding: 2,
+        padding: 0,
       }}
     >
-      <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>
+      <Typography variant="h6" sx={{ pl: 1, mt: 1, mb: 0 }}>
         Abilities
       </Typography>
       {classFeatures.length > 0 && (
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 0 }}>
           <List dense sx={{ listStyleType: 'none', pl: 2 }}>
             {classFeatures.map(
               (feature: ClassFeature | undefined) =>
