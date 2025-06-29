@@ -94,6 +94,8 @@ model ClassFeature {
   description             String
   classLevelId            Int
   type                    classFeatureType
+  display                 Boolean @default(true)
+  enduranceRegeneration   Int?
   selectableFeatureListId Int?
   selectableFeatureCount  Int?
   

@@ -14,6 +14,8 @@ export const CreatureDerivedStatBlock = ({
     .flatMap((c) => c.classLevels)
     .filter((cl) => cl!.level <= creature.level);
 
+  const createClassFeatures = creatureClassLevels.flatMap((cl) => cl!.features);
+
   const getHealth = () => {
     const baseHealth =
       creatureClassLevels.reduce(
@@ -57,6 +59,13 @@ export const CreatureDerivedStatBlock = ({
     return '+' + Number(creature.agility) + ', +' + Number(creature.might);
   };
 
+  const getEnduranceRegeneration = () => {
+    return createClassFeatures.reduce(
+      (sum, feature) => sum + (feature!.enduranceRegeneration ?? 0),
+      0
+    );
+  };
+  console.log(getEnduranceRegeneration());
   return (
     <Box
       sx={{
@@ -91,6 +100,11 @@ export const CreatureDerivedStatBlock = ({
         <Typography variant="body2" color="test.primary" sx={{ mt: 1 }}>
           Ranged: {getRangedDescription()}
         </Typography>
+        {getEnduranceRegeneration() > 0 && (
+          <Typography variant="body2" color="test.primary" sx={{ mt: 1 }}>
+            Endurance Regeneration: {getEnduranceRegeneration()}
+          </Typography>
+        )}
       </div>
     </Box>
   );

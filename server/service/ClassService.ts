@@ -1,4 +1,4 @@
-import { PrismaClient, ClassClassification } from '@prisma/client';
+import { PrismaClient, ClassClassification, Prisma } from '@prisma/client';
 import { apiClass, apiSelectableFeatureList } from '../types/ClassApiTypes';
 
 const prisma = new PrismaClient();
@@ -21,49 +21,18 @@ export const getClasses = async (
     },
   });
 
-  return classes.map((cl) => ({
-    id: cl.id,
-    name: cl.name,
-    classification: cl.classification,
-    minMight: cl.minMight ?? undefined,
-    minAgility: cl.minAgility ?? undefined,
-    minIntellect: cl.minIntellect ?? undefined,
-    minSpirit: cl.minSpirit ?? undefined,
-    classLevels: cl.classLevels.map((level) => ({
-      id: level.id,
-      classId: level.classId,
-      level: level.level,
-      health: level.health,
-      statBonus: level.statBonus,
-      features: level.classFeatures.map((feature) => ({
-        id: feature.id,
-        classLevelId: feature.classLevelId,
-        name: feature.name,
-        description: feature.description,
-        type: feature.type as any,
-        selectableListId: feature.selectableFeatureListId ?? undefined,
-        selectableCount: feature.selectableFeatureCount ?? undefined,
-      })),
-    })),
-  }));
+  return classes.map((cl) => buildClass(cl));
 };
 
-export const getClassById = async (id: number): Promise<apiClass | null> => {
-  const cl = await prisma.class.findUnique({
-    where: { id },
+const buildClass = (
+  cl: Prisma.ClassGetPayload<{
     include: {
       classLevels: {
-        include: {
-          classFeatures: true,
-        },
-      },
-    },
-  });
-
-  if (!cl) {
-    return null;
-  }
-
+        include: { classFeatures: true };
+      };
+    };
+  }>
+): apiClass => {
   return {
     id: cl.id,
     name: cl.name,
@@ -84,11 +53,32 @@ export const getClassById = async (id: number): Promise<apiClass | null> => {
         name: feature.name,
         description: feature.description,
         type: feature.type as any,
+        display: feature.display,
+        enduranceRegeneration: feature.enduranceRegeneration ?? undefined,
         selectableListId: feature.selectableFeatureListId ?? undefined,
         selectableCount: feature.selectableFeatureCount ?? undefined,
       })),
     })),
   };
+};
+
+export const getClassById = async (id: number): Promise<apiClass | null> => {
+  const cl = await prisma.class.findUnique({
+    where: { id },
+    include: {
+      classLevels: {
+        include: {
+          classFeatures: true,
+        },
+      },
+    },
+  });
+
+  if (!cl) {
+    return null;
+  }
+
+  return buildClass(cl);
 };
 
 export const getSelectableFeatureListById = async (

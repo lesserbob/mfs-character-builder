@@ -61,9 +61,7 @@ const FeaturePanel = ({
     .map((i) => i.id);
 
   const existingSelectionLength = existingSelection?.length || 0;
-  console.log(creatureBeforeLevelUp?.features);
-  console.log(existingSelection);
-  console.log(existingSelectionLength);
+
   const totalFeatureRequired =
     creature?.classes
       ?.map((clid) => classes.find((cl) => cl.id === clid))
@@ -105,7 +103,6 @@ const FeaturePanel = ({
       <List dense sx={{ listStyleType: 'none', pl: 2 }}>
         {selectableList?.features?.map((feature: any) => (
           <div>
-            {/* {(totalToAllocate > 0 || existingSelection?.includes(feature.id)) && ( */}
             {displayFeature(feature) && (
               <ListItem
                 key={feature.id}

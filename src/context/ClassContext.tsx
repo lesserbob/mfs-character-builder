@@ -33,6 +33,7 @@ export const ClassProvider: React.FC<ClassProviderProps> = ({ children }) => {
     setError(null);
     try {
       const response = await apiClient.getClasses();
+      console.log(response.data);
       setClasses(response.data);
     } catch (err) {
       setError('Failed to fetch classes');

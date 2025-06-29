@@ -317,6 +317,10 @@ components:
           type: string
           description: Type of the feature
           enum: [BASE, SELECT]
+        enduranceRegeneration:
+          type: integer
+          nullable: true
+          description: Endurance regeneration for this feature
         selectableListId:
           type: integer
           nullable: true
@@ -325,6 +329,9 @@ components:
           type: integer
           nullable: true
           description: Number of selectable items for this feature
+        display:
+          type: boolean
+          description: Whether to display this feature in the UI
       required:
         - id
         - name

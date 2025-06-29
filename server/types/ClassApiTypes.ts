@@ -35,6 +35,8 @@ export interface apiClassLevelFeature {
   name: string;
   description: string;
   type: ClassFeatureType;
+  display: boolean;
+  enduranceRegeneration?: number;
   selectableListId?: number;
   selectableCount?: number;
 }
