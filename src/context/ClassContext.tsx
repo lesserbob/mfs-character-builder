@@ -26,7 +26,7 @@ export const ClassProvider: React.FC<ClassProviderProps> = ({ children }) => {
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  console.log('yea');
   const fetchClasses = async () => {
     if (classes.length > 0) return;
     setLoading(true);

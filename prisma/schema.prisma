@@ -18,6 +18,11 @@ enum classFeatureType {
   SELECT
 }
 
+enum userType {
+  PLAYER
+  GM
+}
+
 model Creature {
   id        Int    @id @default(autoincrement())
   name      String
@@ -129,4 +134,11 @@ model SelectableFeature {
 
   // Relationship to CreatureSelectedFeature
   selectedFeatures  CreatureSelectedFeature[]
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  password String
+  type     userType @default(PLAYER)
 }

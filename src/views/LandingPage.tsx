@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Paper, Container } from '@mui/material';
 import './LandingPage.css';
+import { LoginForm } from '../components/LoginForm';
 
 export const LandingPage = (): React.JSX.Element => {
   return (
@@ -20,6 +21,7 @@ export const LandingPage = (): React.JSX.Element => {
           Roll 12
         </Typography>
       </Paper>
+      <LoginForm />
     </Container>
   );
 };

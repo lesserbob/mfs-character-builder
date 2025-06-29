@@ -1,10 +1,13 @@
 import React from 'react';
 import { Drawer, Box, Typography, Button, Stack } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const OptionPanel = (): React.JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { isAuthenticated } = useAuth();
 
   const handleCreateNew = () => {
     navigate('/create');
@@ -55,6 +58,7 @@ const OptionPanel = (): React.JSX.Element => {
               fullWidth
               sx={{ justifyContent: 'flex-start' }}
               onClick={handleCreateNew}
+              disabled={!isAuthenticated}
             >
               Create New
             </Button>
@@ -63,6 +67,7 @@ const OptionPanel = (): React.JSX.Element => {
               fullWidth
               sx={{ justifyContent: 'flex-start' }}
               onClick={handleSearchCreatures}
+              disabled={!isAuthenticated}
             >
               Search Creatures
             </Button>
