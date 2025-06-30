@@ -5,13 +5,6 @@ import { useClasses } from '../context/ClassContext';
 export const CreatureAbiltities = ({ creature }: { creature: Creature }) => {
   const { classes, loading: classesLoading } = useClasses();
 
-  // const creatureClassLevels = classes
-  //   .filter((c) => creature.classes?.includes(c.id))
-  //   .flatMap((c) => c.classLevels)
-  //   .filter((cl) => cl!.level <= creature.level);
-
-  // const classFeatures = creatureClassLevels.flatMap((cl) => cl!.features);
-
   const classFeatures = classes
     .filter((c) => creature.classes?.includes(c.id))
     .flatMap((c) => c.classLevels)

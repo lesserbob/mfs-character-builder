@@ -369,6 +369,15 @@ components:
           type: integer
           nullable: true
           description: ID of the required selectable feature
+        actionType:
+          type: string
+          nullable: true
+          description: Action type of the selectable feature
+          enum: [STANDARD, MINOR, REACTION, FREE, MOVE]
+        uses:
+          type: integer
+          nullable: true
+          description: Number of uses for the selectable feature
       required:
         - id
         - name

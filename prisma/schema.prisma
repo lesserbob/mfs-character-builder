@@ -13,14 +13,22 @@ enum ClassClassification {
   SPECIALISATION
 }
 
-enum classFeatureType {
+enum ClassFeatureType {
   BASE
   SELECT
 }
 
-enum userType {
+enum UserType {
   PLAYER
   GM
+}
+
+enum ActionType {
+  STANDARD
+  MINOR
+  REACTION
+  FREE
+  MOVE
 }
 
 model Creature {
@@ -98,7 +106,7 @@ model ClassFeature {
   name                    String
   description             String
   classLevelId            Int
-  type                    classFeatureType
+  type                    ClassFeatureType
   display                 Boolean @default(true)
   enduranceRegeneration   Int?
   selectableFeatureListId Int?
@@ -125,6 +133,8 @@ model SelectableFeature {
   description                 String
   selectableFeatureListId     Int
   requiredSelectableFeatureId Int?
+  uses                        Int?
+  actionType                  ActionType?
 
   selectableFeatureList  SelectableFeatureList @relation(fields: [selectableFeatureListId], references: [id])
 
@@ -140,5 +150,5 @@ model User {
   id       Int      @id @default(autoincrement())
   username String   @unique
   password String
-  type     userType @default(PLAYER)
+  type     UserType @default(PLAYER)
 }

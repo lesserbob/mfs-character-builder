@@ -104,6 +104,8 @@ export const getSelectableFeatureListById = async (
       description: item.description,
       requiredSelectableFeatureId:
         item.requiredSelectableFeatureId ?? undefined,
+      actionType: (item.actionType as any) ?? undefined,
+      uses: item.uses ?? undefined,
     })),
   };
 };

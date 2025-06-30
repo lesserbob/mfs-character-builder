@@ -26,14 +26,13 @@ export const ClassProvider: React.FC<ClassProviderProps> = ({ children }) => {
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  console.log('yea');
+
   const fetchClasses = async () => {
     if (classes.length > 0) return;
     setLoading(true);
     setError(null);
     try {
       const response = await apiClient.getClasses();
-      console.log(response.data);
       setClasses(response.data);
     } catch (err) {
       setError('Failed to fetch classes');

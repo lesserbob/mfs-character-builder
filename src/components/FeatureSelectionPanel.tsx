@@ -14,6 +14,7 @@ import {
 import { useClasses } from '../context/ClassContext';
 import { apiClient } from '../api/client';
 import { useEffect, useState } from 'react';
+import { capitalizeFirst } from '../util/TextUtils';
 
 const FeaturePanel = ({
   selectableId,
@@ -41,6 +42,7 @@ const FeaturePanel = ({
       const response = await apiClient.getSelectableFeatureListById(
         selectableId!
       );
+      console.log(response.data);
       setSelectableList(response.data);
     } catch (err) {
       console.error('Error fetching selectable list:', err);
@@ -85,6 +87,17 @@ const FeaturePanel = ({
             (cf) => cf === feature.requiredSelectableFeatureId
           )))
     );
+  };
+
+  const getDisplayText = (feature: SelectableFeature) => {
+    const actionType = feature.actionType;
+    const uses = feature.uses;
+
+    const extraInformation =
+      actionType || uses
+        ? '(' + capitalizeFirst(actionType ?? '') + `,  Uses: ${uses}` + ')'
+        : '';
+    return `${feature.name} ${extraInformation}`;
   };
 
   return (
@@ -132,7 +145,7 @@ const FeaturePanel = ({
                   />
                 )}
                 <ListItemText
-                  primary={feature.name}
+                  primary={getDisplayText(feature)}
                   secondary={feature.description}
                 />
               </ListItem>

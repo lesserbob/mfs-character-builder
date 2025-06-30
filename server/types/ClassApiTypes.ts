@@ -29,6 +29,14 @@ export enum ClassFeatureType {
   SELECT = 'SELECT',
 }
 
+export enum ActionType {
+  STANDARD = 'STANDARD',
+  MINOR = 'MINOR',
+  REACTION = 'REACTION',
+  FREE = 'FREE',
+  MOVE = 'MOVE',
+}
+
 export interface apiClassLevelFeature {
   id: number;
   classLevelId: number;
@@ -52,4 +60,6 @@ export interface apiSelectableFeature {
   name: string;
   description: string;
   requiredSelectableFeatureId?: number;
+  actionType?: ActionType;
+  uses?: number;
 }

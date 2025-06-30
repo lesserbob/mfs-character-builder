@@ -4,7 +4,6 @@ import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite';
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
@@ -19,13 +18,6 @@ const httpsPort = 3443;
 
 // Security middleware
 app.use(helmet());
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
 
 // Configure CORS with specific options
 app.use(
