@@ -21,6 +21,10 @@ const OptionPanel = (): React.JSX.Element => {
     navigate('/search');
   };
 
+  const handleSearchItems = () => {
+    navigate('/search-items');
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -70,6 +74,22 @@ const OptionPanel = (): React.JSX.Element => {
               disabled={!isAuthenticated}
             >
               Search Creatures
+            </Button>
+          </Stack>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+            Gear
+          </Typography>
+          <Stack spacing={1} sx={{ ml: 2 }}>
+            <Button
+              variant={
+                location.pathname === '/search-items' ? 'contained' : 'text'
+              }
+              fullWidth
+              sx={{ justifyContent: 'flex-start' }}
+              onClick={handleSearchItems}
+              disabled={!isAuthenticated}
+            >
+              Search Items
             </Button>
           </Stack>
         </Box>

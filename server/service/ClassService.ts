@@ -36,7 +36,7 @@ const buildClass = (
   return {
     id: cl.id,
     name: cl.name,
-    classification: cl.classification,
+    classification: cl.classification as any,
     minMight: cl.minMight ?? undefined,
     minAgility: cl.minAgility ?? undefined,
     minIntellect: cl.minIntellect ?? undefined,

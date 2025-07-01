@@ -31,6 +31,37 @@ enum ActionType {
   MOVE
 }
 
+enum GearType {
+  MELEE
+  RANGED
+  ARMOR
+  MISCELLANEOUS
+}
+
+enum RateOfFire {
+  SINGLE
+  BURST
+  FULL
+}
+
+enum Range {
+  NEARBY
+  MEDIUM
+  LONG
+  EXTREME
+}
+
+enum Reliability {
+  RELIABLE
+  NORMAL
+  UNRELIABLE
+}
+
+enum ArmorType {
+  OUTFIT
+  HARDENED
+}
+
 model Creature {
   id        Int    @id @default(autoincrement())
   name      String
@@ -43,7 +74,7 @@ model Creature {
   // Relationship to CreatureClass
   classes   CreatureClass[]
 
-  // Relationship to CreatureSelectedItems
+  // Relationship to CreatureSelectedFeatures
   features     CreatureSelectedFeature[]
 }
 
@@ -151,4 +182,27 @@ model User {
   username String   @unique
   password String
   type     UserType @default(PLAYER)
+}
+
+model Item {
+  id                          Int    @id @default(autoincrement())
+  name                        String
+  type                        GearType
+  rank                        Int
+  damageUnarmored             Int?
+  damageArmored               Int?
+  concealable                 Boolean @default(false)
+  twoHanded                   Boolean @default(false)
+  reach                       Boolean @default(false)
+  finesse                     Boolean @default(false)
+  thrown                      Boolean @default(false)
+  attacksWorthOfAmmo          Int?
+  rateOfFire                  RateOfFire?
+  range                       Range?
+  reliability                 Reliability?
+  scatter                     Boolean @default(false)
+  sniper                      Boolean @default(false)
+  brace                       Boolean @default(false)
+  armorType                   ArmorType?
+  soak                        Int?
 }

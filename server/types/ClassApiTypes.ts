@@ -1,7 +1,7 @@
 export interface apiClass {
   id: number;
   name: string;
-  classification: string;
+  classification: ClassClassification;
   minMight?: number;
   minAgility?: number;
   minIntellect?: number;

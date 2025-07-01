@@ -10,6 +10,7 @@ import path from 'path';
 import creatureController from './controller/CreatureController';
 import classController from './controller/ClassController';
 import authController from './controller/AuthController';
+import itemController from './controller/ItemController';
 import { authenticateToken } from './middleware/auth';
 
 const app = express();
@@ -51,6 +52,7 @@ app.use('/api/auth', authController);
 // Mount controllers (authentication will be added to specific routes)
 app.use('/api', creatureController);
 app.use('/api', classController);
+app.use('/api', itemController);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: any) => {

@@ -33,21 +33,20 @@ const FeaturePanel = ({
 
   const { classes } = useClasses();
 
-  useEffect(() => {
-    fetchSelectableList();
-  }, [selectableId]);
-
   const fetchSelectableList = async () => {
     try {
       const response = await apiClient.getSelectableFeatureListById(
         selectableId!
       );
-      console.log(response.data);
       setSelectableList(response.data);
     } catch (err) {
       console.error('Error fetching selectable list:', err);
     }
   };
+
+  useEffect(() => {
+    fetchSelectableList();
+  }, [selectableId]);
 
   const handleCheckboxChange = (itemId: number, checked: boolean) => {
     const newSelectedIds = checked

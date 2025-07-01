@@ -1,0 +1,15 @@
+.search-items-table .MuiTableCell-root:first-child {
+  max-width: 150px;
+  width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-items-table .MuiTableCell-root:nth-child(2) {
+  max-width: 100px;
+  /* width: 100px; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

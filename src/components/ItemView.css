@@ -1,0 +1,73 @@
+.item-view-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.item-view-table .damage-column {
+  width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-view-table .range-column {
+  width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-view-table .armor-type-column {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-view-table .soak-column {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-view-table .awoa-column {
+  width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-view-table .rof-column {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-view-table .options-column {
+  min-width: 120px;
+  /* Let it take remaining space naturally */
+}
+
+.item-view-table .MuiTableCell-root {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.item-view-table .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 600;
+  border-bottom: 2px solid #1565c0;
+}
+
+.item-view-table .MuiTableHead-root .MuiTableRow-root .MuiTableCell-root {
+  color: white !important;
+}
+
+.item-view-table .MuiTableBody-root .MuiTableRow-root:hover {
+  background-color: #f5f5f5;
+}

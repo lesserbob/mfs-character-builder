@@ -10,3 +10,45 @@
   width: 300px; /* fixed width */
   margin-left: auto; /* push to right */
 }
+
+/* Loading state */
+.view-creature-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Alert styling */
+.view-creature-alert {
+  margin-top: 16px;
+}
+
+/* Content container */
+.view-creature-content {
+  padding: 10px;
+}
+
+/* Stat block container */
+.view-creature-stat-block {
+  border: 1px solid;
+  border-color: #bdbdbd; /* grey.400 equivalent */
+  border-radius: 4px;
+  padding: 16px;
+}
+
+/* Spacing containers */
+.view-creature-spacing {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+/* Button container */
+.view-creature-button-container {
+  margin-top: 16px;
+}
+
+/* Button styling */
+.view-creature-button {
+  flex: 1;
+}

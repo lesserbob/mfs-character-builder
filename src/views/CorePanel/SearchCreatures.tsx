@@ -9,16 +9,19 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../api/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { Creature } from '../../api/generated';
 import { useClasses } from '../../context/ClassContext';
 import { getClassDescription } from '../../util/CreatureUtils';
 
 const SearchCreatures = () => {
   const [creatures, setCreatures] = useState<Creature[]>([]);
-  const { classes, loading: classesLoading } = useClasses();
+  const { classes } = useClasses();
+  const hasFetched = useRef(false);
 
-  const fetchCreatures = () => {
+  const fetchCreatures = useCallback(() => {
+    if (hasFetched.current) return; // Prevent duplicate calls
+    hasFetched.current = true;
     return apiClient
       .getCreatures()
       .then((response) => {
@@ -27,11 +30,11 @@ const SearchCreatures = () => {
       .catch((error) => {
         console.error('Error fetching creatures:', error);
       });
-  };
+  }, []);
 
   useEffect(() => {
     fetchCreatures();
-  }, []);
+  }, [fetchCreatures]);
 
   return (
     <TableContainer component={Paper}>

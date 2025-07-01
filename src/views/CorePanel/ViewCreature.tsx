@@ -67,12 +67,7 @@ const ViewCreature: React.FC = () => {
   // TODO : Should generecise this
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="200px"
-      >
+      <Box className="view-creature-loading">
         <CircularProgress />
       </Box>
     );
@@ -80,7 +75,7 @@ const ViewCreature: React.FC = () => {
 
   if (error) {
     return (
-      <Alert severity="error" sx={{ mt: 2 }}>
+      <Alert severity="error" className="view-creature-alert">
         {error}
       </Alert>
     );
@@ -88,7 +83,7 @@ const ViewCreature: React.FC = () => {
 
   if (!creature) {
     return (
-      <Alert severity="warning" sx={{ mt: 2 }}>
+      <Alert severity="warning" className="view-creature-alert">
         Creature not found
       </Alert>
     );
@@ -96,20 +91,13 @@ const ViewCreature: React.FC = () => {
 
   return (
     <div>
-      <div ref={contentRef} style={{ padding: '10px' }}>
+      <div ref={contentRef} className="view-creature-content">
         <Typography variant="h5" component="h2">
           {creature.name}
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6 }}>
-            <Box
-              sx={{
-                border: '1px solid',
-                borderColor: 'grey.400',
-                borderRadius: 1,
-                padding: 2,
-              }}
-            >
+            <Box className="view-creature-stat-block">
               <Stack spacing={2}>
                 <ReadOnlyField label="Name" value={creature.name} />
                 <ReadOnlyField
@@ -143,21 +131,25 @@ const ViewCreature: React.FC = () => {
             <CreatureDerivedStatBlock creature={creature} />
           </Grid>
         </Grid>
-        <Box sx={{ py: 2 }}>
+        <Box className="view-creature-spacing">
           <CreatureAbiltities creature={creature} />
         </Box>
-        <Box sx={{ py: 2 }}>
+        <Box className="view-creature-spacing">
           <FeatureSelectionPanel creature={creature} />
         </Box>
       </div>
       <div className="view-creature-button-group">
-        <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          className="view-creature-button-container"
+        >
           <Button
             variant="contained"
             onClick={() =>
               navigate(`/levelup/${creatureId}/${creature.level + 1}`)
             }
-            sx={{ flex: 1 }}
+            className="view-creature-button"
           >
             Level Up
           </Button>
@@ -165,7 +157,7 @@ const ViewCreature: React.FC = () => {
             variant="outlined"
             onClick={handleExportPdf}
             disabled={pdfLoading}
-            sx={{ flex: 1 }}
+            className="view-creature-button"
           >
             {pdfLoading ? 'Generating PDF...' : 'Export PDF'}
           </Button>

@@ -177,6 +177,20 @@ paths:
                 $ref: '#/components/schemas/selectableFeatureList'
         '404':
           description: Selectable feature list not found
+  /item:
+    get:
+      summary: Get all items
+      description: Retrieve a list of all items
+      operationId: getItems
+      responses:
+        '200':
+          description: List of items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/item'
 components:
   schemas:
     creature:
@@ -382,3 +396,79 @@ components:
         - id
         - name
         - description
+    item:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the item
+        name:
+          type: string
+          description: Name of the item
+        type:
+          type: string
+          description: Type of the item
+          enum: [MELEE, RANGED, ARMOR, MISCELLANEOUS]
+        rank:
+          type: integer
+          description: Rank of the item
+        damageUnarmored:
+          type: integer
+          nullable: true
+          description: Damage of the item when unarmored
+        damageArmored:
+          type: integer
+          nullable: true
+          description: Damage of the item when armored
+        concealable:
+          type: boolean
+          description: Whether the item can be concealed
+        twoHanded:
+          type: boolean
+          description: Whether the item is two-handed
+        reach:
+          type: boolean
+          description: Whether the item has reach
+        finesse:
+          type: boolean
+          description: Whether the item is a finesse weapon
+        thrown:
+          type: boolean
+          description: Whether the item is thrown
+        attacksWorthOfAmmo:
+          type: integer
+          nullable: true
+          description: Number of attacks worth of ammo
+        rateOfFire:
+          type: string
+          nullable: true
+          description: Rate of fire of the item
+          enum: [SINGLE, BURST, FULL_AUTO, SEMI_AUTO]
+        range:
+          type: string
+          nullable: true
+          description: Range of the item
+          enum: [NEARBY, MEDIUM, LONG, EXTREME]
+        reliability:
+          type: string
+          nullable: true
+          description: Reliability of the item
+          enum: [RELIABLE, NORMAL, UNRELIABLE]
+        scatter:
+          type: boolean
+          description: Whether the item can be scattered
+        sniper:
+          type: boolean
+          description: Whether the item is a sniper weapon
+        brace:
+          type: boolean
+          description: Whether the item is a brace weapon
+        armorType:
+          type: string
+          nullable: true
+          description: Type of armor the item is
+          enum: [OUTFIT, HARDENED]
+        soak:
+          type: integer
+          nullable: true
+          description: Soak of the item
