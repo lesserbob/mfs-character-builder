@@ -1,6 +1,10 @@
-# MFS Character Builder
+# MFS (My Fantasy System) Character Builder
 
-A full-stack web application for building and managing RPG characters, featuring a modern React frontend, an Express/Prisma backend, and a SQLite database.
+Full disclosure : An application by an extreme nerd. I love table top role playing games and writing software, so working on this marries my two loves.
+
+This is intended as a full-stack web application for building and managing RPG characters, using the Roll12 system (my personnel system) in the SLA industries setting.
+
+This application exists to both provide a platform for running games as well as demonstrating my skills in software development whilst keeping my skill set up to date. Please feel free to reach out if you find it interesting and I can walk you through what it does, why I did the things I did and give you a clear idea of the type of developer I am.
 
 ---
 
@@ -138,9 +142,3 @@ mfs-character-builder/
 - React StrictMode is enabled by default (may cause double API calls in dev)
 - All code is written in TypeScript
 - Database is SQLite for easy local development
-
----
-
-## License
-
-MIT (or your preferred license)
