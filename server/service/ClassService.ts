@@ -95,6 +95,8 @@ export const getSelectableFeatureListById = async (
     return null;
   }
 
+  console.log(list);
+
   return {
     id: list.id,
     name: list.name,

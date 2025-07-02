@@ -15,6 +15,9 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
+    "db:seed": "prisma db seed",
+    "db:seed:generate": "npx tsx scripts/generate-seed-from-db.ts",
+    "db:export": "npx tsx scripts/export-data.ts",
     "api:generate": "npx @openapitools/openapi-generator-cli generate -i api.yml -g typescript-axios -o src/api/generated",
     "api:docs": "npx @openapitools/openapi-generator-cli generate -i api.yml -g html2 -o docs/api",
     "api:serve-docs": "npx http-server docs/api -p 8080 -o",
@@ -70,7 +73,7 @@
     "vite": "^6.3.5"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "keywords": [],
   "author": ""

@@ -91,6 +91,25 @@ const ViewCreature: React.FC = () => {
 
   return (
     <div>
+      <div>
+        <Button
+          variant="contained"
+          onClick={() =>
+            navigate(`/levelup/${creatureId}/${creature.level + 1}`)
+          }
+          className="view-creature-button"
+        >
+          Level Up
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleExportPdf}
+          disabled={pdfLoading}
+          className="view-creature-button"
+        >
+          {pdfLoading ? 'Generating PDF...' : 'Export PDF'}
+        </Button>
+      </div>
       <div ref={contentRef} className="view-creature-content">
         <Typography variant="h5" component="h2">
           {creature.name}
@@ -137,31 +156,6 @@ const ViewCreature: React.FC = () => {
         <Box className="view-creature-spacing">
           <FeatureSelectionPanel creature={creature} />
         </Box>
-      </div>
-      <div className="view-creature-button-group">
-        <Stack
-          direction="row"
-          spacing={2}
-          className="view-creature-button-container"
-        >
-          <Button
-            variant="contained"
-            onClick={() =>
-              navigate(`/levelup/${creatureId}/${creature.level + 1}`)
-            }
-            className="view-creature-button"
-          >
-            Level Up
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleExportPdf}
-            disabled={pdfLoading}
-            className="view-creature-button"
-          >
-            {pdfLoading ? 'Generating PDF...' : 'Export PDF'}
-          </Button>
-        </Stack>
       </div>
     </div>
   );

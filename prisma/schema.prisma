@@ -103,7 +103,7 @@ model CreatureClass {
 }
 
 model Class {
-  id             Int                 @id @default(autoincrement())
+  id             Int                 @id
   name           String
   classification ClassClassification
   minMight       Int?
@@ -151,7 +151,7 @@ model ClassFeature {
 }
 
 model SelectableFeatureList {
-  id                  Int    @id @default(autoincrement())
+  id                  Int    @id
   name                String
 
   selectableFeatures  SelectableFeature[]
@@ -159,7 +159,7 @@ model SelectableFeatureList {
 }
 
 model SelectableFeature {
-  id                          Int    @id @default(autoincrement())
+  id                          Int    @id
   name                        String
   description                 String
   selectableFeatureListId     Int
@@ -185,7 +185,7 @@ model User {
 }
 
 model Item {
-  id                          Int    @id @default(autoincrement())
+  id                          Int    @id
   name                        String
   type                        GearType
   rank                        Int
@@ -205,4 +205,11 @@ model Item {
   brace                       Boolean @default(false)
   armorType                   ArmorType?
   soak                        Int?
+}
+
+model CreatureItem {
+  id          Int    @id @default(autoincrement())
+  creatureId  Int
+  itemId      Int
+  count       Int   @default(0)
 }

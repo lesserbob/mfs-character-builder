@@ -22,9 +22,6 @@ export const ItemView: React.FC<ItemViewProps> = ({ item }) => {
   const showDamage =
     item.damageUnarmored !== null && item.damageArmored !== null;
 
-  const costTable = [0, 1, 2, 4, 6, 9, 12, 16, 20, 25, 30];
-  const cost = costTable[item.rank] ?? 0;
-
   const damageText = showDamage
     ? item.damageUnarmored === item.damageArmored
       ? `${item.damageUnarmored}`
