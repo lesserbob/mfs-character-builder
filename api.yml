@@ -8,6 +8,8 @@ info:
 servers:
   - url: http://localhost:3001
     description: Development server
+security:
+  - bearerAuth: []
 paths:
   /creature:
     get:
@@ -27,6 +29,8 @@ paths:
       summary: Create a new creature
       description: Create a new creature with basic information
       operationId: createCreature
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -192,6 +196,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/item'
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     creature:
       allOf:
@@ -228,6 +237,10 @@ components:
         spirit:
           type: integer
           description: Spirit attribute
+          default: 0
+        wealth:
+          type: integer
+          description: Wealth attribute
           default: 0
         classes:
           type: array

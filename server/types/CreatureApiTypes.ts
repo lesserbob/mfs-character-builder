@@ -6,6 +6,7 @@ export interface apiCreature {
   agility: number;
   intellect: number;
   spirit: number;
+  wealth: number;
   classes: number[];
   features: number[];
 }

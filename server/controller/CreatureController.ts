@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
 const router = Router();
 import {
   getCreature,
@@ -21,14 +22,19 @@ router.get('/creature/:id', async (req, res, next) => {
   }
 });
 
-router.get('/creature', async (req, res, next) => {
-  try {
-    const creatures = await getCreatures();
-    res.json(creatures);
-  } catch (error) {
-    next(error);
+router.get(
+  '/creature',
+  authenticateToken as any,
+  async (req: any, res, next) => {
+    try {
+      const userId = req.user!.id;
+      const creatures = await getCreatures(userId);
+      res.json(creatures);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // Protected endpoints (authentication required)
 router.put('/creature/:id', async (req, res, next) => {
@@ -43,13 +49,21 @@ router.put('/creature/:id', async (req, res, next) => {
   }
 });
 
-router.post('/creature', async (req, res, next) => {
-  try {
-    const newId = await createCreature(req.body);
-    res.status(201).json({ id: newId });
-  } catch (error) {
-    next(error);
+/**
+ * Creates a new creature
+ */
+router.post(
+  '/creature',
+  authenticateToken as any,
+  async (req: any, res, next) => {
+    try {
+      const userId = req.user!.id;
+      const newId = await createCreature(req.body, userId);
+      res.status(201).json({ id: newId });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export default router;

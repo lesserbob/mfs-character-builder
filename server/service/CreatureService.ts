@@ -27,8 +27,9 @@ export const getCreature = async (id: number): Promise<apiCreature> => {
   return result;
 };
 
-export const getCreatures = async (): Promise<apiCreature[]> => {
+export const getCreatures = async (userId: number): Promise<apiCreature[]> => {
   const deCreatures = await prisma.creature.findMany({
+    where: { userId: userId },
     include: {
       features: true,
     },
@@ -59,6 +60,7 @@ export const mapDeCreatureToApiCreature = (
     agility: deCreature.agility,
     intellect: deCreature.intellect,
     spirit: deCreature.spirit,
+    wealth: deCreature.wealth,
     classes: creatureClasses.map((cc) => cc.classId),
     features: deCreature.features.map((f) => f.featureId),
   };
@@ -66,7 +68,8 @@ export const mapDeCreatureToApiCreature = (
 };
 
 export const createCreature = async (
-  creature: apiCreature
+  creature: apiCreature,
+  userId: number
 ): Promise<number> => {
   const newCreature = await prisma.creature.create({
     data: {
@@ -76,6 +79,8 @@ export const createCreature = async (
       agility: creature.agility,
       intellect: creature.intellect,
       spirit: creature.spirit,
+      wealth: 3, // Default to 3 wealth
+      userId: userId,
     },
     select: {
       id: true,
@@ -115,6 +120,7 @@ export const updateCreature = async (id: number, creature: apiCreature) => {
       agility: creature.agility,
       intellect: creature.intellect,
       spirit: creature.spirit,
+      wealth: creature.wealth,
     },
   });
 

@@ -421,7 +421,6 @@ async function main() {
       classLevelId: 17,
       type: ClassFeatureType.BASE,
       display: true,
-      enduranceRegeneration: 0,
     },
     {
       id: 34,

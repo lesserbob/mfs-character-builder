@@ -1,6 +1,11 @@
 .update-creature-button-group {
   display: flex;
+  justify-content: flex-end;
   gap: 16px;
-  width: 300px;
+  width: 100%;
   margin-left: auto;
+}
+
+.update-creature-button {
+  width: 200px;
 }

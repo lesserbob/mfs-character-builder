@@ -70,12 +70,17 @@ model Creature {
   agility   Int    @default(0)
   intellect Int    @default(0)
   spirit    Int    @default(0)
+  wealth    Int    @default(0)
+  userId    Int
 
   // Relationship to CreatureClass
   classes   CreatureClass[]
 
   // Relationship to CreatureSelectedFeatures
   features     CreatureSelectedFeature[]
+
+  // Relationship to user
+  user          User  @relation(fields: [userId], references: [id])
 }
 
 model CreatureSelectedFeature {
@@ -182,6 +187,9 @@ model User {
   username String   @unique
   password String
   type     UserType @default(PLAYER)
+
+  // Relationship to Creature
+  features     Creature[]
 }
 
 model Item {

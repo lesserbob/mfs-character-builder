@@ -91,7 +91,7 @@ const ViewCreature: React.FC = () => {
 
   return (
     <div>
-      <div>
+      <div className="view-creature-button-group">
         <Button
           variant="contained"
           onClick={() =>
@@ -100,6 +100,13 @@ const ViewCreature: React.FC = () => {
           className="view-creature-button"
         >
           Level Up
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => {}}
+          className="view-creature-button"
+        >
+          Change gear
         </Button>
         <Button
           variant="outlined"

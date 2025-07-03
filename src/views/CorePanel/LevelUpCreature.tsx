@@ -179,6 +179,25 @@ const LevelUpCreature = () => {
 
   return (
     <div>
+      <div className="update-creature-button-group">
+        <Button
+          type="submit"
+          variant="contained"
+          disabled={loading}
+          className="update-creature-button"
+        >
+          {loading ? 'Saveing...' : 'Save'}
+        </Button>
+        <Button
+          type="button"
+          variant="outlined"
+          onClick={() => navigate(`/creature/${creatureId}`)}
+          disabled={loading}
+          className="update-creature-button"
+        >
+          Cancel
+        </Button>
+      </div>
       <Typography variant="h5" component="h2">
         {creature.name}
       </Typography>
@@ -317,25 +336,6 @@ const LevelUpCreature = () => {
             onSelectionChange={setSelectedFeatures}
           />
         </Box>
-        <div className="update-creature-button-group">
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            disabled={loading}
-          >
-            {loading ? 'Saveing...' : 'Save'}
-          </Button>
-          <Button
-            type="button"
-            variant="outlined"
-            fullWidth
-            onClick={() => navigate(`/creature/${creatureId}`)}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </div>
       </form>
     </div>
   );
