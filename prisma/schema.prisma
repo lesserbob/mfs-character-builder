@@ -81,6 +81,9 @@ model Creature {
 
   // Relationship to user
   user          User  @relation(fields: [userId], references: [id])
+
+  // Relationship to CreatureItem
+  items         CreatureItem[]
 }
 
 model CreatureSelectedFeature {
@@ -213,11 +216,20 @@ model Item {
   brace                       Boolean @default(false)
   armorType                   ArmorType?
   soak                        Int?
+
+  // Relationship to CreatureItem
+  creatures         CreatureItem[]
 }
 
 model CreatureItem {
   id          Int    @id @default(autoincrement())
   creatureId  Int
   itemId      Int
-  count       Int   @default(0)
+  quantity    Int   @default(0)
+
+  // Relationship to Creature
+  creature  Creature @relation(fields: [creatureId], references: [id])
+
+    // Relationship to item
+  item      Item @relation(fields: [itemId], references: [id])
 }

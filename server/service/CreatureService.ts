@@ -11,6 +11,8 @@ export const getCreature = async (id: number): Promise<apiCreature> => {
     },
     include: {
       features: true,
+      items: true,
+      classes: true,
     },
   });
 
@@ -18,12 +20,7 @@ export const getCreature = async (id: number): Promise<apiCreature> => {
     throw new Error(`Creature with id ${id} not found`);
   }
 
-  // Get creature classes separately
-  const creatureClasses = await prisma.creatureClass.findMany({
-    where: { creatureId: id },
-  });
-
-  const result = mapDeCreatureToApiCreature(deCreature, creatureClasses);
+  const result = mapDeCreatureToApiCreature(deCreature);
   return result;
 };
 
@@ -32,25 +29,20 @@ export const getCreatures = async (userId: number): Promise<apiCreature[]> => {
     where: { userId: userId },
     include: {
       features: true,
+      items: true,
+      classes: true,
     },
   });
 
-  // TODO: This is a hack to get the creature classes. We should find a better way to do this.
-  const allCreatureClasses = await prisma.creatureClass.findMany();
-
   return deCreatures.map((deCreature) => {
-    const creatureClasses = allCreatureClasses.filter(
-      (cc: any) => cc.creatureId === deCreature.id
-    );
-    return mapDeCreatureToApiCreature(deCreature, creatureClasses);
+    return mapDeCreatureToApiCreature(deCreature);
   });
 };
 
 export const mapDeCreatureToApiCreature = (
   deCreature: Prisma.CreatureGetPayload<{
-    include: { features: true };
-  }>,
-  creatureClasses: any[]
+    include: { features: true; items: true; classes: true };
+  }>
 ): apiCreature => {
   const result: apiCreature = {
     id: deCreature.id,
@@ -61,8 +53,12 @@ export const mapDeCreatureToApiCreature = (
     intellect: deCreature.intellect,
     spirit: deCreature.spirit,
     wealth: deCreature.wealth,
-    classes: creatureClasses.map((cc) => cc.classId),
+    classes: deCreature.classes.map((c) => c.classId),
     features: deCreature.features.map((f) => f.featureId),
+    items: deCreature.items.map((i) => ({
+      itemId: i.itemId,
+      quantity: i.quantity,
+    })),
   };
   return result;
 };
@@ -194,6 +190,61 @@ export const updateCreature = async (id: number, creature: apiCreature) => {
           creatureId: id,
           featureId,
         })),
+      });
+    }
+  }
+
+  // Add / Remove items
+  {
+    const existingItems = await prisma.creatureItem.findMany({
+      where: { creatureId: id },
+    });
+    const existingItemIds = existingItems.map(
+      (existingItem) => existingItem.itemId
+    );
+
+    const newItems = creature.items ?? [];
+    const newItemIds = newItems.map((item) => item.itemId);
+
+    const itemsToAdd = newItems.filter(
+      (newItem) => !existingItemIds.includes(newItem.itemId)
+    );
+    const itemIdsToRemove = existingItemIds.filter(
+      (existingId) => !newItemIds.includes(existingId)
+    );
+    const itemsToUpdate = existingItemIds.filter((iid) =>
+      newItemIds.includes(iid)
+    );
+
+    if (itemsToAdd.length > 0) {
+      await prisma.creatureItem.createMany({
+        data: itemsToAdd.map((item) => ({
+          creatureId: id,
+          itemId: item.itemId,
+          quantity: item.quantity,
+        })),
+      });
+    }
+
+    if (itemsToUpdate.length > 0) {
+      await Promise.all(
+        itemsToUpdate.map((itemId) => {
+          const newItem = newItems.find((item) => item.itemId === itemId);
+          if (newItem) {
+            return prisma.creatureItem.updateMany({
+              where: { creatureId: id, itemId },
+              data: { quantity: newItem.quantity },
+            });
+          }
+        })
+      );
+    }
+    if (itemIdsToRemove.length > 0) {
+      await prisma.creatureItem.deleteMany({
+        where: {
+          creatureId: id,
+          itemId: { in: itemIdsToRemove },
+        },
       });
     }
   }

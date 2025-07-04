@@ -1,0 +1,6 @@
+.wealth-stats {
+  display: flex;
+  flex-direction: row;
+  padding: 2rem;
+  gap: 1rem;
+}

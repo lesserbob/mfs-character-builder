@@ -254,9 +254,28 @@ components:
           items:
             type: integer
             description: Feature ID
+        items:
+          type: array
+          description: List of item IDs the creature has
+          items:
+            type: object
+            properties:
+              itemId:
+                type: integer
+                description: Item ID
+              quantity:
+                type: integer
+                description: Number of items the creature has
+            required:
+              - itemId
+              - quantity
       required:
+        - id
         - name
         - level
+        - classes
+        - features
+        - items
     createCreatureRequest:
       $ref: '#/components/schemas/creatureBase'
     updateCreatureRequest:
@@ -485,3 +504,5 @@ components:
           type: integer
           nullable: true
           description: Soak of the item
+      required:
+        - id

@@ -10,15 +10,16 @@ import {
   TableRow,
 } from '@mui/material';
 import { TableHead } from '@mui/material';
-import { Item } from '../api/generated';
+import { Item, Creature } from '../api/generated';
 import { capitalizeFirst } from '../util/TextUtils';
 import './ItemView.css';
 
 interface ItemViewProps {
   item: Item;
+  creature?: Creature;
 }
 
-export const ItemView: React.FC<ItemViewProps> = ({ item }) => {
+export const ItemView: React.FC<ItemViewProps> = ({ item, creature }) => {
   const showDamage =
     item.damageUnarmored !== null && item.damageArmored !== null;
 
@@ -48,7 +49,7 @@ export const ItemView: React.FC<ItemViewProps> = ({ item }) => {
     options.push('Brace');
   }
   if (item.reliability === 'RELIABLE' || item.reliability === 'UNRELIABLE') {
-    options.push(capitalizeFirst('Reliability'));
+    options.push(capitalizeFirst(item.reliability));
   }
   if (item.twoHanded) {
     options.push('Two-Handed');
@@ -91,7 +92,9 @@ export const ItemView: React.FC<ItemViewProps> = ({ item }) => {
               )}
               {item.type === 'RANGED' && (
                 <>
-                  <TableCell className="range-column">{item.range}</TableCell>
+                  <TableCell className="range-column">
+                    {capitalizeFirst(item.range ?? '')}
+                  </TableCell>
                   <TableCell className="awoa-column">
                     {item.attacksWorthOfAmmo}
                   </TableCell>
@@ -103,7 +106,7 @@ export const ItemView: React.FC<ItemViewProps> = ({ item }) => {
               {item.type === 'ARMOR' && (
                 <>
                   <TableCell className="range-column">
-                    {item.armorType}
+                    {capitalizeFirst(item.armorType ?? '')}
                   </TableCell>
                   <TableCell className="range-column">{item.soak}</TableCell>
                 </>

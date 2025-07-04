@@ -37,17 +37,21 @@ router.get(
 );
 
 // Protected endpoints (authentication required)
-router.put('/creature/:id', async (req, res, next) => {
-  try {
-    const updatedCreature = await updateCreature(
-      parseInt(req.params.id),
-      req.body
-    );
-    res.json(updatedCreature);
-  } catch (error) {
-    next(error);
+router.put(
+  '/creature/:id',
+  authenticateToken as any,
+  async (req: any, res, next) => {
+    try {
+      const updatedCreature = await updateCreature(
+        parseInt(req.params.id),
+        req.body
+      );
+      res.json(updatedCreature);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 /**
  * Creates a new creature

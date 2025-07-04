@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CorePanel } from './views/CorePanel';
 import { ClassProvider } from './context/ClassContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { LoginForm } from './components/LoginForm';
+import { ItemProvider } from './context/ItemContext';
 
 const AppContent: React.FC = () => {
   // const { isAuthenticated } = useAuth();
@@ -14,9 +14,11 @@ const AppContent: React.FC = () => {
 
   return (
     <ClassProvider>
-      <Router>
-        <CorePanel />
-      </Router>
+      <ItemProvider>
+        <Router>
+          <CorePanel />
+        </Router>
+      </ItemProvider>
     </ClassProvider>
   );
 };

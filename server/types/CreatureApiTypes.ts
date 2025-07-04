@@ -1,3 +1,8 @@
+export interface apiCreatureItem {
+  itemId: number;
+  quantity: number;
+}
+
 export interface apiCreature {
   id?: number;
   name: string;
@@ -9,4 +14,5 @@ export interface apiCreature {
   wealth: number;
   classes: number[];
   features: number[];
+  items: apiCreatureItem[];
 }

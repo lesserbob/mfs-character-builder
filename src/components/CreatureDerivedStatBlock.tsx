@@ -65,7 +65,7 @@ export const CreatureDerivedStatBlock = ({
       0
     );
   };
-  console.log(getEnduranceRegeneration());
+
   return (
     <Box
       sx={{

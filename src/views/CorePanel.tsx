@@ -7,6 +7,7 @@ import { LandingPage } from './LandingPage';
 import SearchCreatures from './CorePanel/SearchCreatures';
 import LevelUpCreature from './CorePanel/LevelUpCreature';
 import SearchItems from './CorePanel/SearchItems';
+import Shopping from './CorePanel/Shopping';
 
 export const CorePanel = (): React.JSX.Element => {
   return (
@@ -27,6 +28,7 @@ export const CorePanel = (): React.JSX.Element => {
           <Route path="/search" element={<SearchCreatures />} />
           <Route path="/levelup/:id/:level" element={<LevelUpCreature />} />
           <Route path="/search-items" element={<SearchItems />} />
+          <Route path="/shopping/:id" element={<Shopping />} />
         </Routes>
       </Box>
     </div>

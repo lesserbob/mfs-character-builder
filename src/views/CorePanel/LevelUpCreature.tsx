@@ -165,47 +165,55 @@ const LevelUpCreature = () => {
   };
 
   const onSubmit = async (data: any) => {
-    // console.log(getModifiedCreature());
-    const response = await apiClient.updateCreature(
-      creatureId,
-      getModifiedCreature()
-    );
-    if (response.status === 200) {
-      navigate(`/creature/${creatureId}`);
-    } else {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await apiClient.updateCreature(
+        creatureId,
+        getModifiedCreature()
+      );
+      if (response.status === 200) {
+        navigate(`/creature/${creatureId}`);
+      } else {
+        setError('Failed to save creature');
+      }
+    } catch (err) {
+      console.error('Error updating creature:', err);
       setError('Failed to save creature');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div>
-      <div className="update-creature-button-group">
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={loading}
-          className="update-creature-button"
-        >
-          {loading ? 'Saveing...' : 'Save'}
-        </Button>
-        <Button
-          type="button"
-          variant="outlined"
-          onClick={() => navigate(`/creature/${creatureId}`)}
-          disabled={loading}
-          className="update-creature-button"
-        >
-          Cancel
-        </Button>
-      </div>
-      <Typography variant="h5" component="h2">
-        {creature.name}
-      </Typography>
       <form
         onSubmit={handleSubmit(onSubmit, (formErrors) => {
           console.log('Form errors:', formErrors);
         })}
       >
+        <div className="update-creature-button-group">
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={loading}
+            className="update-creature-button"
+          >
+            {loading ? 'Saving...' : 'Save'}
+          </Button>
+          <Button
+            type="button"
+            variant="outlined"
+            onClick={() => navigate(`/creature/${creatureId}`)}
+            disabled={loading}
+            className="update-creature-button"
+          >
+            Cancel
+          </Button>
+        </div>
+        <Typography variant="h5" component="h2">
+          {creature.name}
+        </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6 }}>
             <Box
