@@ -22,6 +22,7 @@ import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBl
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
 import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
 import { generateCharacterSheetPdf } from '../../util/PdfUtils';
+import { CreatureGear } from './ViewCreature/CreatureGear';
 
 const ViewCreature: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -187,6 +188,9 @@ const ViewCreature: React.FC = () => {
         </Box>
         <Box className="view-creature-spacing">
           <FeatureSelectionPanel creature={creature} />
+        </Box>
+        <Box className="view-creature-spacing">
+          <CreatureGear creature={creature} />
         </Box>
       </div>
     </div>

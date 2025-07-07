@@ -24,6 +24,7 @@ import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBl
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
 import './LevelUpCreature.css';
 import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
+import SectionBox from '../../components/SectionBox';
 
 type FormData = {
   might: number;
@@ -216,14 +217,7 @@ const LevelUpCreature = () => {
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6 }}>
-            <Box
-              sx={{
-                border: '1px solid',
-                borderColor: 'grey.400',
-                borderRadius: 1,
-                padding: 2,
-              }}
-            >
+            <SectionBox>
               <Stack spacing={2}>
                 <ReadOnlyField label="Name" value={creature.name} />
                 <ReadOnlyField
@@ -328,7 +322,7 @@ const LevelUpCreature = () => {
                   )}
                 />
               </Stack>
-            </Box>
+            </SectionBox>
           </Grid>
           <Grid size={{ xs: 6 }}>
             <CreatureDerivedStatBlock creature={getModifiedCreature()} />

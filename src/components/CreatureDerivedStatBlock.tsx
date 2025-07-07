@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { Creature } from '../api/generated';
 import { useClasses } from '../context/ClassContext';
+import SectionBox from './SectionBox';
 
 export const CreatureDerivedStatBlock = ({
   creature,
@@ -67,14 +68,7 @@ export const CreatureDerivedStatBlock = ({
   };
 
   return (
-    <Box
-      sx={{
-        border: '1px solid',
-        borderColor: 'grey.400',
-        borderRadius: 1,
-        padding: 2,
-      }}
-    >
+    <SectionBox>
       <div>
         <Typography variant="body2" color="test.primary" sx={{ mt: 1 }}>
           Health/Endurance: {getHealth()}
@@ -106,6 +100,6 @@ export const CreatureDerivedStatBlock = ({
           </Typography>
         )}
       </div>
-    </Box>
+    </SectionBox>
   );
 };

@@ -15,6 +15,8 @@ import { useClasses } from '../context/ClassContext';
 import { apiClient } from '../api/client';
 import { useEffect, useState } from 'react';
 import { capitalizeFirst } from '../util/TextUtils';
+import SectionHeader from './SectionHeader';
+import SectionBox from './SectionBox';
 
 const FeaturePanel = ({
   selectableId,
@@ -100,18 +102,8 @@ const FeaturePanel = ({
   };
 
   return (
-    <Box
-      sx={{
-        border: '1px solid',
-        borderColor: 'grey.400',
-        borderRadius: 1,
-        padding: 0,
-        mt: 1,
-      }}
-    >
-      <Typography variant="h6" sx={{ pl: 1, mt: 1, mb: 0 }}>
-        {selectableList?.name}
-      </Typography>
+    <SectionBox>
+      <SectionHeader>{selectableList?.name}</SectionHeader>
       <List dense sx={{ listStyleType: 'none', pl: 2 }}>
         {selectableList?.features?.map((feature: any) => (
           <div>
@@ -152,7 +144,7 @@ const FeaturePanel = ({
           </div>
         ))}
       </List>
-    </Box>
+    </SectionBox>
   );
 };
 

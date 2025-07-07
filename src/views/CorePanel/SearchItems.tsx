@@ -12,7 +12,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { capitalizeFirst } from '../../util/TextUtils';
-import ItemView from '../../components/ItemView';
+import ItemView, { ItemViewMode } from '../../components/ItemView';
 import './SearchItems.css';
 import { useItems } from '../../context/ItemContext';
 import { cost } from '../../util/ItemUtils';
@@ -63,6 +63,17 @@ const SearchItems: React.FC<SearchItemsProps> = ({
     handleSetItemQuantity?.(item.id, -1);
   };
 
+  const getFilteredList = () => {
+    return (
+      items
+        // If mode is inventory, show only items that the user has in inventory
+        .filter(
+          (item) =>
+            mode != Mode.INVENTORY ||
+            creature!.items.map((ci) => ci.itemId).includes(item.id)
+        )
+    );
+  };
   return (
     <div>
       <TableContainer component={Paper}>
@@ -71,13 +82,18 @@ const SearchItems: React.FC<SearchItemsProps> = ({
             <TableRow>
               {mode === Mode.SHOPPING && <TableCell>Count</TableCell>}
               <TableCell>Item</TableCell>
-              <TableCell>Type</TableCell>
-              <TableCell>Cost</TableCell>
+              {mode === Mode.SHOPPING ||
+                (mode === Mode.WHOLE_LIST && (
+                  <>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Cost</TableCell>
+                  </>
+                ))}
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {items.map((item) => (
+            {getFilteredList().map((item) => (
               <TableRow key={item.id}>
                 {mode === Mode.SHOPPING && (
                   <TableCell>
@@ -105,10 +121,23 @@ const SearchItems: React.FC<SearchItemsProps> = ({
                   </TableCell>
                 )}
                 <TableCell>{item.name}</TableCell>
-                <TableCell>{capitalizeFirst(item.type ?? '')}</TableCell>
-                <TableCell>{cost(item)}</TableCell>
+                {mode === Mode.SHOPPING ||
+                  (mode === Mode.WHOLE_LIST && (
+                    <>
+                      <TableCell>{capitalizeFirst(item.type ?? '')}</TableCell>
+                      <TableCell>{cost(item)}</TableCell>
+                    </>
+                  ))}
                 <TableCell>
-                  <ItemView item={item} />
+                  <ItemView
+                    item={item}
+                    mode={
+                      mode === Mode.INVENTORY
+                        ? ItemViewMode.TEXT
+                        : ItemViewMode.FANCY
+                    }
+                    creature={creature}
+                  />
                 </TableCell>
               </TableRow>
             ))}

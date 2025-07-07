@@ -7,7 +7,7 @@ import {
   Paper,
   Alert,
 } from '@mui/material';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');

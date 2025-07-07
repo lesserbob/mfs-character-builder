@@ -1,6 +1,8 @@
 import { Box, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { ClassFeature, Creature } from '../api/generated';
 import { useClasses } from '../context/ClassContext';
+import SectionHeader from './SectionHeader';
+import SectionBox from './SectionBox';
 
 export const CreatureAbiltities = ({ creature }: { creature: Creature }) => {
   const { classes, loading: classesLoading } = useClasses();
@@ -13,17 +15,8 @@ export const CreatureAbiltities = ({ creature }: { creature: Creature }) => {
     .filter((f) => f!.display);
 
   return (
-    <Box
-      sx={{
-        border: '1px solid',
-        borderColor: 'grey.400',
-        borderRadius: 1,
-        padding: 0,
-      }}
-    >
-      <Typography variant="h6" sx={{ pl: 1, mt: 1, mb: 0 }}>
-        Abilities
-      </Typography>
+    <SectionBox>
+      <SectionHeader>Abilities</SectionHeader>
       {classFeatures.length > 0 && (
         <Box sx={{ mt: 0 }}>
           <List dense sx={{ listStyleType: 'none', pl: 2 }}>
@@ -44,6 +37,6 @@ export const CreatureAbiltities = ({ creature }: { creature: Creature }) => {
           </List>
         </Box>
       )}
-    </Box>
+    </SectionBox>
   );
 };

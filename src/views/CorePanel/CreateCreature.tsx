@@ -106,6 +106,7 @@ const CreateCreature = (): React.JSX.Element => {
       spirit: spirit,
       classes: classId ? [classId] : [],
       features: selectedFeatures,
+      items: [], // Items done elsewhere
     };
   };
 
@@ -121,9 +122,9 @@ const CreateCreature = (): React.JSX.Element => {
       spirit: data.spirit,
       classes: [data.selectedClassId],
       features: selectedFeatures,
+      items: [],
     };
 
-    // console.log(creature);
     try {
       const response = await apiClient.createCreature(creature);
       const newCreatureId = response.data.id;
