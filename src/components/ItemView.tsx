@@ -73,6 +73,15 @@ export const ItemView: React.FC<ItemViewProps> = ({
   const getItemDescription = (item: Item) => {
     let description = capitalizeFirst(item.type ?? '');
 
+    if (item.type === ItemTypeEnum.Ranged || item.type === ItemTypeEnum.Melee) {
+      const bonusToHit =
+        item.type === ItemTypeEnum.Ranged
+          ? creature?.agility
+          : item.finesse
+            ? Math.max(creature?.agility!, creature?.might!)
+            : creature?.might;
+      description = description + '+' + bonusToHit + ', ';
+    }
     if (showDamage) {
       // Add damage stats
       description = description + ' Damage:' + damageText;
