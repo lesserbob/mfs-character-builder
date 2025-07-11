@@ -136,7 +136,10 @@ const ViewCreature: React.FC = () => {
             horizontal: 'right',
           }}
         >
-          <MenuItem onClick={handleLevelUp}>Level Up</MenuItem>
+          {/* TODO Disabled till specilaist lasses available */}
+          <MenuItem onClick={handleLevelUp} disabled={creature!.level === 5}>
+            Level Up
+          </MenuItem>
           <MenuItem onClick={handleChangeGear}>Change Gear</MenuItem>
           <MenuItem onClick={handleExportPdfFromMenu} disabled={pdfLoading}>
             {pdfLoading ? 'Generating PDF...' : 'Export PDF'}

@@ -2,7 +2,6 @@ import {
   PrismaClient,
   ClassClassification,
   ClassFeatureType,
-  ActionType,
 } from '@prisma/client';
 
 export async function seedClasses(prisma: PrismaClient) {
@@ -33,6 +32,33 @@ export async function seedClasses(prisma: PrismaClient) {
       minMight: 1,
       minAgility: 1,
     },
+    {
+      id: 8,
+      name: 'Wraithen',
+      classification: ClassClassification.RACE,
+      minAgility: 2,
+    },
+    { id: 9, name: 'Specialist', classification: ClassClassification.PATH },
+    {
+      id: 10,
+      name: 'Shakter',
+      classification: ClassClassification.RACE,
+      minMight: 1,
+      minSpirit: 1,
+    },
+    {
+      id: 11,
+      name: 'Neophron',
+      classification: ClassClassification.RACE,
+      minIntellect: 2,
+    },
+    { id: 12, name: 'Leader', classification: ClassClassification.PATH },
+    {
+      id: 13,
+      name: 'Stormer(Xeno)',
+      classification: ClassClassification.RACE,
+      minAgility: 2,
+    },
   ];
   for (const cls of classes) {
     const { id, ...classData } = cls;
@@ -46,30 +72,63 @@ export async function seedClasses(prisma: PrismaClient) {
   // Upsert Class Levels
   console.log('Upserting Class Levels...');
   const classLevels = [
+    // Human
     { id: 1, classId: 1, level: 1, health: 11, statBonus: 0 },
     { id: 3, classId: 1, level: 4, health: 2, statBonus: 2 },
     { id: 4, classId: 1, level: 7, health: 2, statBonus: 3 },
+    // Stormer(Malice)
     { id: 2, classId: 2, level: 1, health: 13, statBonus: 0 },
     { id: 16, classId: 2, level: 4, health: 3, statBonus: 2 },
     { id: 17, classId: 2, level: 7, health: 3, statBonus: 3 },
+    // Warrior
     { id: 5, classId: 3, level: 2, health: 3, statBonus: 0 },
     { id: 6, classId: 3, level: 3, health: 3, statBonus: 0 },
     { id: 7, classId: 3, level: 5, health: 3, statBonus: 0 },
     { id: 8, classId: 3, level: 8, health: 3, statBonus: 0 },
+    // Ebonite
     { id: 9, classId: 4, level: 1, health: 9, statBonus: 0 },
     { id: 10, classId: 4, level: 4, health: 1, statBonus: 2 },
     { id: 11, classId: 4, level: 7, health: 1, statBonus: 3 },
+    // Ebb Master
     { id: 12, classId: 5, level: 2, health: 1, statBonus: 0 },
     { id: 13, classId: 5, level: 3, health: 1, statBonus: 0 },
     { id: 14, classId: 5, level: 5, health: 1, statBonus: 0 },
     { id: 15, classId: 5, level: 8, health: 1, statBonus: 0 },
+    // Soldier
     { id: 18, classId: 6, level: 2, health: 2, statBonus: 0 },
     { id: 19, classId: 6, level: 3, health: 2, statBonus: 0 },
     { id: 20, classId: 6, level: 5, health: 2, statBonus: 0 },
     { id: 21, classId: 6, level: 8, health: 2, statBonus: 0 },
+    // Frother
     { id: 22, classId: 7, level: 1, health: 12, statBonus: 0 },
     { id: 23, classId: 7, level: 4, health: 2, statBonus: 2 },
     { id: 24, classId: 7, level: 7, health: 2, statBonus: 3 },
+    // Wraithen
+    { id: 25, classId: 8, level: 1, health: 10, statBonus: 0 },
+    { id: 26, classId: 8, level: 4, health: 2, statBonus: 2 },
+    { id: 27, classId: 8, level: 7, health: 2, statBonus: 3 },
+    // Specialist
+    { id: 28, classId: 9, level: 2, health: 2, statBonus: 0 },
+    { id: 29, classId: 9, level: 3, health: 2, statBonus: 0 },
+    { id: 30, classId: 9, level: 5, health: 2, statBonus: 0 },
+    { id: 31, classId: 9, level: 8, health: 2, statBonus: 0 },
+    // Shaktar
+    { id: 32, classId: 10, level: 1, health: 12, statBonus: 0 },
+    { id: 33, classId: 10, level: 4, health: 2, statBonus: 2 },
+    { id: 34, classId: 10, level: 7, health: 2, statBonus: 3 },
+    // Neophron
+    { id: 35, classId: 11, level: 1, health: 10, statBonus: 0 },
+    { id: 36, classId: 11, level: 4, health: 1, statBonus: 2 },
+    { id: 37, classId: 11, level: 7, health: 1, statBonus: 3 },
+    // Leader
+    { id: 38, classId: 12, level: 2, health: 2, statBonus: 0 },
+    { id: 39, classId: 12, level: 3, health: 2, statBonus: 0 },
+    { id: 40, classId: 12, level: 5, health: 2, statBonus: 0 },
+    { id: 41, classId: 12, level: 8, health: 2, statBonus: 0 },
+    // Stormer (Xeno)
+    { id: 42, classId: 13, level: 1, health: 11, statBonus: 0 },
+    { id: 43, classId: 13, level: 4, health: 2, statBonus: 2 },
+    { id: 44, classId: 13, level: 7, health: 2, statBonus: 3 },
   ];
   for (const level of classLevels) {
     const { id, ...levelData } = level;
@@ -488,7 +547,6 @@ export async function seedClasses(prisma: PrismaClient) {
       selectableFeatureListId: 7,
       selectableFeatureCount: 1,
     },
-    // 22,23,24
     {
       id: 44,
       name: 'Knowing the Clans',
@@ -525,420 +583,277 @@ export async function seedClasses(prisma: PrismaClient) {
       type: ClassFeatureType.BASE,
       display: true,
     },
+    {
+      id: 48,
+      name: 'Survivor',
+      description:
+        'When you make a saving throw or dodge check you can spend a point of momentum to gain +2 Boons on that save.',
+      classLevelId: 25,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 49,
+      name: 'Danger Sense',
+      description:
+        'Whenever you make an aptitude roll which is to avoid danger (e.g. perception vs ambush, persuasion to avoid a fight) you get +1 Adv.',
+      classLevelId: 25,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 50,
+      name: 'Run away!',
+      description:
+        'When a creature would engage with you, you can make a Agility(Aptitude) check. On success, you have a right to take the move action as a reaction, allowing you to leave the zone and deny the attacker.',
+      classLevelId: 26,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 51,
+      name: 'Speed Demon',
+      description:
+        'Once per round you can take the "change zone” action on your turn as a free action. This does not count toward your limit on move actions.',
+      classLevelId: 27,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 52,
+      name: 'Application',
+      description:
+        'You can, as a free action, spend a point of momentum to grant yourself +1 Boon to an aptitude check, attack roll or dodge roll. If applied to an attack, you also get +1d6 damage.',
+      classLevelId: 28,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 53,
+      name: 'Handy Trick',
+      description:
+        'You have access to handy tricks, Pick one at level 2 and another at level 5.',
+      classLevelId: 28,
+      type: ClassFeatureType.SELECT,
+      display: true,
+      selectableFeatureListId: 8,
+      selectableFeatureCount: 1,
+    },
+    {
+      id: 54,
+      name: 'Expert Escape',
+      description:
+        'When you use the second wind action you can take another action that would be a move action as a free action. This is limited to disengage and change zone actions',
+      classLevelId: 29,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 55,
+      name: 'Professional',
+      description: 'Pick a stat. All aptitude rolls with that stat get +1 Boon',
+      classLevelId: 29,
+      type: ClassFeatureType.SELECT,
+      display: true,
+      selectableFeatureListId: 9,
+      selectableFeatureCount: 1,
+    },
+    {
+      id: 56,
+      name: 'Another Handy Trick',
+      description: 'Pick another',
+      classLevelId: 30,
+      type: ClassFeatureType.SELECT,
+      display: false,
+      selectableFeatureListId: 8,
+      selectableFeatureCount: 1,
+    },
+    {
+      id: 57,
+      name: 'Uncanny Dodge',
+      description:
+        'When you dodge attacks against you get +1 Bane till the start of the party phase. This does not stack',
+      classLevelId: 31,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 58,
+      name: 'Shaktars Honor',
+      description:
+        'Free action when a nearby ally is attacked by a creature it is not engaged with. Spend a momentum point and the attack is redirected to you in the same way as an intercept. Till end of round you gain a +1 Boon and +1d6 damage when attacking the attacker',
+      classLevelId: 32,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 59,
+      name: 'Helpful',
+      description:
+        'When making an aptitude check and it is solely to aid another without benefit to self, Gain +1 Boon',
+      classLevelId: 32,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 60,
+      name: 'Shaktarian Courage',
+      description: 'Gain +2 Boons to Spirit Saves vs fear effects',
+      classLevelId: 33,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 61,
+      name: 'Avenge the fallen',
+      description:
+        'If an ally is ever reduced to zero health and falls unconscious and is dieing, you gain a +2 to Tactical Surge checks. This benefit stacks and lasts till end of the current situation. This can be applied once per ally',
+      classLevelId: 34,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 62,
+      name: 'Neophron Alertness',
+      description:
+        'You get +2 Boons to perception checks to avoid ambushes. In addition, Until you have finished a turn (not including surprise round actions if you took one) you can spend a point of momentum to get an automatic tactical surge without needing to roll and with no penalty to subsequent rolls',
+      classLevelId: 35,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 63,
+      name: 'Damned Clever',
+      description: 'You get +1 boons to all intellect aptitude checks',
+      classLevelId: 35,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 64,
+      name: 'Spot the weakness',
+      description: 'When making attacks, +1 threat on attacks',
+      classLevelId: 36,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 65,
+      name: 'Damned Damned Clever',
+      description: 'Increase bonus on intellect apptitude checks to +2',
+      classLevelId: 36,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 66,
+      name: 'Genius',
+      description:
+        'In addition to all other benefits, when making an Intellect aptitude check, roll the d20 twice and take the better result',
+      classLevelId: 37,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    // 38-41
+    {
+      id: 67,
+      name: 'Aid Ally',
+      description:
+        'As a reaction can spend a point of momentum to grant an ally a boon to an attack roll, saving throw, dodge or aptitude check',
+      classLevelId: 38,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 68,
+      name: 'Inspiring Presence',
+      description:
+        'Unique action. As a minor action you can grant one ally to recover 3 endurance. This can be done at most once per turn. This increases to 4 at 3rd and 5 at fifth',
+      classLevelId: 38,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 69,
+      name: 'Shared recovery',
+      description:
+        'When you take the second wind action, pick an ally in close range. That ally also recovers endurance as if it had used its second wind',
+      classLevelId: 39,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 70,
+      name: 'Improved Inspiring Presence',
+      description: 'Now 4',
+      classLevelId: 39,
+      type: ClassFeatureType.BASE,
+      display: false,
+    },
+    {
+      id: 71,
+      name: 'Tactical Presence',
+      description: 'You and All nearby allies get +1 to Tactical Surge checks',
+      classLevelId: 40,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 72,
+      name: 'Master Inspiring Presence',
+      description: 'Now 5',
+      classLevelId: 40,
+      type: ClassFeatureType.BASE,
+      display: false,
+    },
+    {
+      id: 73,
+      name: 'Wolf pack tactics',
+      description:
+        'In the same turn as you have attacked a target, you can spend a minor action to make that target draw an AOP from one designated ally. The ally must be near you or the target',
+      classLevelId: 41,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 74,
+      name: 'Shroud',
+      description:
+        'As a minor action, spend a point of momentum to become nearly invisible, an active camouflage. You cannot be targeted at long or extreme range and detecting you requires a detection action with +3 Bane. This lasts one minute and requires you are not wearing heavy armor. Any interaction with environment (including attacks) ends the invisibility',
+      classLevelId: 42,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 75,
+      name: 'Night walker',
+      description: '+2 Boon to Agility(Stealth) checks',
+      classLevelId: 42,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 76,
+      name: 'Night killer',
+      description: 'When attacking from surprise you gain +1d6 damage',
+      classLevelId: 43,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 77,
+      name: 'Night sights',
+      description:
+        'You have no banes to perception checks due to poor lighting, nor would an opposing creature get boon on stealth due to poor lighting vs you',
+      classLevelId: 44,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
   ];
 
   for (const feature of classFeatures) {
     const { id, ...featureData } = feature;
     await prisma.classFeature.upsert({
-      where: { id },
-      update: featureData,
-      create: { id, ...featureData },
-    });
-  }
-
-  // Upsert Selectable Feature Lists
-  console.log('Upserting Selectable Feature Lists...');
-  const selectableFeatureLists = [
-    { id: 1, name: 'Warrior Stances' },
-    { id: 2, name: 'Flux Schools' },
-    { id: 3, name: 'Novice Powers' },
-    { id: 4, name: 'Expert Powers' },
-    { id: 5, name: 'Meta Ebb' },
-    { id: 6, name: 'Master Powers' },
-    { id: 7, name: 'Soldier Stances' },
-  ];
-
-  for (const list of selectableFeatureLists) {
-    const { id, ...listData } = list;
-    await prisma.selectableFeatureList.upsert({
-      where: { id },
-      update: listData,
-      create: { id, ...listData },
-    });
-  }
-
-  // Upsert Selectable Features
-  console.log('Upserting Selectable Features...');
-  const selectableFeatures = [
-    {
-      id: 1,
-      name: 'All Out',
-      description:
-        'You gain +1 Boon on melee attacks and +1d6 to damage. You cannot take cover or dodge whilst in this stance and attacks against you gain +1 Boon ',
-      selectableFeatureListId: 1,
-    },
-    {
-      id: 2,
-      name: 'Defender',
-      description:
-        'Attacks against you have +1 Bane and you gain +1 Boon on dodge attempts. Your attacks have +1 Bane',
-      selectableFeatureListId: 1,
-    },
-    {
-      id: 3,
-      name: 'Brawlers',
-      description:
-        'Once per round when you land a melee attack, the defender must make a save (your choice which) or suffer an effect   Physique save or pushed back   Agility save or knocked prone ',
-      selectableFeatureListId: 1,
-    },
-    {
-      id: 4,
-      name: 'Great Weapon',
-      description:
-        'When using a melee weapon two handed you gain +1d6 bonus damage. You can opt to forgo this damage to be able to attack two targets you are engaged with as part of a single attack action.',
-      selectableFeatureListId: 1,
-    },
-    {
-      id: 5,
-      name: 'Dervish',
-      description:
-        'You when using dual melee weapons, if you strike a foe with both weapons in the same turn, the target takes an additional 1d6 from each attack ',
-      selectableFeatureListId: 1,
-    },
-    {
-      id: 6,
-      name: 'Duelist',
-      description:
-        'When using a one-handed melee weapon with no weapon in your off hand, your attacks crit range in increased by 1 and your dodge gets +1 Boon ',
-      selectableFeatureListId: 1,
-    },
-    {
-      id: 7,
-      name: 'Fire',
-      description: 'Some people want to watch the world burn',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 8,
-      name: 'Ice',
-      description: 'Using cold to freeze and shatter',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 9,
-      name: 'Telekinesis',
-      description: 'Moving the physical with a thought',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 10,
-      name: 'Telepathy',
-      description: 'Conecting you thoughts with the thoughts of others',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 11,
-      name: 'Spacial / Temporal',
-      description: 'Manipulation of space and time',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 12,
-      name: 'Ehancement',
-      description: 'Changing your physical and biological state',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 13,
-      name: 'Entropy',
-      description: 'The natural force that brings the end of all things',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 14,
-      name: 'Creation',
-      description: 'The ability to create',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 15,
-      name: 'Light',
-      description: 'Control of light and the electromagnetic',
-      selectableFeatureListId: 2,
-    },
-    {
-      id: 16,
-      name: 'Flame Bolt',
-      description:
-        'You conjure a small ball of fire which you can project at a target at up to long range.   This does 10/8 damage. The target gets an agility save with 1 bane, on success the damage is halved ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 7,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 17,
-      name: 'Fan of Flame',
-      description:
-        'You throw out a cone of fire. Pick 3 nearby targets. Each takes 8/6 damage. Each target then makes an Agility save. On success the damage is halved ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 7,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 18,
-      name: 'Ice Bolt',
-      description:
-        'You conjure a shard of ice which you can project at a target at up to long range.   This does 8/6 damage. The target gets an agility save with 1 bane, on success the damage is halved ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 8,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 19,
-      name: 'Ice Wall',
-      description:
-        'You create a wall of ice. This wall is 3 squares long and 2 squares high. It has 10 health and can be destroyed. The wall lasts until resolve (+1 Boon) ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 8,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 20,
-      name: 'Blade of Ice',
-      description:
-        'You can summon a blade made of pure ice. This lasts until resolve (+1 Boon)   In addition, you can elect to make the blade shatter on contact, increasing the damage by 4/2 (Total 8/2) ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 8,
-      uses: 3,
-      actionType: ActionType.MINOR,
-    },
-    {
-      id: 21,
-      name: 'Frost Beam',
-      description:
-        'You can project a beam of pure cold at a single target at up to Long range. The target takes 6/2 damage and is slowed till resolve (Slowed: Move actions take 2 action points). The Target gets a physique save. On success, the damage is halved and the target does is not slowed. ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 8,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 22,
-      name: 'Sleet Storm',
-      description:
-        'Pick 1 zone at up to medium range. The area is obscured till end next enemy phase (+1 Bane to any action involving sight) and all targets in the zone at time of casting must make an Agility save or fall prone as the floor temporarily becomes icy. ',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 8,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 23,
-      name: 'Armor of Frost',
-      description:
-        'Your armor become infused with ice. Till resolve (+1 boon) you have +10 max and current endurance and anyone hitting you in melee while you have endurance automatically take 1d6 damage',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 8,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 24,
-      name: 'Empower',
-      description:
-        'When you roll damage with an ability, instead of rolling 1d10, do 10 damage automatically',
-      selectableFeatureListId: 5,
-    },
-    {
-      id: 25,
-      name: 'Split',
-      description:
-        'Strictly for powers which target a single enemy. Power can target two enemies. The enemies must each be viably targetable and be nearby each other',
-      selectableFeatureListId: 5,
-    },
-    {
-      id: 26,
-      name: 'Refresh',
-      description:
-        'When a power targets yourself or an ally, that recipient of the spell recovers 2d6 endurance. If the power affects multiple targets, you must choose which will receives this benefit',
-      selectableFeatureListId: 5,
-    },
-    {
-      id: 27,
-      name: 'Heighten',
-      description: 'Targets get +1 Bane on saves (if any) ',
-      selectableFeatureListId: 5,
-    },
-    {
-      id: 28,
-      name: 'Permeance',
-      description:
-        'The power will have +1 Boon to resolve checks (if beneficial) or +1 Bane to resolve checks (if harmful) ',
-      selectableFeatureListId: 5,
-    },
-    {
-      id: 29,
-      name: 'Quicken',
-      description:
-        'For powers which are a standard action, you can use these as a minor action. This costs 2 momentum instead of 1.',
-      selectableFeatureListId: 5,
-    },
-    {
-      id: 30,
-      name: 'Crown of Flame',
-      description:
-        'A crown of flame appears over your head.   Whilst active, you have resistance to fire and cold damage, and your melee attacks get +1d6 fire damage.   Whilst active you can also, as a minor action, cause an adjacent target to take 1d6 fire damage (ignores armor) ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 7,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 31,
-      name: 'Ignite',
-      description:
-        'A target of your choice up to medium range takes 10 fire damage. In addition, they catch fire for 2d6 health damage per round Whilst burning from this effect they take a 1 Bane penalty to all actions due to pain.   Lasts till resolve. ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 7,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 32,
-      name: 'Fireball',
-      description:
-        'Pick a zone at up to extreme range that you can see. You fling a dart of fire which explodes, hitting all within   Targets take 8/6  damage. Targets are allowed an agility save for half ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 7,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 33,
-      name: 'Wall of fire',
-      description:
-        'You erect a wall of fire. When cast pick 2 zones that are adjacent to one and other, this wall of fire is considered to be between these zones.   Anyone moving from one zone to the other without a means of circumventing (its gotta be special...can you fly? teleport?) Takes 5 damage. Additionally, the flames obstruct vision granting a +1 Bane on attacks and perception checks through the wall ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 7,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 34,
-      name: 'Freeze',
-      description:
-        'Pick a target up to medium range. Target takes 4 damage. The target is also locked in Ice. Whilst in this state they lose all action points and cant gain them, they cant act in any way, they have resistance to all damage.   Lasts till resolve   The target is allowed a physique save with 1 Bane. In success damage is halved and the target is not encased ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 8,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 35,
-      name: 'Encase',
-      description:
-        'You encase yourself on a coffin of ice. Whilst in this coffin you cant act or effect the world around you. You are immune to all damage bar entropic.   This can be used as a reaction after having taken damage   Last till resolve or you choose to drop it. ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 8,
-      uses: 1,
-      actionType: ActionType.REACTION,
-    },
-    {
-      id: 36,
-      name: 'Brittle Ice',
-      description:
-        'Pick a target up to Long range. Target takes 6 damage and is brittle till resolve.   Brittle targets take an extra 1d6 damage from all sources.   The target gets a Physique save with 1 bane. On success, the damage is halved and the target is not brittle. ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 8,
-      uses: 3,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 37,
-      name: 'Ice Storm',
-      description:
-        'Pick a zone up top long range. This target all creatures in the zone   Targets take 6/2 damage and are knocked prone.   Targets get an Agility save on success the damage is halved and they are no knocked prone.   The zone becomes difficult terrain till end of combat. ',
-      selectableFeatureListId: 4,
-      requiredSelectableFeatureId: 8,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-    {
-      id: 38,
-      name: 'Flame Blade',
-      description:
-        'You conjure a sword made of flame(5/3, finesse). This produces warmth and light, and can easily be used to start fires. Lasts till resolve (+2 Boon) This can be used to start fires and provides illumination at short range',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 7,
-      uses: 3,
-      actionType: ActionType.MINOR,
-    },
-    {
-      id: 39,
-      name: 'Pyrotechnics',
-      description:
-        'You throw out a blast of fireworks at a zone up to long range. This is a bright flash of light and sound. All in the zone must make an Intellect Save. On fail they lose 1 Action point and are blinded until the end of their next phase.',
-      selectableFeatureListId: 3,
-      requiredSelectableFeatureId: 7,
-      uses: 1,
-      actionType: ActionType.STANDARD,
-    },
-
-    {
-      id: 40,
-      name: 'Skirmisher',
-      description:
-        'You can disengage as a minor action. In addition, if you change zone before attacking, you gain +1 Boon to your attack and ignore light cover',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 41,
-      name: 'Marksman',
-      description:
-        'You gain +1 boon to attacks at medium range or greater. You cannot dodge.',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 42,
-      name: 'Overwatch',
-      description:
-        'Enemies that move trigger an attack of opportunity. Taking this attack instantly ends the stance (Special: Overwatch lasts till it used, you move or change stances, no resolve checks required)',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 43,
-      name: 'Defenders',
-      description:
-        'Attacks against you have +1 Bane and you gain +1 Boon on dodge attempts. Your attacks have +1 Bane.',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 44,
-      name: 'Tactical',
-      description:
-        'You get +2 to Tactical Surge Checks. This ends as soon as you successfully tactical surge',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 45,
-      name: 'Auto Support',
-      description:
-        'You brace well and get the most out of burst fire. All burst fire gets an additional +1 damage bonus. In addition, the “Brace” feature has its penalty reduced by 1 (i.e. 1 Bane instead of 2). You cannot use the aim action.',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 46,
-      name: 'Grenadier',
-      description:
-        'When using grenade weapons (or other explosive attacks) the saving throw made by targets gets +1 bane',
-      selectableFeatureListId: 7,
-    },
-    {
-      id: 47,
-      name: 'Gun Slinger',
-      description:
-        'You when using dual ranged weapons, if you strike a foe with both weapons in the same turn, the target takes an additional 1d6 from each attack',
-      selectableFeatureListId: 7,
-    },
-  ];
-
-  for (const feature of selectableFeatures) {
-    const { id, ...featureData } = feature;
-    await prisma.selectableFeature.upsert({
       where: { id },
       update: featureData,
       create: { id, ...featureData },

@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { capitalizeFirst } from '../util/TextUtils';
 import SectionHeader from './SectionHeader';
 import SectionBox from './SectionBox';
+import './FeatureSelectionPanel.css';
 
 const FeaturePanel = ({
   selectableId,
@@ -90,6 +91,8 @@ const FeaturePanel = ({
     );
   };
 
+  // TODO Organise by pre-requisites
+
   const getDisplayText = (feature: SelectableFeature) => {
     const actionType = feature.actionType;
     const uses = feature.uses;
@@ -104,18 +107,11 @@ const FeaturePanel = ({
   return (
     <SectionBox>
       <SectionHeader>{selectableList?.name}</SectionHeader>
-      <List dense sx={{ listStyleType: 'none', pl: 2 }}>
+      <List dense className="feature-selection-list">
         {selectableList?.features?.map((feature: any) => (
           <div>
             {displayFeature(feature) && (
-              <ListItem
-                key={feature.id}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  p: 0,
-                }}
-              >
+              <ListItem key={feature.id} className="feature-selection-item">
                 {totalToAllocate > 0 && (
                   <Checkbox
                     checked={[
@@ -127,7 +123,7 @@ const FeaturePanel = ({
                     }
                     //                  Disable if
                     // a. This is an existing selection (cant be removed)
-                    // b> we have selected enough AND this is NOT a selected item
+                    // b. we have selected enough AND this is NOT a selected item
                     disabled={
                       existingSelection?.includes(feature.id) ||
                       (selectedItemIds.length === totalToAllocate &&

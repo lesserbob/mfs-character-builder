@@ -1,11 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 import { seedClasses } from './seed-classes';
 import { seedItems } from './seed-items';
+import { seedSelectables } from './seed-selectables';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Start seeding static data...');
+  await seedSelectables(prisma);
   await seedClasses(prisma);
   await seedItems(prisma);
 
