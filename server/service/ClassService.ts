@@ -15,10 +15,12 @@ export const getClasses = async (
     include: {
       classLevels: {
         include: {
-          classFeatures: true,
+          classFeatures: { orderBy: { name: 'asc' } },
         },
+        orderBy: { level: 'asc' },
       },
     },
+    orderBy: [{ classification: 'asc' }, { name: 'asc' }],
   });
 
   return classes.map((cl) => buildClass(cl));

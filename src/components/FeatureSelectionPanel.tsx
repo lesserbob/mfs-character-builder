@@ -1,11 +1,4 @@
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  Checkbox,
-} from '@mui/material';
+import { List, ListItem, ListItemText, Checkbox } from '@mui/material';
 import {
   Creature,
   SelectableFeature,

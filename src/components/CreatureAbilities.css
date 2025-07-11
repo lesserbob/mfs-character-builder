@@ -1,0 +1,17 @@
+.creature-abilities-container {
+  margin-top: 0;
+}
+
+.creature-abilities-list {
+  list-style-type: none;
+  padding-left: 16px;
+}
+
+.creature-abilities-item {
+  display: list-item;
+  padding: 0;
+}
+
+.creature-abilities-item.highlighted {
+  color: green;
+}

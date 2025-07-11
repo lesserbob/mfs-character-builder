@@ -118,6 +118,7 @@ const LevelUpCreature = () => {
     return Number(level) === 2 || Number(level) === 6;
   };
 
+  // TODO implement ebbonite only classes
   const availableClasses = classes.filter(
     (cls) =>
       cls.classLevels &&
@@ -329,7 +330,10 @@ const LevelUpCreature = () => {
           </Grid>
         </Grid>
         <Box sx={{ py: 2 }}>
-          <CreatureAbiltities creature={getModifiedCreature()} />
+          <CreatureAbiltities
+            creature={getModifiedCreature()}
+            highlghtLevel={Number(level)}
+          />
         </Box>
         <Box sx={{ py: 2 }}>
           <FeatureSelectionPanel
