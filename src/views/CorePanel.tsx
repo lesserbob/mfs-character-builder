@@ -8,6 +8,7 @@ import SearchCreatures from './CorePanel/SearchCreatures';
 import LevelUpCreature from './CorePanel/LevelUpCreature';
 import SearchItems from './CorePanel/SearchItems';
 import Shopping from './CorePanel/Shopping';
+import { ResetPassword } from './CorePanel/ResetPassword';
 
 export const CorePanel = (): React.JSX.Element => {
   return (
@@ -29,6 +30,7 @@ export const CorePanel = (): React.JSX.Element => {
           <Route path="/levelup/:id/:level" element={<LevelUpCreature />} />
           <Route path="/search-items" element={<SearchItems />} />
           <Route path="/shopping/:id" element={<Shopping />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </Box>
     </div>

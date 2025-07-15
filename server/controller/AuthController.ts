@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { authenticateToken, generateToken } from '../middleware/auth';
+import { authenticateToken, generateToken } from '../service/AuthService';
 import {
   getUserByUsername,
   createUser,
   getUserById,
+  changePassword,
 } from '../service/UserService';
 import bcrypt from 'bcryptjs';
 
@@ -25,7 +26,7 @@ router.post('/register', async (req: any, res: any, next: any) => {
 
   const user = await createUser(username, password);
 
-  const token = generateToken(user.id, user.username);
+  const token = generateToken(user.id, user.username, user.type);
 
   res.status(201).json({
     message: 'User created successfully',
@@ -63,7 +64,7 @@ router.post('/login', async (req: any, res: any, next: any) => {
     }
 
     // Generate token
-    const token = generateToken(user.id, user.username);
+    const token = generateToken(user.id, user.username, user.type);
 
     res.json({
       message: 'Login successful',
@@ -90,6 +91,33 @@ router.get(
     }
 
     res.json({ user });
+  }
+);
+
+router.post(
+  '/resetPassword',
+  authenticateToken as any,
+  async (req: any, res: any, next: any) => {
+    const { username, password } = req.body;
+
+    // Ensure user has GM priveledge
+    if (req.user.type != 'GM') {
+      return res.status(500).json({ error: 'Insufficient priveledge' });
+    }
+
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: 'Username and password are required' });
+    }
+
+    const user = await getUserByUsername(username);
+    if (!user) {
+      return res.status(404).json({ error: 'Unkown user' });
+    }
+
+    const updatedUser = changePassword(user.id, password);
+    res.json({ updatedUser });
   }
 );
 

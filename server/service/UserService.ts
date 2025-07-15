@@ -1,4 +1,3 @@
-import { generateToken } from '../middleware/auth';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
@@ -55,4 +54,17 @@ export const getUserById = async (id: number) => {
     },
   });
   return user;
+};
+
+export const changePassword = async (id: number, password: string) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await prisma.user.update({
+    where: { id: id },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return getUserById(id);
 };

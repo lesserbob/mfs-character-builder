@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { authenticateToken, AuthenticatedRequest } from '../middleware/auth';
+import {
+  authenticateToken,
+  AuthenticatedRequest,
+} from '../service/AuthService';
 const router = Router();
 import {
   getCreature,

@@ -55,7 +55,6 @@ mfs-character-builder/
 │   ├── controller/        # Express route controllers
 │   ├── service/           # Business logic/services
 │   ├── types/             # API and DB types
-│   ├── middleware/        # Express middleware (auth, etc.)
 │   └── index.ts           # Express app entry point
 ├── src/
 │   ├── api/               # Generated API client and auth service

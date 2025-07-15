@@ -9,8 +9,12 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export const generateToken = (userId: number, username: string): string => {
-  return jwt.sign({ id: userId, username }, config.jwtSecret, {
+export const generateToken = (
+  userId: number,
+  username: string,
+  type: string
+): string => {
+  return jwt.sign({ id: userId, username, type }, config.jwtSecret, {
     expiresIn: '24h',
   });
 };

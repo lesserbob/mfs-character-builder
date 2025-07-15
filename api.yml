@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
   title: Character Builder API
-  description: API for managing characters and their stats
+  description: API for managing characters and their stats for SLA Roll 12
   version: 1.0.0
   contact:
-    name: Character Builder Team
+    name: SLA Roll 12
 servers:
   - url: http://localhost:3001
     description: Development server

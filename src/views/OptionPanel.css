@@ -1,0 +1,39 @@
+.option-panel-drawer {
+  width: 240px;
+  flex-shrink: 0;
+}
+
+.option-panel-drawer .MuiDrawer-paper {
+  width: 240px;
+  box-sizing: border-box;
+}
+
+.option-panel-box {
+  padding: 16px;
+}
+
+.option-panel-stack {
+  padding: 16px;
+}
+
+.option-panel-section-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.option-panel-stack-inner {
+  margin-left: 16px;
+}
+
+.option-panel-button {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.option-panel-button > .MuiButton-label,
+.option-panel-button > span {
+  justify-content: flex-start !important;
+  text-align: left !important;
+  width: 100%;
+  display: flex;
+}

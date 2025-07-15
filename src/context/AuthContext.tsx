@@ -20,6 +20,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   register: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  resetPassword: (username: string, password: string) => Promise<boolean>;
   isAuthenticated: boolean;
 }
 
@@ -110,12 +111,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('authToken');
   };
 
+  const resetPassword = async (
+    username: string,
+    password: string
+  ): Promise<boolean> => {
+    try {
+      await authService.setPassword({ username, password }, token!);
+      return true;
+    } catch (error) {
+      console.error('Reset password failed:', error);
+      return false;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
     login,
     register,
     logout,
+    resetPassword,
     isAuthenticated: !!token && !!user,
   };
 

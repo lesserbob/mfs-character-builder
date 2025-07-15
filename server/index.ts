@@ -11,7 +11,7 @@ import creatureController from './controller/CreatureController';
 import classController from './controller/ClassController';
 import authController from './controller/AuthController';
 import itemController from './controller/ItemController';
-import { authenticateToken } from './middleware/auth';
+import { authenticateToken } from './service/AuthService';
 
 const app = express();
 const port = 3001;

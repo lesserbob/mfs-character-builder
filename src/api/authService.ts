@@ -13,6 +13,11 @@ interface RegisterRequest {
   password: string;
 }
 
+interface ResetPasswordRequest {
+  username: string;
+  password: string;
+}
+
 interface AuthResponse {
   message: string;
   token: string;
@@ -68,6 +73,25 @@ export const authService = {
     } catch (error: any) {
       console.error(
         'Get current user error:',
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  async setPassword(
+    credentials: ResetPasswordRequest,
+    token: string
+  ): Promise<any> {
+    try {
+      await axios.post(`${API_BASE_URL}/auth/resetPassword`, credentials, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error: any) {
+      console.error(
+        'Reset password error:',
         error.response?.data || error.message
       );
       throw error;
