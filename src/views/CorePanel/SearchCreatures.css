@@ -1,0 +1,9 @@
+.creature-link {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+.gm-settings-button {
+  color: var(--mui-palette-primary-main, #1976d2);
+}

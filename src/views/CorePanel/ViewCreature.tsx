@@ -24,6 +24,18 @@ import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
 import { generateCharacterSheetPdf } from '../../util/PdfUtils';
 import { CreatureGear } from './ViewCreature/CreatureGear';
 
+const wealthMap: Record<number, number> = {
+  2: 5,
+  3: 8,
+  4: 12,
+  5: 17,
+  6: 23,
+  7: 30,
+  8: 38,
+  9: 47,
+  10: 57,
+};
+
 const ViewCreature: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const creatureId = id ? parseInt(id, 10) : 0;
@@ -117,10 +129,21 @@ const ViewCreature: React.FC = () => {
     );
   }
 
+  const canLevelUp = (creatute: Creature): boolean => {
+    /* TODO Disabled till specilaist classes available */
+    if (creature!.level === 5) return false;
+
+    // Must have enough wealth to cover next level
+    const requiredWealth = wealthMap[creature.level + 1];
+    if ((creature.wealth ?? 0) < requiredWealth) return false;
+
+    return true;
+  };
+
   return (
     <div>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <IconButton onClick={handleMenuOpen} sx={{ color: 'primary.main' }}>
+      <Box className="view-creature-settings-button">
+        <IconButton onClick={handleMenuOpen}>
           <SettingsIcon />
         </IconButton>
         <Menu
@@ -136,8 +159,7 @@ const ViewCreature: React.FC = () => {
             horizontal: 'right',
           }}
         >
-          {/* TODO Disabled till specilaist lasses available */}
-          <MenuItem onClick={handleLevelUp} disabled={creature!.level === 5}>
+          <MenuItem onClick={handleLevelUp} disabled={!canLevelUp(creature)}>
             Level Up
           </MenuItem>
           <MenuItem onClick={handleChangeGear}>Change Gear</MenuItem>

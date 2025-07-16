@@ -28,10 +28,9 @@ router.get('/creature/:id', async (req, res, next) => {
 router.get(
   '/creature',
   authenticateToken as any,
-  async (req: any, res, next) => {
+  async (req: AuthenticatedRequest, res, next) => {
     try {
-      const userId = req.user!.id;
-      const creatures = await getCreatures(userId);
+      const creatures = await getCreatures(req.user!);
       res.json(creatures);
     } catch (error) {
       next(error);

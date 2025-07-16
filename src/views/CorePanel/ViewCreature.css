@@ -48,3 +48,10 @@
 .view-creature-button {
   width: 200px;
 }
+
+.view-creature-settings-button {
+  color: var(--mui-palette-primary-main, #1976d2);
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}

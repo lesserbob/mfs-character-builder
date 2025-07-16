@@ -28,7 +28,6 @@ const Shopping = () => {
   }, [creatureId]);
 
   const handleSetItemQuantity = (itemId: number, quantity: number) => {
-    console.log('Set item quantity');
     // Check that the item is currently in the creatures inventory
     let itemList = [...creature!.items];
     const inList = itemList.find((i) => i.itemId === itemId);
@@ -43,10 +42,8 @@ const Shopping = () => {
     } else {
       if (quantity > 0) itemList.push({ itemId: itemId, quantity: quantity });
     }
-    console.log(itemList);
     // Need to rebuild creature to force re-render
     const newCreature = { ...creature, items: itemList } as Creature;
-    console.log(newCreature);
     setCreature(newCreature);
   };
 

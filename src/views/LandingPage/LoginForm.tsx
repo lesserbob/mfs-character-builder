@@ -35,6 +35,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const { login, register, logout, resetPassword, user, isAuthenticated } =
     useAuth();
 
+  const handleLogout = () => {
+    setMessage('');
+    logout();
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -90,7 +94,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             )}
             You are logged in as {user?.username}!
           </Typography>
-          <Button fullWidth variant="outlined" onClick={logout} sx={{ mt: 2 }}>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={handleLogout}
+            sx={{ mt: 2 }}
+          >
             Logout
           </Button>
         </Paper>
