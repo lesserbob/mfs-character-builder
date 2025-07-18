@@ -32,3 +32,6 @@ database.sqlite
 database.sqlite.bkup
 *.sqlite
 *.sqlite3
+
+# Enivronment file
+.env

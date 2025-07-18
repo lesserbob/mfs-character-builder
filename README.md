@@ -64,6 +64,7 @@ mfs-character-builder/
 │   ├── views/             # Page-level React components
 │   └── main.tsx           # React app entry point
 ├── ssl/                   # Self-signed SSL certs for HTTPS dev
+├── .env.example           # Example environment variables file
 └── README.md              # This file
 ```
 
@@ -78,13 +79,22 @@ mfs-character-builder/
 
 ### Setup
 
-1. **Install dependencies:**
+1. **Set up environment variables:**
+
+   Copy the example environment file and edit as needed:
+
+   ```bash
+   cp .env.example .env
+   # Edit .env to customize for your environment
+   ```
+
+2. **Install dependencies:**
 
    ```bash
    npm install
    ```
 
-2. **Set up the database:**
+3. **Set up the database:**
 
    ```bash
    npm run db:push      # Push schema to SQLite
@@ -92,27 +102,27 @@ mfs-character-builder/
    npm run db:studio    # (Optional) Open Prisma Studio
    ```
 
-3. **Seed the database (optional):**
+4. **Seed the database (optional):**
 
    ```bash
    npx ts-node prisma/seed.ts
    ```
 
-4. **Generate API client and docs:**
+5. **Generate API client and docs:**
 
    ```bash
    npm run api:generate
    npm run api:docs
    ```
 
-5. **Start the backend server:**
+6. **Start the backend server:**
 
    ```bash
    npm run server:build
    npm run server
    ```
 
-6. **Start the frontend dev server:**
+7. **Start the frontend dev server:**
    ```bash
    npm run dev
    ```
@@ -141,3 +151,10 @@ mfs-character-builder/
 - React StrictMode is enabled by default (may cause double API calls in dev)
 - All code is written in TypeScript
 - Database is SQLite for easy local development
+
+---
+
+### Environment Variables
+
+- All required environment variables are listed in `.env.example`.
+- Copy this file to `.env` and adjust values as needed for your local or production setup.

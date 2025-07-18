@@ -14,34 +14,43 @@ import itemController from './controller/ItemController';
 import { authenticateToken } from './service/AuthService';
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
 const httpsPort = 3443;
 
 // Security middleware
 app.use(helmet());
 
 // Configure CORS with specific options
-app.use(
-  cors({
-    origin: [
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',')
+  : [
       'http://localhost:5173',
       'http://localhost:3000',
       'https://localhost:5173',
       'https://localhost:3000',
-    ], // Allow your frontend URLs
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow all methods including OPTIONS
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow common headers
-    credentials: true, // Allow credentials if needed
+    ];
+app.use(
+  cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
+// Serve static files from public/
+app.use(express.static('public'));
+
+// Health check endpoint
+app.get('/health', (req: Request, res: Response) => res.send('OK'));
+
 // Open SQLite database
 let db: Database;
 (async () => {
   db = await open({
-    filename: './database.sqlite',
+    filename: process.env.DB_PATH || './database.sqlite',
     driver: sqlite3.Database,
   });
 })();
