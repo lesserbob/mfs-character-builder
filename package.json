@@ -42,6 +42,7 @@
     "express-rate-limit": "^7.5.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
     "prisma": "^6.10.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -58,6 +59,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.15.4",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.4.1",
@@ -76,7 +78,7 @@
     "vite": "^6.3.5"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "node dist/server/seed/seed.js"
   },
   "keywords": [],
   "author": ""

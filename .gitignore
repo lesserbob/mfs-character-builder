@@ -35,3 +35,7 @@ database.sqlite.bkup
 
 # Enivronment file
 .env
+
+# server build deployable
+deploy.zip
+/deploy
