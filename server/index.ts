@@ -74,21 +74,31 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// HTTP server (for development)
+// HTTP server (for development and production)
 app.listen(port, () => {
   console.log(`HTTP Server listening at http://localhost:${port}`);
 });
 
-// HTTPS server (for production)
+// HTTPS server (for development and production when SSL is available)
 try {
-  const privateKey = fs.readFileSync(
-    path.join(process.cwd(), 'ssl/private-key.pem'),
-    'utf8'
-  );
-  const certificate = fs.readFileSync(
-    path.join(process.cwd(), 'ssl/certificate.pem'),
-    'utf8'
-  );
+  // In production, EB might provide SSL certificates at a different path
+  const sslPath =
+    process.env.NODE_ENV === 'production'
+      ? '/etc/pki/tls/certs'
+      : path.join(process.cwd(), 'ssl');
+
+  const privateKeyPath =
+    process.env.NODE_ENV === 'production'
+      ? path.join(sslPath, 'private-key.pem')
+      : path.join(process.cwd(), 'ssl/private-key.pem');
+
+  const certificatePath =
+    process.env.NODE_ENV === 'production'
+      ? path.join(sslPath, 'certificate.pem')
+      : path.join(process.cwd(), 'ssl/certificate.pem');
+
+  const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
+  const certificate = fs.readFileSync(certificatePath, 'utf8');
 
   const credentials = { key: privateKey, cert: certificate };
   const httpsServer = https.createServer(credentials, app);
@@ -98,11 +108,13 @@ try {
   });
 } catch (error) {
   console.log('SSL certificates not found. HTTPS server not started.');
-  console.log(
-    'To enable HTTPS, create SSL certificates in the ssl/ directory:'
-  );
-  console.log('  mkdir ssl');
-  console.log(
-    '  openssl req -x509 -newkey rsa:4096 -keyout ssl/private-key.pem -out ssl/certificate.pem -days 365 -nodes'
-  );
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(
+      'To enable HTTPS in development, create SSL certificates in the ssl/ directory:'
+    );
+    console.log('  mkdir ssl');
+    console.log(
+      '  openssl req -x509 -newkey rsa:4096 -keyout ssl/private-key.pem -out ssl/certificate.pem -days 365 -nodes'
+    );
+  }
 }

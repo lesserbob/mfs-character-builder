@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build-dev": "export VITE_API_URL=https://localhost:3443/api && npm run api:generate && export VITE_API_URL=https://localhost:3443/api && vite build",
+    "build-prod": "export VITE_API_URL=https://d22cbvleeb4smp.cloudfront.net/api && npm run api:generate && export VITE_API_URL=https://d22cbvleeb4smp.cloudfront.net/api && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
@@ -19,7 +21,7 @@
     "db:seed": "prisma db seed",
     "db:seed:generate": "npx tsx scripts/generate-seed-from-db.ts",
     "db:export": "npx tsx scripts/export-data.ts",
-    "api:generate": "npx @openapitools/openapi-generator-cli generate -i api.yml -g typescript-axios -o src/api/generated",
+    "api:generate": "sed 's|\\${API_URL:-http://localhost:3001}|'\"$VITE_API_URL\"'|g' api.yml > api.temp.yml && npx @openapitools/openapi-generator-cli generate -i api.temp.yml -g typescript-axios -o src/api/generated && rm api.temp.yml",
     "api:docs": "npx @openapitools/openapi-generator-cli generate -i api.yml -g html2 -o docs/api",
     "api:serve-docs": "npx http-server docs/api -p 8080 -o",
     "test": "echo \"Error: no test specified\" && exit 1",

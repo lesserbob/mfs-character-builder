@@ -2,7 +2,7 @@ import { DefaultApi, Configuration } from './generated';
 
 // Create a configured API client instance
 const config = new Configuration({
-  basePath: 'https://localhost:3443/api',
+  basePath: import.meta.env.VITE_API_URL || 'https://localhost:3443/api',
 });
 
 // Export the configured API client

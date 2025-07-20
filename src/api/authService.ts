@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-// Use HTTPS for API calls to the backend
-const API_BASE_URL = 'https://localhost:3443/api';
+// Use environment variable for API calls to the backend
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://localhost:3443/api';
 
 interface LoginRequest {
   username: string;
