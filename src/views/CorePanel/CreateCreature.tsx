@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,6 +11,7 @@ import {
   InputLabel,
   Box,
   Tooltip,
+  FormHelperText,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import './CreateCreature.css';
@@ -20,7 +21,12 @@ import { Class, ClassClassificationEnum } from '../../api/generated';
 import { useClasses } from '../../context/ClassContext';
 import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
-import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
+import {
+  FeatureSelectionPanel,
+  FeatureSelectionPanelHandle,
+} from '../../components/FeatureSelectionPanel';
+import SectionBox from '../../components/SectionBox';
+import { Text } from '../../components/Text';
 
 type FormData = {
   name: string;
@@ -57,6 +63,9 @@ const CreateCreature = (): React.JSX.Element => {
 
   const [loading, setLoading] = useState(false);
   const [creatureClass, setCreatureClass] = useState<Class | null>(null);
+  const [pointAllocationError, setPointAllocationError] =
+    useState<boolean>(false);
+  const featurePanelRef = useRef<FeatureSelectionPanelHandle>(null);
 
   // Watch all stat values to calculate sum
   const level = watch('level');
@@ -67,7 +76,8 @@ const CreateCreature = (): React.JSX.Element => {
   const classId = watch('selectedClassId');
 
   const totalStats = might + agility + intellect + spirit;
-  const disbleIncrement = totalStats >= 3;
+  const toAllocate = 3 - totalStats;
+  const disableIncrement = toAllocate <= 0;
 
   const racialClasses = classes.filter(
     (cls) => cls.classification === ClassClassificationEnum.Race
@@ -111,6 +121,16 @@ const CreateCreature = (): React.JSX.Element => {
   };
 
   const onSubmit = async (data: any) => {
+    if (toAllocate !== 0) {
+      setPointAllocationError(true);
+      return;
+    }
+    if (!featurePanelRef.current?.canSubmit()) {
+      return;
+    }
+
+    setPointAllocationError(false);
+
     setLoading(true);
 
     const creature = {
@@ -186,11 +206,11 @@ const CreateCreature = (): React.JSX.Element => {
                     arrow
                   >
                     <FormControl fullWidth error={!!errors.selectedClassId}>
-                      <InputLabel>Select Class</InputLabel>
+                      <InputLabel>Select Race</InputLabel>
                       <Select
                         {...field}
                         value={field.value ?? ''}
-                        label="Select Class"
+                        label="Select Race"
                         disabled={loading}
                       >
                         {racialClasses.map((cls) => (
@@ -220,66 +240,89 @@ const CreateCreature = (): React.JSX.Element => {
                   />
                 )}
               />
-
-              <Controller
-                name="might"
-                control={control}
-                render={({ field }) => (
-                  <StatEditor
-                    stat="Might"
-                    value={field.value}
-                    min={creatureClass?.minMight ?? -1}
-                    max={3}
-                    setValue={field.onChange}
-                    disableIncrement={disbleIncrement}
+              <SectionBox>
+                <div className="create-creature-stack">
+                  <Tooltip
+                    open={pointAllocationError}
+                    title="You must allocate all points"
+                    placement="right"
+                    arrow
+                  >
+                    <Text>Points to allocate: {toAllocate}</Text>
+                  </Tooltip>
+                  <Controller
+                    name="might"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Might"
+                        value={field.value}
+                        min={creatureClass?.minMight ?? -1}
+                        max={3}
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableIncrement}
+                      />
+                    )}
                   />
-                )}
-              />
 
-              <Controller
-                name="agility"
-                control={control}
-                render={({ field }) => (
-                  <StatEditor
-                    stat="Agility"
-                    value={field.value}
-                    min={creatureClass?.minAgility ?? -1}
-                    max={3}
-                    setValue={field.onChange}
-                    disableIncrement={disbleIncrement}
+                  <Controller
+                    name="agility"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Agility"
+                        value={field.value}
+                        min={creatureClass?.minAgility ?? -1}
+                        max={3}
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableIncrement}
+                      />
+                    )}
                   />
-                )}
-              />
 
-              <Controller
-                name="intellect"
-                control={control}
-                render={({ field }) => (
-                  <StatEditor
-                    stat="Intellect"
-                    value={field.value}
-                    min={creatureClass?.minIntellect ?? -1}
-                    max={3}
-                    setValue={field.onChange}
-                    disableIncrement={disbleIncrement}
+                  <Controller
+                    name="intellect"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Intellect"
+                        value={field.value}
+                        min={creatureClass?.minIntellect ?? -1}
+                        max={3}
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableIncrement}
+                      />
+                    )}
                   />
-                )}
-              />
 
-              <Controller
-                name="spirit"
-                control={control}
-                render={({ field }) => (
-                  <StatEditor
-                    stat="Spirit"
-                    value={field.value}
-                    min={creatureClass?.minSpirit ?? -1}
-                    max={3}
-                    setValue={field.onChange}
-                    disableIncrement={disbleIncrement}
+                  <Controller
+                    name="spirit"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Spirit"
+                        value={field.value}
+                        min={creatureClass?.minSpirit ?? -1}
+                        max={3}
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableIncrement}
+                      />
+                    )}
                   />
-                )}
-              />
+                </div>
+              </SectionBox>
             </div>
           </Grid>
           <Grid size={{ xs: 6 }}>
@@ -294,6 +337,7 @@ const CreateCreature = (): React.JSX.Element => {
             creature={getCreature()}
             creatureBeforeLevelUp={{ ...getCreature(), features: [] }}
             onSelectionChange={setSelectedFeatures}
+            ref={featurePanelRef}
           />
         </Box>
         <div className="create-creature-button-group">

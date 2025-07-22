@@ -174,35 +174,34 @@ const ViewCreature: React.FC = () => {
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6 }}>
-            <Box className="view-creature-stat-block">
-              <Stack spacing={2}>
-                <ReadOnlyField label="Name" value={creature.name} />
-                <ReadOnlyField
-                  label="Level"
-                  value={
-                    creature.level.toString() +
-                    ' ' +
-                    getClassDescription(creature, classes)
-                  }
-                />
-                <ReadOnlyField
-                  label="Might"
-                  value={creature.might?.toString() ?? '0'}
-                />
-                <ReadOnlyField
-                  label="Agility"
-                  value={creature.agility?.toString() ?? '0'}
-                />
-                <ReadOnlyField
-                  label="Intellect"
-                  value={creature.intellect?.toString() ?? '0'}
-                />
-                <ReadOnlyField
-                  label="Spirit"
-                  value={creature.spirit?.toString() ?? '0'}
-                />
-              </Stack>
-            </Box>
+            <Stack spacing={2}>
+              <ReadOnlyField label="Name" value={creature.name} />
+              <ReadOnlyField
+                label="Level"
+                value={
+                  creature.level.toString() +
+                  ' ' +
+                  getClassDescription(creature, classes)
+                }
+              />
+              <ReadOnlyField
+                label="Might"
+                value={creature.might?.toString() ?? '0'}
+              />
+              <ReadOnlyField
+                label="Agility"
+                value={creature.agility?.toString() ?? '0'}
+              />
+              <ReadOnlyField
+                label="Intellect"
+                value={creature.intellect?.toString() ?? '0'}
+              />
+              <ReadOnlyField
+                label="Spirit"
+                value={creature.spirit?.toString() ?? '0'}
+              />
+            </Stack>
+            {/* </Box> */}
           </Grid>
           <Grid size={{ xs: 6 }}>
             <CreatureDerivedStatBlock creature={creature} />

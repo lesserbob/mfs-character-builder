@@ -16,15 +16,19 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ReadOnlyField } from './ViewCreature/ReadOnlyField';
 import { apiClient, Creature } from '../../api/client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useClasses } from '../../context/ClassContext';
 import { getClassDescription } from '../../util/CreatureUtils';
 import { StatEditor } from './CreateCreature/StatEditor';
 import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
 import './LevelUpCreature.css';
-import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
+import {
+  FeatureSelectionPanel,
+  FeatureSelectionPanelHandle,
+} from '../../components/FeatureSelectionPanel';
 import SectionBox from '../../components/SectionBox';
+import { Text } from '../../components/Text';
 
 type FormData = {
   might: number;
@@ -39,6 +43,7 @@ const LevelUpCreature = () => {
   const creatureId = id ? parseInt(id, 10) : 0;
   const { classes, loading: classesLoading } = useClasses();
   const navigate = useNavigate();
+  const featurePanelRef = useRef<FeatureSelectionPanelHandle>(null);
 
   const {
     control,
@@ -60,7 +65,8 @@ const LevelUpCreature = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
-
+  const [pointAllocationError, setPointAllocationError] =
+    useState<boolean>(false);
   const selectedClassId = watch('selectedClassId');
 
   const fetchCreature = async () => {
@@ -125,7 +131,7 @@ const LevelUpCreature = () => {
       cls.classLevels.some((lvl) => lvl.level === Number(level))
   );
 
-  const statBonus =
+  const statBonusThisLevel =
     classes
       .filter((cl) => creature.classes?.includes(cl.id))
       .flatMap((cl) => cl.classLevels)
@@ -139,7 +145,9 @@ const LevelUpCreature = () => {
     creature.agility! -
     creature.intellect! -
     creature.spirit!;
-  const disableStatAllocation = statBonusAllocated === statBonus;
+
+  const toAllocate = statBonusThisLevel - statBonusAllocated;
+  const disableStatAllocation = toAllocate <= 0;
 
   const getModifiedCreature = () => {
     // Assume creature is your current creature object and selectedClassId is the new class to add
@@ -167,6 +175,15 @@ const LevelUpCreature = () => {
   };
 
   const onSubmit = async (data: any) => {
+    if (toAllocate !== 0) {
+      setPointAllocationError(true);
+      return;
+    }
+    setPointAllocationError(false);
+    if (!featurePanelRef.current?.canSubmit()) {
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -218,112 +235,141 @@ const LevelUpCreature = () => {
         </Typography>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6 }}>
-            <SectionBox>
-              <Stack spacing={2}>
-                <ReadOnlyField label="Name" value={creature.name} />
-                <ReadOnlyField
-                  label="Level"
-                  value={
-                    level +
-                    ' ' +
-                    getClassDescription(getModifiedCreature(), classes)
-                  }
-                />
+            <Stack spacing={2}>
+              <ReadOnlyField label="Name" value={creature.name} />
+              <ReadOnlyField
+                label="Level"
+                value={
+                  level +
+                  ' ' +
+                  getClassDescription(getModifiedCreature(), classes)
+                }
+              />
 
-                {selectNewClass() && (
+              {selectNewClass() && (
+                <Controller
+                  name="selectedClassId"
+                  control={control}
+                  rules={{ required: 'Class selection is required' }}
+                  render={({ field }) => (
+                    <Tooltip
+                      title={errors.selectedClassId?.message || ''}
+                      open={!!errors.selectedClassId}
+                      disableHoverListener={!errors.selectedClassId}
+                      placement="right"
+                      arrow
+                    >
+                      <FormControl fullWidth error={!!errors.selectedClassId}>
+                        <InputLabel>Select Class</InputLabel>
+                        <Select
+                          {...field}
+                          value={field.value ?? ''}
+                          label="Select Class"
+                          disabled={loading}
+                        >
+                          {availableClasses.map((cls) => (
+                            <MenuItem key={cls.name} value={cls.id}>
+                              {cls.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Tooltip>
+                  )}
+                />
+              )}
+              <SectionBox>
+                <Stack spacing={2}>
+                  {statBonusThisLevel > 0 && (
+                    <Tooltip
+                      open={pointAllocationError}
+                      title="You must allocate all points"
+                      placement="right"
+                      arrow
+                    >
+                      <Text>Points to allocate: {toAllocate}</Text>
+                    </Tooltip>
+                  )}
                   <Controller
-                    name="selectedClassId"
+                    name="might"
                     control={control}
-                    rules={{ required: 'Class selection is required' }}
                     render={({ field }) => (
-                      <Tooltip
-                        title={errors.selectedClassId?.message || ''}
-                        open={!!errors.selectedClassId}
-                        disableHoverListener={!errors.selectedClassId}
-                        placement="right"
-                        arrow
-                      >
-                        <FormControl fullWidth error={!!errors.selectedClassId}>
-                          <InputLabel>Select Class</InputLabel>
-                          <Select
-                            {...field}
-                            value={field.value ?? ''}
-                            label="Select Class"
-                            disabled={loading}
-                          >
-                            {availableClasses.map((cls) => (
-                              <MenuItem key={cls.name} value={cls.id}>
-                                {cls.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Tooltip>
+                      <StatEditor
+                        stat="Might"
+                        value={field.value}
+                        min={creature.might!}
+                        max={creature.might! + (statBonusThisLevel > 0 ? 1 : 0)}
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableStatAllocation}
+                      />
                     )}
                   />
-                )}
 
-                <Controller
-                  name="might"
-                  control={control}
-                  render={({ field }) => (
-                    <StatEditor
-                      stat="Might"
-                      value={field.value}
-                      min={creature.might!}
-                      max={creature.might! + (statBonus > 0 ? 1 : 0)}
-                      setValue={field.onChange}
-                      disableIncrement={disableStatAllocation}
-                    />
-                  )}
-                />
+                  <Controller
+                    name="agility"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Agility"
+                        value={field.value}
+                        min={creature.agility!}
+                        max={
+                          creature.agility! + (statBonusThisLevel > 0 ? 1 : 0)
+                        }
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableStatAllocation}
+                      />
+                    )}
+                  />
 
-                <Controller
-                  name="agility"
-                  control={control}
-                  render={({ field }) => (
-                    <StatEditor
-                      stat="Agility"
-                      value={field.value}
-                      min={creature.agility!}
-                      max={creature.agility! + (statBonus > 0 ? 1 : 0)}
-                      setValue={field.onChange}
-                      disableIncrement={disableStatAllocation}
-                    />
-                  )}
-                />
+                  <Controller
+                    name="intellect"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Intellect"
+                        value={field.value}
+                        min={creature.intellect!}
+                        max={
+                          creature.intellect! + (statBonusThisLevel > 0 ? 1 : 0)
+                        }
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableStatAllocation}
+                      />
+                    )}
+                  />
 
-                <Controller
-                  name="intellect"
-                  control={control}
-                  render={({ field }) => (
-                    <StatEditor
-                      stat="Intellect"
-                      value={field.value}
-                      min={creature.intellect!}
-                      max={creature.intellect! + (statBonus > 0 ? 1 : 0)}
-                      setValue={field.onChange}
-                      disableIncrement={disableStatAllocation}
-                    />
-                  )}
-                />
-
-                <Controller
-                  name="spirit"
-                  control={control}
-                  render={({ field }) => (
-                    <StatEditor
-                      stat="Spirit"
-                      value={field.value}
-                      min={creature.spirit!}
-                      max={creature.spirit! + (statBonus > 0 ? 1 : 0)}
-                      setValue={field.onChange}
-                      disableIncrement={disableStatAllocation}
-                    />
-                  )}
-                />
-              </Stack>
-            </SectionBox>
+                  <Controller
+                    name="spirit"
+                    control={control}
+                    render={({ field }) => (
+                      <StatEditor
+                        stat="Spirit"
+                        value={field.value}
+                        min={creature.spirit!}
+                        max={
+                          creature.spirit! + (statBonusThisLevel > 0 ? 1 : 0)
+                        }
+                        setValue={(val) => {
+                          field.onChange(val);
+                          setPointAllocationError(false);
+                        }}
+                        disableIncrement={disableStatAllocation}
+                      />
+                    )}
+                  />
+                </Stack>
+              </SectionBox>
+            </Stack>
           </Grid>
           <Grid size={{ xs: 6 }}>
             <CreatureDerivedStatBlock creature={getModifiedCreature()} />
@@ -340,6 +386,7 @@ const LevelUpCreature = () => {
             creature={getModifiedCreature()}
             creatureBeforeLevelUp={creature}
             onSelectionChange={setSelectedFeatures}
+            ref={featurePanelRef}
           />
         </Box>
       </form>
