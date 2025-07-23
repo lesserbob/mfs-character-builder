@@ -72,6 +72,7 @@ model Creature {
   spirit    Int    @default(0)
   wealth    Int    @default(0)
   userId    Int
+  portrait  String?
 
   // Relationship to CreatureClass
   classes   CreatureClass[]

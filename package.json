@@ -21,7 +21,7 @@
     "db:seed": "prisma db seed",
     "db:seed:generate": "npx tsx scripts/generate-seed-from-db.ts",
     "db:export": "npx tsx scripts/export-data.ts",
-    "api:generate": "sed 's|\\${API_URL:-http://localhost:3001}|'\"$VITE_API_URL\"'|g' api.yml > api.temp.yml && npx @openapitools/openapi-generator-cli generate -i api.temp.yml -g typescript-axios -o src/api/generated && rm api.temp.yml",
+    "api:generate": "npx @openapitools/openapi-generator-cli generate -i api.yml -g typescript-axios -o src/api/generated",
     "api:docs": "npx @openapitools/openapi-generator-cli generate -i api.yml -g html2 -o docs/api",
     "api:serve-docs": "npx http-server docs/api -p 8080 -o",
     "test": "echo \"Error: no test specified\" && exit 1",

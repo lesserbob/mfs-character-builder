@@ -6,7 +6,7 @@ info:
   contact:
     name: SLA Roll 12
 servers:
-  - url: ${API_URL:-http://localhost:3001}
+  - url: 
     description: Development server
 security:
   - bearerAuth: []
@@ -269,9 +269,6 @@ components:
             required:
               - itemId
               - quantity
-        portrait:
-          type: string
-          description: creature portrait
       required:
         - id
         - name

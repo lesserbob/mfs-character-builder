@@ -1,16 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Menu,
-  MenuItem,
-  Paper,
-  TextField,
-  Tooltip,
-} from '@mui/material';
+import { IconButton, Menu, MenuItem, Paper } from '@mui/material';
 import {
   Table,
   TableBody,
@@ -28,81 +16,7 @@ import { getClassDescription } from '../../util/CreatureUtils';
 import './SearchCreatures.css';
 import { useAuth } from '../../context/AuthContext';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Controller, useForm } from 'react-hook-form';
-
-export interface SetWealthDialogProps {
-  isModelOpen: boolean;
-  closeModel(): void;
-  creature: Creature | undefined;
-}
-const SetWealthDialog = ({
-  isModelOpen,
-  closeModel,
-  creature,
-}: SetWealthDialogProps) => {
-  type FormData = {
-    wealth: number;
-  };
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch,
-    setValue,
-  } = useForm<FormData>();
-  const wealth = watch('wealth');
-
-  const onSubmit = async (data: any) => {
-    if (!creature) return;
-
-    const modifiedCreature = { ...creature, wealth: Number(wealth) };
-    await apiClient.updateCreature(creature.id, modifiedCreature);
-
-    closeModel();
-  };
-
-  if (!creature) return <></>;
-
-  return (
-    <Dialog open={isModelOpen} onClose={closeModel}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle>Set Wealth for {creature.name}</DialogTitle>
-        <DialogContent>
-          {creature.name} current wealth is {creature.wealth}
-          <Controller
-            name="wealth"
-            control={control}
-            rules={{ required: 'New wealth is required' }}
-            render={({ field }) => (
-              <Tooltip
-                title={errors.wealth?.message || ''}
-                open={!!errors.wealth}
-                disableHoverListener={!errors.wealth}
-                placement="right"
-                arrow
-              >
-                <TextField
-                  {...field}
-                  label="New Wealth"
-                  fullWidth
-                  error={!!errors.wealth}
-                />
-              </Tooltip>
-            )}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeModel}>Cancel</Button>
-          <Button type="submit" variant="contained">
-            Save
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
-  );
-};
+import { SetWealthDialog } from './SearchCreatures/SetWealthDialog';
 
 const SearchCreatures = () => {
   const [creatures, setCreatures] = useState<Creature[]>([]);

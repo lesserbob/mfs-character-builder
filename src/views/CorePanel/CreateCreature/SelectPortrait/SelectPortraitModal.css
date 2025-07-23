@@ -1,0 +1,11 @@
+.select-portrait-button-group {
+  display: flex;
+  gap: 16px;
+  width: 300px;
+  margin-left: auto;
+  flex-direction: row;
+}
+
+.select-portrait-button-group button {
+  flex: 1;
+}

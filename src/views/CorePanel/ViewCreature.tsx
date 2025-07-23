@@ -23,6 +23,7 @@ import { CreatureAbiltities } from '../../components/CreatureAbilities';
 import { FeatureSelectionPanel } from '../../components/FeatureSelectionPanel';
 import { generateCharacterSheetPdf } from '../../util/PdfUtils';
 import { CreatureGear } from './ViewCreature/CreatureGear';
+import { SelectPortait } from './CreateCreature/SelectPortrait';
 
 const wealthMap: Record<number, number> = {
   2: 5,
@@ -140,6 +141,21 @@ const ViewCreature: React.FC = () => {
     return true;
   };
 
+  const onPortraitSelect = async (portrait: string | null) => {
+    // If we got a null, nothing changed
+    if (!portrait) return;
+
+    creature.portrait = portrait;
+    try {
+      const response = await apiClient.updateCreature(creatureId, creature!);
+      if (response.status === 200) {
+        navigate(`/creature/${creatureId}`);
+      }
+    } catch (err) {
+      console.error('Error updating creature:', err);
+    }
+  };
+
   return (
     <div>
       <Box className="view-creature-settings-button">
@@ -201,9 +217,12 @@ const ViewCreature: React.FC = () => {
                 value={creature.spirit?.toString() ?? '0'}
               />
             </Stack>
-            {/* </Box> */}
           </Grid>
           <Grid size={{ xs: 6 }}>
+            <SelectPortait
+              onPortraitSelect={onPortraitSelect}
+              initialPortrait={creature.portrait}
+            />
             <CreatureDerivedStatBlock creature={creature} />
           </Grid>
         </Grid>

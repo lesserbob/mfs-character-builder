@@ -27,6 +27,7 @@ import {
 } from '../../components/FeatureSelectionPanel';
 import SectionBox from '../../components/SectionBox';
 import { Text } from '../../components/Text';
+import { SelectPortait } from './CreateCreature/SelectPortrait';
 
 type FormData = {
   name: string;
@@ -36,6 +37,7 @@ type FormData = {
   intellect: number;
   spirit: number;
   selectedClassId?: number;
+  portrait: string | null;
 };
 
 const CreateCreature = (): React.JSX.Element => {
@@ -120,6 +122,10 @@ const CreateCreature = (): React.JSX.Element => {
     };
   };
 
+  const onPortraitSelect = (portrait: string | null) => {
+    setValue('portrait', portrait);
+  };
+
   const onSubmit = async (data: any) => {
     if (toAllocate !== 0) {
       setPointAllocationError(true);
@@ -143,6 +149,7 @@ const CreateCreature = (): React.JSX.Element => {
       classes: [data.selectedClassId],
       features: selectedFeatures,
       items: [],
+      portrait: data.portrait,
     };
 
     try {
@@ -326,6 +333,7 @@ const CreateCreature = (): React.JSX.Element => {
             </div>
           </Grid>
           <Grid size={{ xs: 6 }}>
+            <SelectPortait onPortraitSelect={onPortraitSelect} />
             <CreatureDerivedStatBlock creature={getCreature()} />
           </Grid>
         </Grid>

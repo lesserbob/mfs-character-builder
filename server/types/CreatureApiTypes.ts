@@ -15,4 +15,5 @@ export interface apiCreature {
   classes: number[];
   features: number[];
   items: apiCreatureItem[];
+  portrait: string | null;
 }

@@ -1,0 +1,16 @@
+{
+  "Ebon": ["ebb1.jpg", "ebb2.jpg", "ebb3.jpg"],
+  "Frother": ["froth1.jpg"],
+  "General": ["gen1.jpg", "gen2.jpg", "gen3.jpg"],
+  "Human": [
+    "human1.jpg",
+    "human2.jpg",
+    "human3.jpg",
+    "human4.jpg",
+    "human5.jpg",
+    "human6.jpg"
+  ],
+  "Shaktar": ["shak1.jpg"],
+  "Wraithen": ["wraith1.jpg", "wraith2.jpg"],
+  "Xeno": ["xeno1.jpg"]
+}

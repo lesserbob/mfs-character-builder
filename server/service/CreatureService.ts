@@ -64,6 +64,7 @@ export const mapDeCreatureToApiCreature = (
       itemId: i.itemId,
       quantity: i.quantity,
     })),
+    portrait: deCreature.portrait,
   };
   return result;
 };
@@ -82,6 +83,7 @@ export const createCreature = async (
       spirit: creature.spirit,
       wealth: 3, // Default to 3 wealth
       userId: userId,
+      portrait: creature.portrait,
     },
     select: {
       id: true,
@@ -122,6 +124,7 @@ export const updateCreature = async (id: number, creature: apiCreature) => {
       intellect: creature.intellect,
       spirit: creature.spirit,
       wealth: creature.wealth,
+      portrait: creature.portrait,
     },
   });
 
