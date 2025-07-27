@@ -9,6 +9,8 @@ import LevelUpCreature from './CorePanel/LevelUpCreature';
 import SearchItems from './CorePanel/SearchItems';
 import Shopping from './CorePanel/Shopping';
 import { ResetPassword } from './CorePanel/ResetPassword';
+import { CreatePlayerCharacter } from './CorePanel/CreatePlayerCharacter';
+import { CreateAntagonist } from './CorePanel/CreateAntagonist';
 
 export const CorePanel = (): React.JSX.Element => {
   return (
@@ -24,7 +26,8 @@ export const CorePanel = (): React.JSX.Element => {
       >
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/create" element={<CreateCreature />} />
+          <Route path="/createCharacter" element={<CreatePlayerCharacter />} />
+          <Route path="/createAntagonist" element={<CreateAntagonist />} />
           <Route path="/creature/:id" element={<ViewCreature />} />
           <Route path="/search" element={<SearchCreatures />} />
           <Route path="/levelup/:id/:level" element={<LevelUpCreature />} />

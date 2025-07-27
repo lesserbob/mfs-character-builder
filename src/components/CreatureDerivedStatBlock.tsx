@@ -18,13 +18,17 @@ export const CreatureDerivedStatBlock = ({
   const createClassFeatures = creatureClassLevels.flatMap((cl) => cl!.features);
 
   const getHealth = () => {
-    const baseHealth =
+    const healthFromClasses: number =
       creatureClassLevels.reduce(
         (sum, classLevel) => sum + (classLevel!.health ?? 0),
         0
       ) ?? 0;
 
-    return baseHealth + Number(creature.might);
+    return (
+      healthFromClasses +
+      Number(creature.baseHealth ?? 0) +
+      Number(creature.might)
+    );
   };
 
   const getMomentum = () => {

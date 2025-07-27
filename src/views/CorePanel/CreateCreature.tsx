@@ -15,9 +15,13 @@ import {
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import './CreateCreature.css';
-import { StatEditor } from './CreateCreature/StatEditor';
+import { StatEditor } from '../../components/StatEditor';
 import { apiClient } from '../../api/client';
-import { Class, ClassClassificationEnum } from '../../api/generated';
+import {
+  Class,
+  ClassClassificationEnum,
+  CreatureBespokeFeature,
+} from '../../api/generated';
 import { useClasses } from '../../context/ClassContext';
 import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
@@ -28,6 +32,8 @@ import {
 import SectionBox from '../../components/SectionBox';
 import { Text } from '../../components/Text';
 import { SelectPortait } from './CreateCreature/SelectPortrait';
+import { capitalizeFirst } from '../../util/TextUtils';
+import { BespokeFeatureModal } from './CreateCreature/BespokeFeatureModal';
 
 type FormData = {
   name: string;
@@ -38,9 +44,19 @@ type FormData = {
   spirit: number;
   selectedClassId?: number;
   portrait: string | null;
+  baseHealth: number;
 };
 
-const CreateCreature = (): React.JSX.Element => {
+export enum Mode {
+  PLAYER_CHARACTER = 'Player Character',
+  ANTOGANIST = 'Antagonist',
+}
+
+export interface CreateCreatureProps {
+  mode: Mode;
+}
+
+const CreateCreature = ({ mode }: CreateCreatureProps): React.JSX.Element => {
   const { classes, loading: classesLoading } = useClasses();
   const navigate = useNavigate();
 
@@ -59,6 +75,7 @@ const CreateCreature = (): React.JSX.Element => {
       agility: 0,
       intellect: 0,
       spirit: 0,
+      baseHealth: 0,
       selectedClassId: undefined,
     },
   });
@@ -68,6 +85,10 @@ const CreateCreature = (): React.JSX.Element => {
   const [pointAllocationError, setPointAllocationError] =
     useState<boolean>(false);
   const featurePanelRef = useRef<FeatureSelectionPanelHandle>(null);
+  // const [bespokeFeatures, setBespokeFeatures] = useState<[string, string][]>([]);
+  const [bespokeFeatures, setBespokeFeatures] = useState<
+    CreatureBespokeFeature[]
+  >([]);
 
   // Watch all stat values to calculate sum
   const level = watch('level');
@@ -76,10 +97,12 @@ const CreateCreature = (): React.JSX.Element => {
   const intellect = watch('intellect');
   const spirit = watch('spirit');
   const classId = watch('selectedClassId');
+  const baseHealth = watch('baseHealth');
 
   const totalStats = might + agility + intellect + spirit;
   const toAllocate = 3 - totalStats;
-  const disableIncrement = toAllocate <= 0;
+  const disableIncrement =
+    mode === Mode.PLAYER_CHARACTER ? toAllocate <= 0 : false;
 
   const racialClasses = classes.filter(
     (cls) => cls.classification === ClassClassificationEnum.Race
@@ -119,6 +142,8 @@ const CreateCreature = (): React.JSX.Element => {
       classes: classId ? [classId] : [],
       features: selectedFeatures,
       items: [], // Items done elsewhere
+      baseHealth: baseHealth,
+      bespokeFeatures: bespokeFeatures,
     };
   };
 
@@ -127,7 +152,7 @@ const CreateCreature = (): React.JSX.Element => {
   };
 
   const onSubmit = async (data: any) => {
-    if (toAllocate !== 0) {
+    if (mode === Mode.PLAYER_CHARACTER && toAllocate !== 0) {
       setPointAllocationError(true);
       return;
     }
@@ -150,6 +175,9 @@ const CreateCreature = (): React.JSX.Element => {
       features: selectedFeatures,
       items: [],
       portrait: data.portrait,
+      type: mode === Mode.PLAYER_CHARACTER ? 'PLAYER' : 'ANTAGONIST',
+      baseHealth: data.baseHealth,
+      bespokeFeatures: bespokeFeatures,
     };
 
     try {
@@ -168,10 +196,17 @@ const CreateCreature = (): React.JSX.Element => {
     }
   };
 
+  const addBespokeFeature = (name: string, description: string) => {
+    setBespokeFeatures((prev) => [
+      ...prev,
+      { name: name, description: description },
+    ]);
+  };
+
   return (
     <div>
       <Typography variant="h5" component="h2" className="create-creature-title">
-        Create New Creature
+        Create New {capitalizeFirst(mode)}
       </Typography>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -200,63 +235,71 @@ const CreateCreature = (): React.JSX.Element => {
                 )}
               />
 
-              <Controller
-                name="selectedClassId"
-                control={control}
-                rules={{ required: 'Class selection is required' }}
-                render={({ field }) => (
-                  <Tooltip
-                    title={errors.selectedClassId?.message || ''}
-                    open={!!errors.selectedClassId}
-                    disableHoverListener={!errors.selectedClassId}
-                    placement="right"
-                    arrow
-                  >
-                    <FormControl fullWidth error={!!errors.selectedClassId}>
-                      <InputLabel>Select Race</InputLabel>
-                      <Select
-                        {...field}
-                        value={field.value ?? ''}
-                        label="Select Race"
-                        disabled={loading}
+              {mode === Mode.PLAYER_CHARACTER && (
+                <>
+                  <Controller
+                    name="selectedClassId"
+                    control={control}
+                    rules={{ required: 'Class selection is required' }}
+                    render={({ field }) => (
+                      <Tooltip
+                        title={errors.selectedClassId?.message || ''}
+                        open={!!errors.selectedClassId}
+                        disableHoverListener={!errors.selectedClassId}
+                        placement="right"
+                        arrow
                       >
-                        {racialClasses.map((cls) => (
-                          <MenuItem key={cls.name} value={cls.id}>
-                            {cls.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Tooltip>
-                )}
-              />
-
-              <Controller
-                name="level"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Level"
-                    type="number"
-                    fullWidth
-                    error={!!errors.level}
-                    helperText={errors.level?.message}
-                    slotProps={{ input: { readOnly: true } }}
-                    value={1}
+                        <FormControl fullWidth error={!!errors.selectedClassId}>
+                          <InputLabel>Select Race</InputLabel>
+                          <Select
+                            {...field}
+                            value={field.value ?? ''}
+                            label="Select Race"
+                            disabled={loading}
+                          >
+                            {racialClasses.map((cls) => (
+                              <MenuItem key={cls.name} value={cls.id}>
+                                {cls.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Tooltip>
+                    )}
                   />
-                )}
-              />
+
+                  <Controller
+                    name="level"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Level"
+                        type="number"
+                        fullWidth
+                        error={!!errors.level}
+                        helperText={errors.level?.message}
+                        slotProps={{ input: { readOnly: true } }}
+                        value={1}
+                      />
+                    )}
+                  />
+                </>
+              )}
+
               <SectionBox>
                 <div className="create-creature-stack">
-                  <Tooltip
-                    open={pointAllocationError}
-                    title="You must allocate all points"
-                    placement="right"
-                    arrow
-                  >
-                    <Text>Points to allocate: {toAllocate}</Text>
-                  </Tooltip>
+                  {mode === Mode.PLAYER_CHARACTER && (
+                    <Tooltip
+                      open={pointAllocationError}
+                      title="You must allocate all points"
+                      placement="right"
+                      arrow
+                    >
+                      <Text>Points to allocate: {toAllocate}</Text>
+                    </Tooltip>
+                  )}
+                  {mode === Mode.ANTOGANIST && <Text>Total: {totalStats}</Text>}
                   <Controller
                     name="might"
                     control={control}
@@ -264,8 +307,12 @@ const CreateCreature = (): React.JSX.Element => {
                       <StatEditor
                         stat="Might"
                         value={field.value}
-                        min={creatureClass?.minMight ?? -1}
-                        max={3}
+                        min={
+                          mode === Mode.PLAYER_CHARACTER
+                            ? (creatureClass?.minMight ?? -1)
+                            : -999
+                        }
+                        max={mode === Mode.PLAYER_CHARACTER ? 3 : 999}
                         setValue={(val) => {
                           field.onChange(val);
                           setPointAllocationError(false);
@@ -282,8 +329,12 @@ const CreateCreature = (): React.JSX.Element => {
                       <StatEditor
                         stat="Agility"
                         value={field.value}
-                        min={creatureClass?.minAgility ?? -1}
-                        max={3}
+                        min={
+                          mode === Mode.PLAYER_CHARACTER
+                            ? (creatureClass?.minAgility ?? -1)
+                            : -999
+                        }
+                        max={mode === Mode.PLAYER_CHARACTER ? 3 : 999}
                         setValue={(val) => {
                           field.onChange(val);
                           setPointAllocationError(false);
@@ -300,8 +351,12 @@ const CreateCreature = (): React.JSX.Element => {
                       <StatEditor
                         stat="Intellect"
                         value={field.value}
-                        min={creatureClass?.minIntellect ?? -1}
-                        max={3}
+                        min={
+                          mode === Mode.PLAYER_CHARACTER
+                            ? (creatureClass?.minIntellect ?? -1)
+                            : -999
+                        }
+                        max={mode === Mode.PLAYER_CHARACTER ? 3 : 999}
                         setValue={(val) => {
                           field.onChange(val);
                           setPointAllocationError(false);
@@ -318,8 +373,12 @@ const CreateCreature = (): React.JSX.Element => {
                       <StatEditor
                         stat="Spirit"
                         value={field.value}
-                        min={creatureClass?.minSpirit ?? -1}
-                        max={3}
+                        min={
+                          mode === Mode.PLAYER_CHARACTER
+                            ? (creatureClass?.minSpirit ?? -1)
+                            : -999
+                        }
+                        max={mode === Mode.PLAYER_CHARACTER ? 3 : 999}
                         setValue={(val) => {
                           field.onChange(val);
                           setPointAllocationError(false);
@@ -328,6 +387,29 @@ const CreateCreature = (): React.JSX.Element => {
                       />
                     )}
                   />
+
+                  {mode === Mode.ANTOGANIST && (
+                    <Controller
+                      name="baseHealth"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          value={field.value}
+                          type="number"
+                          label="Base Health"
+                          fullWidth
+                          error={!!errors.baseHealth}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(
+                              value === '' ? undefined : Number(value)
+                            );
+                          }}
+                        />
+                      )}
+                    />
+                  )}
                 </div>
               </SectionBox>
             </div>
@@ -338,7 +420,13 @@ const CreateCreature = (): React.JSX.Element => {
           </Grid>
         </Grid>
         <Box sx={{ py: 1 }}>
-          <CreatureAbiltities creature={getCreature()} />
+          <CreatureAbiltities
+            creature={getCreature()}
+            allowCreate={mode === Mode.ANTOGANIST}
+            onCreate={(name, description) => {
+              addBespokeFeature(name, description);
+            }}
+          />
         </Box>
         <Box sx={{ py: 0 }}>
           <FeatureSelectionPanel

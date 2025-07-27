@@ -10,8 +10,12 @@ const OptionPanel = (): React.JSX.Element => {
 
   const { isAuthenticated, user } = useAuth();
 
-  const handleCreateNew = () => {
-    navigate('/create');
+  const handleCreateNewCharacter = () => {
+    navigate('/createCharacter');
+  };
+
+  const handleCreateNewAntagonist = () => {
+    navigate('/createAntagonist');
   };
 
   const handleHome = () => {
@@ -39,13 +43,7 @@ const OptionPanel = (): React.JSX.Element => {
       </Box>
       <Stack spacing={2} className="option-panel-stack">
         <Box>
-          <Typography
-            variant="subtitle1"
-            className="option-panel-section-title"
-          >
-            Characters
-          </Typography>
-          <Stack spacing={1} className="option-panel-stack-inner">
+          <Stack spacing={1}>
             <Button
               variant={location.pathname === '/' ? 'contained' : 'text'}
               fullWidth
@@ -54,14 +52,22 @@ const OptionPanel = (): React.JSX.Element => {
             >
               Home
             </Button>
+          </Stack>
+          <Typography
+            variant="subtitle1"
+            className="option-panel-section-title"
+          >
+            Characters
+          </Typography>
+          <Stack spacing={1} className="option-panel-stack-inner">
             <Button
               variant={location.pathname === '/create' ? 'contained' : 'text'}
               fullWidth
               className="option-panel-button"
-              onClick={handleCreateNew}
+              onClick={handleCreateNewCharacter}
               disabled={!isAuthenticated}
             >
-              Create New
+              Create New Character
             </Button>
             <Button
               variant={location.pathname === '/search' ? 'contained' : 'text'}
@@ -70,7 +76,7 @@ const OptionPanel = (): React.JSX.Element => {
               onClick={handleSearchCreatures}
               disabled={!isAuthenticated}
             >
-              Search Creatures
+              Search Characters
             </Button>
           </Stack>
           <Typography
@@ -98,7 +104,26 @@ const OptionPanel = (): React.JSX.Element => {
                 variant="subtitle1"
                 className="option-panel-section-title"
               >
-                GM Only
+                Antagonist
+              </Typography>
+              <Stack spacing={1} className="option-panel-stack-inner">
+                <Button
+                  variant={
+                    location.pathname === '/create' ? 'contained' : 'text'
+                  }
+                  fullWidth
+                  className="option-panel-button"
+                  onClick={handleCreateNewAntagonist}
+                  disabled={!isAuthenticated}
+                >
+                  Create New Antagonist
+                </Button>
+              </Stack>
+              <Typography
+                variant="subtitle1"
+                className="option-panel-section-title"
+              >
+                Admin
               </Typography>
               <Stack spacing={1} className="option-panel-stack-inner">
                 <Button

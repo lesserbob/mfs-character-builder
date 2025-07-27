@@ -1,0 +1,24 @@
+.bespoke-feature-dialog-paper {
+  width: 600px;
+  /* max-width: 90vw; */
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.bespoke-feature-button-group {
+  display: flex;
+  gap: 16px;
+  /* width: 600px; */
+  margin-left: auto;
+  flex-direction: row;
+}
+
+.bespoke-feature-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bespoke-feature-button-group button {
+  flex: 1;
+}

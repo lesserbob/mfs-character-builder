@@ -272,6 +272,17 @@ components:
         portrait:
           type: string
           description: creature portrait
+        type:
+          type: string
+          description: creature type
+        baseHealth:
+          type: integer
+          description: creature base health (not including health from classes)
+        bespokeFeatures:
+          type: array
+          description: List of bespoke features for this creature
+          items:
+            $ref: '#/components/schemas/creatureBespokeFeature'
       required:
         - id
         - name
@@ -279,10 +290,20 @@ components:
         - classes
         - features
         - items
+        - bespokeFeatures
     createCreatureRequest:
       $ref: '#/components/schemas/creatureBase'
     updateCreatureRequest:
       $ref: '#/components/schemas/creature'
+    creatureBespokeFeature:
+      type: object
+      properties:
+        name:
+          type: string
+          description: feature name
+        description:
+          type: string
+          description: feature description
     class:
       type: object
       properties:

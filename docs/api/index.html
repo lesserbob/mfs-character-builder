@@ -845,31 +845,133 @@ ul.nav-tabs {
     // Script section to load models into a JS Var
     var defs = {}
     defs["class"] = {
+  "required" : [ "classification", "id", "name" ],
   "type" : "object",
   "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the class"
+    },
     "name" : {
       "type" : "string",
       "description" : "class name"
     },
     "classification" : {
       "type" : "string",
-      "description" : "class classification"
+      "description" : "class classification",
+      "enum" : [ "RACE", "PATH", "SPECIALISATION" ]
     },
     "minMight" : {
       "type" : "integer",
-      "description" : "minimum might required to select this class"
+      "description" : "minimum might required to select this class",
+      "nullable" : true
     },
     "minAgility" : {
       "type" : "integer",
-      "description" : "minimum agility required to select this class"
+      "description" : "minimum agility required to select this class",
+      "nullable" : true
     },
     "minIntellect" : {
       "type" : "integer",
-      "description" : "minimum intellect required to select this class"
+      "description" : "minimum intellect required to select this class",
+      "nullable" : true
     },
     "minSpirit" : {
       "type" : "integer",
-      "description" : "minimum spirit required to select this class"
+      "description" : "minimum spirit required to select this class",
+      "nullable" : true
+    },
+    "classLevels" : {
+      "type" : "array",
+      "description" : "List of levels for this class",
+      "items" : {
+        "$ref" : "#/components/schemas/classLevel"
+      }
+    }
+  }
+};
+    defs["classFeature"] = {
+  "required" : [ "description", "id", "name" ],
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the class feature"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "Name of the feature"
+    },
+    "description" : {
+      "type" : "string",
+      "description" : "Description of the feature"
+    },
+    "type" : {
+      "type" : "string",
+      "description" : "Type of the feature",
+      "enum" : [ "BASE", "SELECT" ]
+    },
+    "enduranceRegeneration" : {
+      "type" : "integer",
+      "description" : "Endurance regeneration for this feature",
+      "nullable" : true
+    },
+    "selectableListId" : {
+      "type" : "integer",
+      "description" : "ID of the selectable list for this feature",
+      "nullable" : true
+    },
+    "selectableCount" : {
+      "type" : "integer",
+      "description" : "Number of selectable items for this feature",
+      "nullable" : true
+    },
+    "display" : {
+      "type" : "boolean",
+      "description" : "Whether to display this feature in the UI"
+    }
+  }
+};
+    defs["classLevel"] = {
+  "required" : [ "classId", "health", "id", "level" ],
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the class level"
+    },
+    "classId" : {
+      "type" : "integer",
+      "description" : "ID of the class this level belongs to"
+    },
+    "level" : {
+      "type" : "integer",
+      "description" : "The level number"
+    },
+    "health" : {
+      "type" : "integer",
+      "description" : "Health points at this level"
+    },
+    "statBonus" : {
+      "type" : "integer",
+      "description" : "Stat bonus at this level",
+      "default" : 0
+    },
+    "features" : {
+      "type" : "array",
+      "description" : "List of features available at this level",
+      "items" : {
+        "$ref" : "#/components/schemas/classFeature"
+      }
+    }
+  }
+};
+    defs["createCreature_201_response"] = {
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the creature"
     }
   }
 };
@@ -877,6 +979,7 @@ ul.nav-tabs {
   "allOf" : [ {
     "$ref" : "#/components/schemas/creatureBase"
   }, {
+    "required" : [ "id" ],
     "type" : "object",
     "properties" : {
       "id" : {
@@ -887,7 +990,7 @@ ul.nav-tabs {
   } ]
 };
     defs["creatureBase"] = {
-  "required" : [ "level", "name" ],
+  "required" : [ "classes", "features", "id", "items", "level", "name" ],
   "type" : "object",
   "properties" : {
     "name" : {
@@ -918,6 +1021,210 @@ ul.nav-tabs {
       "type" : "integer",
       "description" : "Spirit attribute",
       "default" : 0
+    },
+    "wealth" : {
+      "type" : "integer",
+      "description" : "Wealth attribute",
+      "default" : 0
+    },
+    "classes" : {
+      "type" : "array",
+      "description" : "List of class IDs the creature has",
+      "items" : {
+        "type" : "integer",
+        "description" : "Class ID"
+      }
+    },
+    "features" : {
+      "type" : "array",
+      "description" : "List of feature IDs the creature has",
+      "items" : {
+        "type" : "integer",
+        "description" : "Feature ID"
+      }
+    },
+    "items" : {
+      "type" : "array",
+      "description" : "List of item IDs the creature has",
+      "items" : {
+        "$ref" : "#/components/schemas/creatureBase_items_inner"
+      }
+    },
+    "portrait" : {
+      "type" : "string",
+      "description" : "creature portrait"
+    },
+    "type" : {
+      "type" : "string",
+      "description" : "creature type"
+    }
+  }
+};
+    defs["creatureBase_items_inner"] = {
+  "required" : [ "itemId", "quantity" ],
+  "type" : "object",
+  "properties" : {
+    "itemId" : {
+      "type" : "integer",
+      "description" : "Item ID"
+    },
+    "quantity" : {
+      "type" : "integer",
+      "description" : "Number of items the creature has"
+    }
+  }
+};
+    defs["item"] = {
+  "required" : [ "id" ],
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the item"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "Name of the item"
+    },
+    "type" : {
+      "type" : "string",
+      "description" : "Type of the item",
+      "enum" : [ "MELEE", "RANGED", "ARMOR", "MISCELLANEOUS" ]
+    },
+    "rank" : {
+      "type" : "integer",
+      "description" : "Rank of the item"
+    },
+    "damageUnarmored" : {
+      "type" : "integer",
+      "description" : "Damage of the item when unarmored",
+      "nullable" : true
+    },
+    "damageArmored" : {
+      "type" : "integer",
+      "description" : "Damage of the item when armored",
+      "nullable" : true
+    },
+    "concealable" : {
+      "type" : "boolean",
+      "description" : "Whether the item can be concealed"
+    },
+    "twoHanded" : {
+      "type" : "boolean",
+      "description" : "Whether the item is two-handed"
+    },
+    "reach" : {
+      "type" : "boolean",
+      "description" : "Whether the item has reach"
+    },
+    "finesse" : {
+      "type" : "boolean",
+      "description" : "Whether the item is a finesse weapon"
+    },
+    "thrown" : {
+      "type" : "boolean",
+      "description" : "Whether the item is thrown"
+    },
+    "attacksWorthOfAmmo" : {
+      "type" : "integer",
+      "description" : "Number of attacks worth of ammo",
+      "nullable" : true
+    },
+    "rateOfFire" : {
+      "type" : "string",
+      "description" : "Rate of fire of the item",
+      "nullable" : true,
+      "enum" : [ "SINGLE", "BURST", "FULL_AUTO", "SEMI_AUTO" ]
+    },
+    "range" : {
+      "type" : "string",
+      "description" : "Range of the item",
+      "nullable" : true,
+      "enum" : [ "NEARBY", "MEDIUM", "LONG", "EXTREME" ]
+    },
+    "reliability" : {
+      "type" : "string",
+      "description" : "Reliability of the item",
+      "nullable" : true,
+      "enum" : [ "RELIABLE", "NORMAL", "UNRELIABLE" ]
+    },
+    "scatter" : {
+      "type" : "boolean",
+      "description" : "Whether the item can be scattered"
+    },
+    "sniper" : {
+      "type" : "boolean",
+      "description" : "Whether the item is a sniper weapon"
+    },
+    "brace" : {
+      "type" : "boolean",
+      "description" : "Whether the item is a brace weapon"
+    },
+    "armorType" : {
+      "type" : "string",
+      "description" : "Type of armor the item is",
+      "nullable" : true,
+      "enum" : [ "OUTFIT", "HARDENED" ]
+    },
+    "soak" : {
+      "type" : "integer",
+      "description" : "Soak of the item",
+      "nullable" : true
+    }
+  }
+};
+    defs["selectableFeature"] = {
+  "required" : [ "description", "id", "name" ],
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the selectable feature"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "Name of the selectable feature"
+    },
+    "description" : {
+      "type" : "string",
+      "description" : "Description of the selectable feature"
+    },
+    "requiredSelectableFeatureId" : {
+      "type" : "integer",
+      "description" : "ID of the required selectable feature",
+      "nullable" : true
+    },
+    "actionType" : {
+      "type" : "string",
+      "description" : "Action type of the selectable feature",
+      "nullable" : true,
+      "enum" : [ "STANDARD", "MINOR", "REACTION", "FREE", "MOVE" ]
+    },
+    "uses" : {
+      "type" : "integer",
+      "description" : "Number of uses for the selectable feature",
+      "nullable" : true
+    }
+  }
+};
+    defs["selectableFeatureList"] = {
+  "required" : [ "id", "name" ],
+  "type" : "object",
+  "properties" : {
+    "id" : {
+      "type" : "integer",
+      "description" : "Unique identifier for the selectable feature list"
+    },
+    "name" : {
+      "type" : "string",
+      "description" : "Name of the selectable feature list"
+    },
+    "features" : {
+      "type" : "array",
+      "description" : "List of selectable features",
+      "items" : {
+        "$ref" : "#/components/schemas/selectableFeature"
+      }
     }
   }
 };
@@ -926,7 +1233,7 @@ ul.nav-tabs {
   "$ref" : "#/components/schemas/creatureBase"
 };
         defs["updateCreatureRequest"] = {
-  "$ref" : "#/components/schemas/creatureBase"
+  "$ref" : "#/components/schemas/creature"
 };
 
     var errs = {};
@@ -953,6 +1260,9 @@ ul.nav-tabs {
                     <li data-group="Default" data-name="deleteCreature" class="">
                       <a href="#api-Default-deleteCreature">deleteCreature</a>
                     </li>
+                    <li data-group="Default" data-name="getClassById" class="">
+                      <a href="#api-Default-getClassById">getClassById</a>
+                    </li>
                     <li data-group="Default" data-name="getClasses" class="">
                       <a href="#api-Default-getClasses">getClasses</a>
                     </li>
@@ -961,6 +1271,12 @@ ul.nav-tabs {
                     </li>
                     <li data-group="Default" data-name="getCreatures" class="">
                       <a href="#api-Default-getCreatures">getCreatures</a>
+                    </li>
+                    <li data-group="Default" data-name="getItems" class="">
+                      <a href="#api-Default-getItems">getItems</a>
+                    </li>
+                    <li data-group="Default" data-name="getSelectableFeatureListById" class="">
+                      <a href="#api-Default-getSelectableFeatureListById">getSelectableFeatureListById</a>
                     </li>
                     <li data-group="Default" data-name="updateCreature" class="">
                       <a href="#api-Default-updateCreature">updateCreature</a>
@@ -981,7 +1297,7 @@ ul.nav-tabs {
               <div class="app-desc">Version: 1.0.0</div>
             <hr>
             <div id="app-description" class="app-desc">
-                API for managing characters and their stats
+                API for managing characters and their stats for SLA Roll 12
             </div>
           </div>
         </div>
@@ -1023,15 +1339,29 @@ ul.nav-tabs {
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-createCreature-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X POST \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
  -H "Content-Type: application/json" \
- "http://localhost:3001/creature" \
+ "http://$/creature" \
  -d '{
+  &quot;wealth&quot; : 2,
+  &quot;features&quot; : [ 9, 9 ],
   &quot;intellect&quot; : 5,
   &quot;level&quot; : 0,
   &quot;might&quot; : 6,
+  &quot;classes&quot; : [ 7, 7 ],
   &quot;name&quot; : &quot;name&quot;,
   &quot;spirit&quot; : 5,
-  &quot;agility&quot; : 1
+  &quot;agility&quot; : 1,
+  &quot;portrait&quot; : &quot;portrait&quot;,
+  &quot;type&quot; : &quot;type&quot;,
+  &quot;items&quot; : [ {
+    &quot;itemId&quot; : 3,
+    &quot;quantity&quot; : 2
+  }, {
+    &quot;itemId&quot; : 3,
+    &quot;quantity&quot; : 2
+  } ]
 }'
 </code></pre>
                           </div>
@@ -1046,13 +1376,19 @@ import java.util.*;
 
 public class DefaultApiExample {
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         DefaultApi apiInstance = new DefaultApi();
         creatureBase body = ; // creatureBase | 
 
         try {
-            apiInstance.createCreature(body);
+            createCreature_201_response result = apiInstance.createCreature(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#createCreature");
             e.printStackTrace();
@@ -1088,7 +1424,8 @@ public class DefaultApiExample {
         creatureBase body = ; // creatureBase | 
 
         try {
-            apiInstance.createCreature(body);
+            createCreature_201_response result = apiInstance.createCreature(body);
+            System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#createCreature");
             e.printStackTrace();
@@ -1101,7 +1438,10 @@ public class DefaultApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Default-createCreature-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
 // Create an instance of the API class
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
@@ -1109,7 +1449,10 @@ creatureBase *body = ; //
 
 // Create a new creature
 [apiInstance createCreatureWith:body
-              completionHandler: ^(NSError* error) {
+              completionHandler: ^(createCreature_201_response output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
     if (error) {
         NSLog(@"Error: %@", error);
     }
@@ -1119,6 +1462,11 @@ creatureBase *body = ; //
 
                             <div class="tab-pane" id="examples-Default-createCreature-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new CharacterBuilderApi.DefaultApi()
@@ -1128,7 +1476,7 @@ var callback = function(error, data, response) {
   if (error) {
     console.error(error);
   } else {
-    console.log('API called successfully.');
+    console.log('API called successfully. Returned data: ' + data);
   }
 };
 api.createCreature(body, callback);
@@ -1151,6 +1499,8 @@ namespace Example
     {
         public void main()
         {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new DefaultApi();
@@ -1158,7 +1508,8 @@ namespace Example
 
             try {
                 // Create a new creature
-                apiInstance.createCreature(body);
+                createCreature_201_response result = apiInstance.createCreature(body);
+                Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling DefaultApi.createCreature: " + e.Message );
             }
@@ -1172,12 +1523,16 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\DefaultApi();
 $body = ; // creatureBase | 
 
 try {
-    $api_instance->createCreature($body);
+    $result = $api_instance->createCreature($body);
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling DefaultApi->createCreature: ', $e->getMessage(), PHP_EOL;
 }
@@ -1189,12 +1544,16 @@ try {
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::DefaultApi;
 
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
 my $body = WWW::OPenAPIClient::Object::creatureBase->new(); # creatureBase | 
 
 eval {
-    $api_instance->createCreature(body => $body);
+    my $result = $api_instance->createCreature(body => $body);
+    print Dumper($result);
 };
 if ($@) {
     warn "Exception when calling DefaultApi->createCreature: $@\n";
@@ -1208,13 +1567,17 @@ import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
 
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
 # Create an instance of the API class
 api_instance = openapi_client.DefaultApi()
 body =  # creatureBase | 
 
 try:
     # Create a new creature
-    api_instance.create_creature(body)
+    api_response = api_instance.create_creature(body)
+    pprint(api_response)
 except ApiException as e:
     print("Exception when calling DefaultApi->createCreature: %s\n" % e)</code></pre>
                             </div>
@@ -1310,6 +1673,11 @@ $(document).ready(function() {
 
 
                             <ul id="responses-detail-Default-createCreature-201" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-createCreature-201-schema">Schema</a>
+                                </li>
+
+
 
 
                             </ul>
@@ -1321,7 +1689,14 @@ $(document).ready(function() {
                                   <script>
                                     $(document).ready(function() {
                                       var schemaWrapper = {
-  "description" : "Creature created successfully"
+  "description" : "Creature created successfully",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/createCreature_201_response"
+      }
+    }
+  }
 };
                                       var schema = findNode('schema',schemaWrapper).schema;
                                       if (!schema) {
@@ -1397,7 +1772,8 @@ $(document).ready(function() {
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-deleteCreature-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X DELETE \
- "http://localhost:3001/creature/{id}"
+ -H "Authorization: Bearer [[accessToken]]" \
+ "http://$/creature/{id}"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-deleteCreature-0-java">
@@ -1411,6 +1787,11 @@ import java.util.*;
 
 public class DefaultApiExample {
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         DefaultApi apiInstance = new DefaultApi();
@@ -1466,7 +1847,10 @@ public class DefaultApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Default-deleteCreature-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
 // Create an instance of the API class
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
@@ -1484,6 +1868,11 @@ Integer *id = 56; // Creature ID (default to null)
 
                             <div class="tab-pane" id="examples-Default-deleteCreature-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new CharacterBuilderApi.DefaultApi()
@@ -1516,6 +1905,8 @@ namespace Example
     {
         public void main()
         {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new DefaultApi();
@@ -1537,6 +1928,9 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\DefaultApi();
 $id = 56; // Integer | Creature ID
@@ -1553,6 +1947,9 @@ try {
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::DefaultApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
@@ -1572,6 +1969,9 @@ import time
 import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.DefaultApi()
@@ -1709,6 +2109,504 @@ Creature ID
                         </article>
                       </div>
                       <hr>
+                    <div id="api-Default-getClassById">
+                      <article id="api-Default-getClassById-0" data-group="User" data-name="getClassById" data-version="0">
+                        <div class="pull-left">
+                          <h1>getClassById</h1>
+                          <p>Get class by ID</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Retrieve a specific class by ID with optional levels</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/class/{id}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-getClassById-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-getClassById-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-getClassById-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-getClassById-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-getClassById-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-getClassById-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-getClassById-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
+ "http://$/class/{id}?includeLevels=true"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-getClassById-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
+
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        Integer id = 56; // Integer | Class ID
+        Boolean includeLevels = true; // Boolean | Include class levels in the response
+
+        try {
+            class result = apiInstance.getClassById(id, includeLevels);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getClassById");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getClassById-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+final Integer id = new Integer(); // Integer | Class ID
+final Boolean includeLevels = new Boolean(); // Boolean | Include class levels in the response
+
+try {
+    final result = await api_instance.getClassById(id, includeLevels);
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->getClassById: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getClassById-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        Integer id = 56; // Integer | Class ID
+        Boolean includeLevels = true; // Boolean | Include class levels in the response
+
+        try {
+            class result = apiInstance.getClassById(id, includeLevels);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getClassById");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-getClassById-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-getClassById-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+Integer *id = 56; // Class ID (default to null)
+Boolean *includeLevels = true; // Include class levels in the response (optional) (default to true)
+
+// Get class by ID
+[apiInstance getClassByIdWith:id
+    includeLevels:includeLevels
+              completionHandler: ^(class output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getClassById-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
+
+// Create an instance of the API class
+var api = new CharacterBuilderApi.DefaultApi()
+var id = 56; // {Integer} Class ID
+var opts = {
+  'includeLevels': true // {Boolean} Include class levels in the response
+};
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getClassById(id, opts, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-getClassById-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-getClassById-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getClassByIdExample
+    {
+        public void main()
+        {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
+
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var id = 56;  // Integer | Class ID (default to null)
+            var includeLevels = true;  // Boolean | Include class levels in the response (optional)  (default to true)
+
+            try {
+                // Get class by ID
+                class result = apiInstance.getClassById(id, includeLevels);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.getClassById: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getClassById-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$id = 56; // Integer | Class ID
+$includeLevels = true; // Boolean | Include class levels in the response
+
+try {
+    $result = $api_instance->getClassById($id, $includeLevels);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->getClassById: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getClassById-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $id = 56; # Integer | Class ID
+my $includeLevels = true; # Boolean | Include class levels in the response
+
+eval {
+    my $result = $api_instance->getClassById(id => $id, includeLevels => $includeLevels);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->getClassById: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getClassById-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+id = 56 # Integer | Class ID (default to null)
+includeLevels = true # Boolean | Include class levels in the response (optional) (default to true)
+
+try:
+    # Get class by ID
+    api_response = api_instance.get_class_by_id(id, includeLevels=includeLevels)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->getClassById: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getClassById-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let id = 56; // Integer
+    let includeLevels = true; // Boolean
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.getClassById(id, includeLevels, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">id*</td>
+<td>
+
+
+    <div id="d2e199_getClassById_id">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Class ID
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">includeLevels</td>
+<td>
+
+
+    <div id="d2e199_getClassById_includeLevels">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Boolean
+                </span>
+
+                    <div class="inner description marked">
+Include class levels in the response
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-getClassById-title-200"></h3>
+                            <p id="examples-Default-getClassById-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `Class found`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-getClassById-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-getClassById-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-getClassById-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getClassById-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getClassById-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getClassById-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Default-getClassById-200-schema">
+                                <div id="responses-Default-getClassById-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Class found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/class"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Default-getClassById-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Default-getClassById-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Default-getClassById-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Default-getClassById-title-404"></h3>
+                            <p id="examples-Default-getClassById-description-404" class="marked"></p>
+                            <script>
+                              var responseDefault404_description = `Class not found`;
+                              var responseDefault404_description_break = responseDefault404_description.indexOf('\n');
+                              if (responseDefault404_description_break == -1) {
+                                $("#examples-Default-getClassById-title-404").text("Status: 404 - " + responseDefault404_description);
+                              } else {
+                                $("#examples-Default-getClassById-title-404").text("Status: 404 - " + responseDefault404_description.substring(0, responseDefault404_description_break));
+                                $("#examples-Default-getClassById-description-404").html(responseDefault404_description.substring(responseDefault404_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getClassById-404" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getClassById-404-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Default-getClassById-404-schema">
+                                <div id="responses-Default-getClassById-schema-404" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Class not found"
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Default-getClassById-404-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Default-getClassById-schema-404');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Default-getClassById-404-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-Default-getClasses">
                       <article id="api-Default-getClasses-0" data-group="User" data-name="getClasses" data-version="0">
                         <div class="pull-left">
@@ -1744,8 +2642,9 @@ Creature ID
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-getClasses-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
  -H "Accept: application/json" \
- "http://localhost:3001/class"
+ "http://$/class?classification=classification_example&includeLevels=true"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-getClasses-0-java">
@@ -1759,12 +2658,19 @@ import java.util.*;
 
 public class DefaultApiExample {
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         DefaultApi apiInstance = new DefaultApi();
+        String classification = classification_example; // String | Filter classes by classification type
+        Boolean includeLevels = true; // Boolean | Include class levels in the response
 
         try {
-            array[class] result = apiInstance.getClasses();
+            array[class] result = apiInstance.getClasses(classification, includeLevels);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getClasses");
@@ -1780,9 +2686,11 @@ public class DefaultApiExample {
 
 final api_instance = DefaultApi();
 
+final String classification = new String(); // String | Filter classes by classification type
+final Boolean includeLevels = new Boolean(); // Boolean | Include class levels in the response
 
 try {
-    final result = await api_instance.getClasses();
+    final result = await api_instance.getClasses(classification, includeLevels);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->getClasses: $e\n');
@@ -1797,9 +2705,11 @@ try {
 public class DefaultApiExample {
     public static void main(String[] args) {
         DefaultApi apiInstance = new DefaultApi();
+        String classification = classification_example; // String | Filter classes by classification type
+        Boolean includeLevels = true; // Boolean | Include class levels in the response
 
         try {
-            array[class] result = apiInstance.getClasses();
+            array[class] result = apiInstance.getClasses(classification, includeLevels);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#getClasses");
@@ -1813,14 +2723,20 @@ public class DefaultApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Default-getClasses-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
 // Create an instance of the API class
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
+String *classification = classification_example; // Filter classes by classification type (optional) (default to null)
+Boolean *includeLevels = true; // Include class levels in the response (optional) (default to false)
 
 // Get all classes
-[apiInstance getClassesWithCompletionHandler: 
-              ^(array[class] output, NSError* error) {
+[apiInstance getClassesWith:classification
+    includeLevels:includeLevels
+              completionHandler: ^(array[class] output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
     }
@@ -1833,9 +2749,19 @@ DefaultApi *apiInstance = [[DefaultApi alloc] init];
 
                             <div class="tab-pane" id="examples-Default-getClasses-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new CharacterBuilderApi.DefaultApi()
+var opts = {
+  'classification': classification_example, // {String} Filter classes by classification type
+  'includeLevels': true // {Boolean} Include class levels in the response
+};
+
 var callback = function(error, data, response) {
   if (error) {
     console.error(error);
@@ -1843,7 +2769,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.getClasses(callback);
+api.getClasses(opts, callback);
 </code></pre>
                             </div>
 
@@ -1863,13 +2789,17 @@ namespace Example
     {
         public void main()
         {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new DefaultApi();
+            var classification = classification_example;  // String | Filter classes by classification type (optional)  (default to null)
+            var includeLevels = true;  // Boolean | Include class levels in the response (optional)  (default to false)
 
             try {
                 // Get all classes
-                array[class] result = apiInstance.getClasses();
+                array[class] result = apiInstance.getClasses(classification, includeLevels);
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling DefaultApi.getClasses: " + e.Message );
@@ -1884,11 +2814,16 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$classification = classification_example; // String | Filter classes by classification type
+$includeLevels = true; // Boolean | Include class levels in the response
 
 try {
-    $result = $api_instance->getClasses();
+    $result = $api_instance->getClasses($classification, $includeLevels);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling DefaultApi->getClasses: ', $e->getMessage(), PHP_EOL;
@@ -1901,11 +2836,16 @@ try {
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::DefaultApi;
 
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $classification = classification_example; # String | Filter classes by classification type
+my $includeLevels = true; # Boolean | Include class levels in the response
 
 eval {
-    my $result = $api_instance->getClasses();
+    my $result = $api_instance->getClasses(classification => $classification, includeLevels => $includeLevels);
     print Dumper($result);
 };
 if ($@) {
@@ -1920,12 +2860,17 @@ import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
 
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
 # Create an instance of the API class
 api_instance = openapi_client.DefaultApi()
+classification = classification_example # String | Filter classes by classification type (optional) (default to null)
+includeLevels = true # Boolean | Include class levels in the response (optional) (default to false)
 
 try:
     # Get all classes
-    api_response = api_instance.get_classes()
+    api_response = api_instance.get_classes(classification=classification, includeLevels=includeLevels)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling DefaultApi->getClasses: %s\n" % e)</code></pre>
@@ -1935,9 +2880,11 @@ except ApiException as e:
                               <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
 
 pub fn main() {
+    let classification = classification_example; // String
+    let includeLevels = true; // Boolean
 
     let mut context = DefaultApi::Context::default();
-    let result = client.getClasses(&context).wait();
+    let result = client.getClasses(classification, includeLevels, &context).wait();
 
     println!("{:?}", result);
 }
@@ -1956,6 +2903,53 @@ pub fn main() {
 
 
 
+                            <div class="methodsubtabletitle">Query parameters</div>
+                            <table id="methodsubtable">
+                              <tr>
+                                <th width="150px">Name</th>
+                                <th>Description</th>
+                              </tr>
+                                <tr><td style="width:150px;">classification</td>
+<td>
+
+
+    <div id="d2e199_getClasses_classification">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    String
+                </span>
+
+                    <div class="inner description marked">
+Filter classes by classification type
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">includeLevels</td>
+<td>
+
+
+    <div id="d2e199_getClasses_includeLevels">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Boolean
+                </span>
+
+                    <div class="inner description marked">
+Include class levels in the response
+                    </div>
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
 
                           <h2>Responses</h2>
                             <h3 id="examples-Default-getClasses-title-200"></h3>
@@ -2075,8 +3069,9 @@ pub fn main() {
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-getCreatureById-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
  -H "Accept: application/json" \
- "http://localhost:3001/creature/{id}"
+ "http://$/creature/{id}"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-getCreatureById-0-java">
@@ -2090,6 +3085,11 @@ import java.util.*;
 
 public class DefaultApiExample {
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         DefaultApi apiInstance = new DefaultApi();
@@ -2147,7 +3147,10 @@ public class DefaultApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Default-getCreatureById-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
 // Create an instance of the API class
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
@@ -2168,6 +3171,11 @@ Integer *id = 56; // Creature ID (default to null)
 
                             <div class="tab-pane" id="examples-Default-getCreatureById-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new CharacterBuilderApi.DefaultApi()
@@ -2200,6 +3208,8 @@ namespace Example
     {
         public void main()
         {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new DefaultApi();
@@ -2222,6 +3232,9 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\DefaultApi();
 $id = 56; // Integer | Creature ID
@@ -2239,6 +3252,9 @@ try {
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::DefaultApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
@@ -2259,6 +3275,9 @@ import time
 import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.DefaultApi()
@@ -2508,8 +3527,9 @@ Creature ID
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-getCreatures-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
  -H "Accept: application/json" \
- "http://localhost:3001/creature"
+ "http://$/creature"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-getCreatures-0-java">
@@ -2523,6 +3543,11 @@ import java.util.*;
 
 public class DefaultApiExample {
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         DefaultApi apiInstance = new DefaultApi();
@@ -2577,7 +3602,10 @@ public class DefaultApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Default-getCreatures-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
 // Create an instance of the API class
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
@@ -2597,6 +3625,11 @@ DefaultApi *apiInstance = [[DefaultApi alloc] init];
 
                             <div class="tab-pane" id="examples-Default-getCreatures-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new CharacterBuilderApi.DefaultApi()
@@ -2627,6 +3660,8 @@ namespace Example
     {
         public void main()
         {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new DefaultApi();
@@ -2648,6 +3683,9 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\DefaultApi();
 
@@ -2664,6 +3702,9 @@ try {
                               <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::DefaultApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
@@ -2683,6 +3724,9 @@ import time
 import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.DefaultApi()
@@ -2804,6 +3848,820 @@ pub fn main() {
                         </article>
                       </div>
                       <hr>
+                    <div id="api-Default-getItems">
+                      <article id="api-Default-getItems-0" data-group="User" data-name="getItems" data-version="0">
+                        <div class="pull-left">
+                          <h1>getItems</h1>
+                          <p>Get all items</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Retrieve a list of all items</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/item</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-getItems-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-getItems-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-getItems-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-getItems-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-getItems-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-getItems-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-getItems-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
+ "http://$/item"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-getItems-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
+
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+
+        try {
+            array[item] result = apiInstance.getItems();
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getItems");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getItems-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+
+try {
+    final result = await api_instance.getItems();
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->getItems: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getItems-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+
+        try {
+            array[item] result = apiInstance.getItems();
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getItems");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-getItems-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-getItems-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+
+// Get all items
+[apiInstance getItemsWithCompletionHandler: 
+              ^(array[item] output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getItems-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
+
+// Create an instance of the API class
+var api = new CharacterBuilderApi.DefaultApi()
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getItems(callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-getItems-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-getItems-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getItemsExample
+    {
+        public void main()
+        {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
+
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+
+            try {
+                // Get all items
+                array[item] result = apiInstance.getItems();
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.getItems: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getItems-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+
+try {
+    $result = $api_instance->getItems();
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->getItems: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getItems-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+
+eval {
+    my $result = $api_instance->getItems();
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->getItems: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getItems-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+
+try:
+    # Get all items
+    api_response = api_instance.get_items()
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->getItems: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getItems-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.getItems(&context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-getItems-title-200"></h3>
+                            <p id="examples-Default-getItems-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `List of items`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-getItems-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-getItems-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-getItems-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getItems-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getItems-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getItems-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Default-getItems-200-schema">
+                                <div id="responses-Default-getItems-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "List of items",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/item"
+        }
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Default-getItems-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Default-getItems-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Default-getItems-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
+                    <div id="api-Default-getSelectableFeatureListById">
+                      <article id="api-Default-getSelectableFeatureListById-0" data-group="User" data-name="getSelectableFeatureListById" data-version="0">
+                        <div class="pull-left">
+                          <h1>getSelectableFeatureListById</h1>
+                          <p>Get selectable feature list by ID</p>
+                        </div>
+                        <div class="pull-right"></div>
+                        <div class="clearfix"></div>
+                        <p></p>
+                        <p class="marked">Retrieve a specific selectable feature list by ID</p>
+                        <p></p>
+                        <br />
+                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/class/selectableFeatureList/{id}</span></code></pre>
+                        <p>
+                          <h3>Usage and SDK Samples</h3>
+                        </p>
+                        <ul class="nav nav-tabs nav-tabs-examples">
+                          <li class="active"><a href="#examples-Default-getSelectableFeatureListById-0-curl">Curl</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-java">Java</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-dart">Dart</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-android">Android</a></li>
+                          <!--<li class=""><a href="#examples-Default-getSelectableFeatureListById-0-groovy">Groovy</a></li>-->
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-objc">Obj-C</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-javascript">JavaScript</a></li>
+                          <!--<li class=""><a href="#examples-Default-getSelectableFeatureListById-0-angular">Angular</a></li>-->
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-csharp">C#</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-php">PHP</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-perl">Perl</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-python">Python</a></li>
+                          <li class=""><a href="#examples-Default-getSelectableFeatureListById-0-rust">Rust</a></li>
+                        </ul>
+
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="examples-Default-getSelectableFeatureListById-0-curl">
+                            <pre class="prettyprint"><code class="language-bsh">curl -X GET \
+ -H "Authorization: Bearer [[accessToken]]" \
+ -H "Accept: application/json" \
+ "http://$/class/selectableFeatureList/{id}"
+</code></pre>
+                          </div>
+                          <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-java">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.*;
+import org.openapitools.client.auth.*;
+import org.openapitools.client.model.*;
+import org.openapitools.client.api.DefaultApi;
+
+import java.io.File;
+import java.util.*;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
+
+        // Create an instance of the API class
+        DefaultApi apiInstance = new DefaultApi();
+        Integer id = 56; // Integer | Selectable Feature List ID
+
+        try {
+            selectableFeatureList result = apiInstance.getSelectableFeatureListById(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getSelectableFeatureListById");
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-dart">
+                            <pre class="prettyprint"><code class="language-dart">import 'package:openapi/api.dart';
+
+final api_instance = DefaultApi();
+
+final Integer id = new Integer(); // Integer | Selectable Feature List ID
+
+try {
+    final result = await api_instance.getSelectableFeatureListById(id);
+    print(result);
+} catch (e) {
+    print('Exception when calling DefaultApi->getSelectableFeatureListById: $e\n');
+}
+
+</code></pre>
+                          </div>
+
+                          <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-android">
+                            <pre class="prettyprint"><code class="language-java">import org.openapitools.client.api.DefaultApi;
+
+public class DefaultApiExample {
+    public static void main(String[] args) {
+        DefaultApi apiInstance = new DefaultApi();
+        Integer id = 56; // Integer | Selectable Feature List ID
+
+        try {
+            selectableFeatureList result = apiInstance.getSelectableFeatureListById(id);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling DefaultApi#getSelectableFeatureListById");
+            e.printStackTrace();
+        }
+    }
+}</code></pre>
+                          </div>
+  <!--
+  <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-groovy">
+  <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+  </div> -->
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-objc">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
+
+// Create an instance of the API class
+DefaultApi *apiInstance = [[DefaultApi alloc] init];
+Integer *id = 56; // Selectable Feature List ID (default to null)
+
+// Get selectable feature list by ID
+[apiInstance getSelectableFeatureListByIdWith:id
+              completionHandler: ^(selectableFeatureList output, NSError* error) {
+    if (output) {
+        NSLog(@"%@", output);
+    }
+    if (error) {
+        NSLog(@"Error: %@", error);
+    }
+}];
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-javascript">
+                              <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
+
+// Create an instance of the API class
+var api = new CharacterBuilderApi.DefaultApi()
+var id = 56; // {Integer} Selectable Feature List ID
+
+var callback = function(error, data, response) {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+};
+api.getSelectableFeatureListById(id, callback);
+</code></pre>
+                            </div>
+
+                            <!--<div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-angular">
+              <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
+            </div>-->
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-csharp">
+                              <pre class="prettyprint"><code class="language-cs">using System;
+using System.Diagnostics;
+using Org.OpenAPITools.Api;
+using Org.OpenAPITools.Client;
+using Org.OpenAPITools.Model;
+
+namespace Example
+{
+    public class getSelectableFeatureListByIdExample
+    {
+        public void main()
+        {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
+
+            // Create an instance of the API class
+            var apiInstance = new DefaultApi();
+            var id = 56;  // Integer | Selectable Feature List ID (default to null)
+
+            try {
+                // Get selectable feature list by ID
+                selectableFeatureList result = apiInstance.getSelectableFeatureListById(id);
+                Debug.WriteLine(result);
+            } catch (Exception e) {
+                Debug.Print("Exception when calling DefaultApi.getSelectableFeatureListById: " + e.Message );
+            }
+        }
+    }
+}
+</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-php">
+                              <pre class="prettyprint"><code class="language-php"><&#63;php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
+// Create an instance of the API class
+$api_instance = new OpenAPITools\Client\Api\DefaultApi();
+$id = 56; // Integer | Selectable Feature List ID
+
+try {
+    $result = $api_instance->getSelectableFeatureListById($id);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling DefaultApi->getSelectableFeatureListById: ', $e->getMessage(), PHP_EOL;
+}
+?></code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-perl">
+                              <pre class="prettyprint"><code class="language-perl">use Data::Dumper;
+use WWW::OPenAPIClient::Configuration;
+use WWW::OPenAPIClient::DefaultApi;
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
+# Create an instance of the API class
+my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
+my $id = 56; # Integer | Selectable Feature List ID
+
+eval {
+    my $result = $api_instance->getSelectableFeatureListById(id => $id);
+    print Dumper($result);
+};
+if ($@) {
+    warn "Exception when calling DefaultApi->getSelectableFeatureListById: $@\n";
+}</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-python">
+                              <pre class="prettyprint"><code class="language-python">from __future__ import print_statement
+import time
+import openapi_client
+from openapi_client.rest import ApiException
+from pprint import pprint
+
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
+# Create an instance of the API class
+api_instance = openapi_client.DefaultApi()
+id = 56 # Integer | Selectable Feature List ID (default to null)
+
+try:
+    # Get selectable feature list by ID
+    api_response = api_instance.get_selectable_feature_list_by_id(id)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->getSelectableFeatureListById: %s\n" % e)</code></pre>
+                            </div>
+
+                            <div class="tab-pane" id="examples-Default-getSelectableFeatureListById-0-rust">
+                              <pre class="prettyprint"><code class="language-rust">extern crate DefaultApi;
+
+pub fn main() {
+    let id = 56; // Integer
+
+    let mut context = DefaultApi::Context::default();
+    let result = client.getSelectableFeatureListById(id, &context).wait();
+
+    println!("{:?}", result);
+}
+</code></pre>
+                            </div>
+                          </div>
+
+                          <h2>Scopes</h2>
+                          <table>
+                            
+                          </table>
+
+                          <h2>Parameters</h2>
+
+                            <div class="methodsubtabletitle">Path parameters</div>
+                            <table id="methodsubtable">
+                                <tr>
+                                  <th width="150px">Name</th>
+                                  <th>Description</th>
+                                </tr>
+                                  <tr><td style="width:150px;">id*</td>
+<td>
+
+
+    <div id="d2e199_getSelectableFeatureListById_id">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Integer
+                </span>
+
+                    <div class="inner description marked">
+Selectable Feature List ID
+                    </div>
+            </div>
+                <div class="inner required">
+                    Required
+                </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                            </table>
+
+
+
+
+
+                          <h2>Responses</h2>
+                            <h3 id="examples-Default-getSelectableFeatureListById-title-200"></h3>
+                            <p id="examples-Default-getSelectableFeatureListById-description-200" class="marked"></p>
+                            <script>
+                              var responseDefault200_description = `Selectable feature list found`;
+                              var responseDefault200_description_break = responseDefault200_description.indexOf('\n');
+                              if (responseDefault200_description_break == -1) {
+                                $("#examples-Default-getSelectableFeatureListById-title-200").text("Status: 200 - " + responseDefault200_description);
+                              } else {
+                                $("#examples-Default-getSelectableFeatureListById-title-200").text("Status: 200 - " + responseDefault200_description.substring(0, responseDefault200_description_break));
+                                $("#examples-Default-getSelectableFeatureListById-description-200").html(responseDefault200_description.substring(responseDefault200_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getSelectableFeatureListById-200" class="nav nav-tabs nav-tabs-examples" >
+                                <li class="active">
+                                  <a data-toggle="tab" href="#responses-Default-getSelectableFeatureListById-200-schema">Schema</a>
+                                </li>
+
+
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getSelectableFeatureListById-200-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Default-getSelectableFeatureListById-200-schema">
+                                <div id="responses-Default-getSelectableFeatureListById-schema-200" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Selectable feature list found",
+  "content" : {
+    "application/json" : {
+      "schema" : {
+        "$ref" : "#/components/schemas/selectableFeatureList"
+      }
+    }
+  }
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Default-getSelectableFeatureListById-200-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Default-getSelectableFeatureListById-schema-200');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Default-getSelectableFeatureListById-200-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                            <h3 id="examples-Default-getSelectableFeatureListById-title-404"></h3>
+                            <p id="examples-Default-getSelectableFeatureListById-description-404" class="marked"></p>
+                            <script>
+                              var responseDefault404_description = `Selectable feature list not found`;
+                              var responseDefault404_description_break = responseDefault404_description.indexOf('\n');
+                              if (responseDefault404_description_break == -1) {
+                                $("#examples-Default-getSelectableFeatureListById-title-404").text("Status: 404 - " + responseDefault404_description);
+                              } else {
+                                $("#examples-Default-getSelectableFeatureListById-title-404").text("Status: 404 - " + responseDefault404_description.substring(0, responseDefault404_description_break));
+                                $("#examples-Default-getSelectableFeatureListById-description-404").html(responseDefault404_description.substring(responseDefault404_description_break));
+                              }
+                            </script>
+
+
+                            <ul id="responses-detail-Default-getSelectableFeatureListById-404" class="nav nav-tabs nav-tabs-examples" >
+
+
+                            </ul>
+
+
+                            <div class="tab-content" id="responses-Default-getSelectableFeatureListById-404-wrapper" style='margin-bottom: 10px;'>
+                              <div class="tab-pane active" id="responses-Default-getSelectableFeatureListById-404-schema">
+                                <div id="responses-Default-getSelectableFeatureListById-schema-404" class="exampleStyle">
+                                  <script>
+                                    $(document).ready(function() {
+                                      var schemaWrapper = {
+  "description" : "Selectable feature list not found"
+};
+                                      var schema = findNode('schema',schemaWrapper).schema;
+                                      if (!schema) {
+                                        schema = schemaWrapper.schema;
+                                      }
+                                      if (schema == null) {
+                                        return;
+                                      }
+                                      if (schema.$ref != null) {
+                                        schema = defsParser.$refs.get(schema.$ref);
+                                        if (schema.properties != null) {
+                                          Object.keys(schema.properties).forEach( (item) => {
+                                            if (schema.properties[item].$ref != null) {
+                                              schema.properties[item] = defsParser.$refs.get(schema.properties[item].$ref);
+                                            }
+                                          });
+                                        }
+                                      } else if (schema.items != null && schema.items.$ref != null) {
+                                        schema.items = defsParser.$refs.get(schema.items.$ref);
+                                      } else {
+                                        schemaWrapper.definitions = Object.assign({}, defs);
+                                        $RefParser.dereference(schemaWrapper).catch(function(err) {
+                                          console.log(err);
+                                        });
+                                      }
+
+                                      var view = new JSONSchemaView(schema, 3);
+                                      $('#responses-Default-getSelectableFeatureListById-404-schema-data').val(JSON.stringify(schema));
+                                      var result = $('#responses-Default-getSelectableFeatureListById-schema-404');
+                                      result.empty();
+                                      result.append(view.render());
+                                    });
+                                  </script>
+                                </div>
+                                <input id='responses-Default-getSelectableFeatureListById-404-schema-data' type='hidden' value=''></input>
+                              </div>
+                            </div>
+                        </article>
+                      </div>
+                      <hr>
                     <div id="api-Default-updateCreature">
                       <article id="api-Default-updateCreature-0" data-group="User" data-name="updateCreature" data-version="0">
                         <div class="pull-left">
@@ -2839,9 +4697,30 @@ pub fn main() {
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Default-updateCreature-0-curl">
                             <pre class="prettyprint"><code class="language-bsh">curl -X PUT \
+ -H "Authorization: Bearer [[accessToken]]" \
  -H "Content-Type: application/json" \
- "http://localhost:3001/creature/{id}" \
- -d ''
+ "http://$/creature/{id}" \
+ -d '{
+  &quot;wealth&quot; : 2,
+  &quot;intellect&quot; : 5,
+  &quot;level&quot; : 0,
+  &quot;might&quot; : 6,
+  &quot;classes&quot; : [ 7, 7 ],
+  &quot;spirit&quot; : 5,
+  &quot;portrait&quot; : &quot;portrait&quot;,
+  &quot;type&quot; : &quot;type&quot;,
+  &quot;features&quot; : [ 9, 9 ],
+  &quot;name&quot; : &quot;name&quot;,
+  &quot;id&quot; : 4,
+  &quot;agility&quot; : 1,
+  &quot;items&quot; : [ {
+    &quot;itemId&quot; : 3,
+    &quot;quantity&quot; : 2
+  }, {
+    &quot;itemId&quot; : 3,
+    &quot;quantity&quot; : 2
+  } ]
+}'
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Default-updateCreature-0-java">
@@ -2855,14 +4734,19 @@ import java.util.*;
 
 public class DefaultApiExample {
     public static void main(String[] args) {
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+
+        // Configure Bearer (JWT) access token for authorization: bearerAuth
+        HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
+        bearerAuth.setBearerToken("BEARER TOKEN");
 
         // Create an instance of the API class
         DefaultApi apiInstance = new DefaultApi();
         Integer id = 56; // Integer | Creature ID
-        CreatureBase creatureBase = ; // CreatureBase | 
+        creature body = ; // creature | 
 
         try {
-            apiInstance.updateCreature(id, creatureBase);
+            apiInstance.updateCreature(id, body);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#updateCreature");
             e.printStackTrace();
@@ -2878,10 +4762,10 @@ public class DefaultApiExample {
 final api_instance = DefaultApi();
 
 final Integer id = new Integer(); // Integer | Creature ID
-final CreatureBase creatureBase = new CreatureBase(); // CreatureBase | 
+final creature body = new creature(); // creature | 
 
 try {
-    final result = await api_instance.updateCreature(id, creatureBase);
+    final result = await api_instance.updateCreature(id, body);
     print(result);
 } catch (e) {
     print('Exception when calling DefaultApi->updateCreature: $e\n');
@@ -2897,10 +4781,10 @@ public class DefaultApiExample {
     public static void main(String[] args) {
         DefaultApi apiInstance = new DefaultApi();
         Integer id = 56; // Integer | Creature ID
-        CreatureBase creatureBase = ; // CreatureBase | 
+        creature body = ; // creature | 
 
         try {
-            apiInstance.updateCreature(id, creatureBase);
+            apiInstance.updateCreature(id, body);
         } catch (ApiException e) {
             System.err.println("Exception when calling DefaultApi#updateCreature");
             e.printStackTrace();
@@ -2913,16 +4797,19 @@ public class DefaultApiExample {
   <pre class="prettyprint language-json prettyprinted" data-type="json"><code>Coming Soon!</code></pre>
   </div> -->
                             <div class="tab-pane" id="examples-Default-updateCreature-0-objc">
-                              <pre class="prettyprint"><code class="language-cpp">
+                              <pre class="prettyprint"><code class="language-cpp">Configuration *apiConfig = [Configuration sharedConfig];
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+[apiConfig setAccessToken:@"YOUR_ACCESS_TOKEN"];
 
 // Create an instance of the API class
 DefaultApi *apiInstance = [[DefaultApi alloc] init];
 Integer *id = 56; // Creature ID (default to null)
-CreatureBase *creatureBase = ; // 
+creature *body = ; // 
 
 // Update creature
 [apiInstance updateCreatureWith:id
-    creatureBase:creatureBase
+    body:body
               completionHandler: ^(NSError* error) {
     if (error) {
         NSLog(@"Error: %@", error);
@@ -2933,11 +4820,16 @@ CreatureBase *creatureBase = ; //
 
                             <div class="tab-pane" id="examples-Default-updateCreature-0-javascript">
                               <pre class="prettyprint"><code class="language-js">var CharacterBuilderApi = require('character_builder_api');
+var defaultClient = CharacterBuilderApi.ApiClient.instance;
+
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+var bearerAuth = defaultClient.authentications['bearerAuth'];
+bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new CharacterBuilderApi.DefaultApi()
 var id = 56; // {Integer} Creature ID
-var creatureBase = ; // {CreatureBase} 
+var body = ; // {creature} 
 
 var callback = function(error, data, response) {
   if (error) {
@@ -2946,7 +4838,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully.');
   }
 };
-api.updateCreature(id, creatureBase, callback);
+api.updateCreature(id, body, callback);
 </code></pre>
                             </div>
 
@@ -2966,15 +4858,17 @@ namespace Example
     {
         public void main()
         {
+            // Configure Bearer (JWT) access token for authorization: bearerAuth
+            Configuration.Default.AccessToken = "YOUR_ACCESS_TOKEN";
 
             // Create an instance of the API class
             var apiInstance = new DefaultApi();
             var id = 56;  // Integer | Creature ID (default to null)
-            var creatureBase = new CreatureBase(); // CreatureBase | 
+            var body = ;  // creature | 
 
             try {
                 // Update creature
-                apiInstance.updateCreature(id, creatureBase);
+                apiInstance.updateCreature(id, body);
             } catch (Exception e) {
                 Debug.Print("Exception when calling DefaultApi.updateCreature: " + e.Message );
             }
@@ -2988,13 +4882,16 @@ namespace Example
                               <pre class="prettyprint"><code class="language-php"><&#63;php
 require_once(__DIR__ . '/vendor/autoload.php');
 
+// Configure Bearer (JWT) access token for authorization: bearerAuth
+OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('', 'YOUR_ACCESS_TOKEN');
+
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\DefaultApi();
 $id = 56; // Integer | Creature ID
-$creatureBase = ; // CreatureBase | 
+$body = ; // creature | 
 
 try {
-    $api_instance->updateCreature($id, $creatureBase);
+    $api_instance->updateCreature($id, $body);
 } catch (Exception $e) {
     echo 'Exception when calling DefaultApi->updateCreature: ', $e->getMessage(), PHP_EOL;
 }
@@ -3006,13 +4903,16 @@ try {
 use WWW::OPenAPIClient::Configuration;
 use WWW::OPenAPIClient::DefaultApi;
 
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+$WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
+
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::DefaultApi->new();
 my $id = 56; # Integer | Creature ID
-my $creatureBase = WWW::OPenAPIClient::Object::CreatureBase->new(); # CreatureBase | 
+my $body = WWW::OPenAPIClient::Object::creature->new(); # creature | 
 
 eval {
-    $api_instance->updateCreature(id => $id, creatureBase => $creatureBase);
+    $api_instance->updateCreature(id => $id, body => $body);
 };
 if ($@) {
     warn "Exception when calling DefaultApi->updateCreature: $@\n";
@@ -3026,14 +4926,17 @@ import openapi_client
 from openapi_client.rest import ApiException
 from pprint import pprint
 
+# Configure Bearer (JWT) access token for authorization: bearerAuth
+openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
+
 # Create an instance of the API class
 api_instance = openapi_client.DefaultApi()
 id = 56 # Integer | Creature ID (default to null)
-creatureBase =  # CreatureBase | 
+body =  # creature | 
 
 try:
     # Update creature
-    api_instance.update_creature(id, creatureBase)
+    api_instance.update_creature(id, body)
 except ApiException as e:
     print("Exception when calling DefaultApi->updateCreature: %s\n" % e)</code></pre>
                             </div>
@@ -3043,10 +4946,10 @@ except ApiException as e:
 
 pub fn main() {
     let id = 56; // Integer
-    let creatureBase = ; // CreatureBase
+    let body = ; // creature
 
     let mut context = DefaultApi::Context::default();
-    let result = client.updateCreature(id, creatureBase, &context).wait();
+    let result = client.updateCreature(id, body, &context).wait();
 
     println!("{:?}", result);
 }
@@ -3099,7 +5002,7 @@ Creature ID
                                 <th width="150px">Name</th>
                                 <th>Description</th>
                               </tr>
-                                <tr><td style="width:150px;">creatureBase <span style="color:red;">*</span></td>
+                                <tr><td style="width:150px;">body <span style="color:red;">*</span></td>
 <td>
 <p class="marked"></p>
 <script>
@@ -3108,7 +5011,7 @@ $(document).ready(function() {
   "content" : {
     "application/json" : {
       "schema" : {
-        "$ref" : "#/components/schemas/creatureBase"
+        "$ref" : "#/components/schemas/updateCreatureRequest"
       }
     }
   },
@@ -3131,12 +5034,12 @@ $(document).ready(function() {
   }
 
   var view = new JSONSchemaView(schema,2,{isBodyParam: true});
-  var result = $('#d2e199_updateCreature_creatureBase');
+  var result = $('#d2e199_updateCreature_body');
   result.empty();
   result.append(view.render());
 });
 </script>
-<div id="d2e199_updateCreature_creatureBase"></div>
+<div id="d2e199_updateCreature_body"></div>
 </td>
 </tr>
 

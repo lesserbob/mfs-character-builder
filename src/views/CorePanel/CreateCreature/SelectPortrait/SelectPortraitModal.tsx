@@ -20,11 +20,9 @@ export const SelectPortraitModal = ({
   useEffect(() => {
     fetch(`/portraits/portraits.json`)
       .then((res) => {
-        console.log(res);
         return res.json();
       })
       .then((data: PortraitData) => {
-        console.log(data);
         setPortraits(data);
         const firstFolder = Object.keys(data)[0];
         if (firstFolder) setSelectedFolder(firstFolder);

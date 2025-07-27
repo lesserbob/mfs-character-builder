@@ -3,6 +3,11 @@ export interface apiCreatureItem {
   quantity: number;
 }
 
+export interface apiBespokeFeature {
+  name: string;
+  description: string;
+}
+
 export interface apiCreature {
   id?: number;
   name: string;
@@ -16,4 +21,7 @@ export interface apiCreature {
   features: number[];
   items: apiCreatureItem[];
   portrait: string | null;
+  type: string;
+  baseHealth: number;
+  bespokeFeatures: apiBespokeFeature[];
 }

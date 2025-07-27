@@ -14,7 +14,7 @@ import {
 import SettingsIcon from '@mui/icons-material/Settings';
 import { apiClient } from '../../api/client';
 import { Creature } from '../../api/generated';
-import { ReadOnlyField } from './ViewCreature/ReadOnlyField';
+import { ReadOnlyField } from '../../components/ReadOnlyField';
 import './ViewCreature.css';
 import { useClasses } from '../../context/ClassContext';
 import { getClassDescription } from '../../util/CreatureUtils';
@@ -216,6 +216,12 @@ const ViewCreature: React.FC = () => {
                 label="Spirit"
                 value={creature.spirit?.toString() ?? '0'}
               />
+              {creature.type === 'ANTAGONIST' && (
+                <ReadOnlyField
+                  label="Base Health"
+                  value={creature.baseHealth?.toString() ?? '0'}
+                />
+              )}
             </Stack>
           </Grid>
           <Grid size={{ xs: 6 }}>

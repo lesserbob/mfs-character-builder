@@ -8,9 +8,12 @@
     "human3.jpg",
     "human4.jpg",
     "human5.jpg",
-    "human6.jpg"
+    "human6.jpg",
+    "human7.jpg",
+    "human8.jpg"
   ],
   "Shaktar": ["shak1.jpg"],
   "Wraithen": ["wraith1.jpg", "wraith2.jpg"],
-  "Xeno": ["xeno1.jpg"]
+  "Xeno": ["xeno1.jpg"],
+  "Carrien": ["carrien1.jpg", "carrien2.jpeg", "carrien3.png", "carrien4.jpeg"]
 }

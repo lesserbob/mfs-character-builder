@@ -14,12 +14,12 @@ import {
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ReadOnlyField } from './ViewCreature/ReadOnlyField';
+import { ReadOnlyField } from '../../components/ReadOnlyField';
 import { apiClient, Creature } from '../../api/client';
 import { useState, useEffect, useRef } from 'react';
 import { useClasses } from '../../context/ClassContext';
 import { getClassDescription } from '../../util/CreatureUtils';
-import { StatEditor } from './CreateCreature/StatEditor';
+import { StatEditor } from '../../components/StatEditor';
 import { CreatureDerivedStatBlock } from '../../components/CreatureDerivedStatBlock';
 import { CreatureAbiltities } from '../../components/CreatureAbilities';
 import './LevelUpCreature.css';

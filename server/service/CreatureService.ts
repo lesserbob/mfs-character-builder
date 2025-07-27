@@ -13,6 +13,7 @@ export const getCreature = async (id: number): Promise<apiCreature> => {
       features: true,
       items: true,
       classes: true,
+      bespokeFeatures: true,
     },
   });
 
@@ -36,6 +37,7 @@ export const getCreatures = async (user: any): Promise<apiCreature[]> => {
       features: true,
       items: true,
       classes: true,
+      bespokeFeatures: true,
     },
   });
 
@@ -46,7 +48,12 @@ export const getCreatures = async (user: any): Promise<apiCreature[]> => {
 
 export const mapDeCreatureToApiCreature = (
   deCreature: Prisma.CreatureGetPayload<{
-    include: { features: true; items: true; classes: true };
+    include: {
+      features: true;
+      items: true;
+      classes: true;
+      bespokeFeatures: true;
+    };
   }>
 ): apiCreature => {
   const result: apiCreature = {
@@ -65,6 +72,12 @@ export const mapDeCreatureToApiCreature = (
       quantity: i.quantity,
     })),
     portrait: deCreature.portrait,
+    type: deCreature.type,
+    baseHealth: deCreature.baseHealth,
+    bespokeFeatures: deCreature.bespokeFeatures.map((f) => ({
+      name: f.name,
+      description: f.description,
+    })),
   };
   return result;
 };
@@ -84,6 +97,8 @@ export const createCreature = async (
       wealth: 3, // Default to 3 wealth
       userId: userId,
       portrait: creature.portrait,
+      type: creature.type,
+      baseHealth: creature.baseHealth,
     },
     select: {
       id: true,
@@ -93,10 +108,12 @@ export const createCreature = async (
   // Create CreatureClass records for each class ID
   if (creature.classes && creature.classes.length > 0) {
     await prisma.creatureClass.createMany({
-      data: creature.classes.map((classId) => ({
-        creatureId: newCreature.id,
-        classId: classId,
-      })),
+      data: creature.classes
+        .filter((ccl) => ccl != null)
+        .map((classId) => ({
+          creatureId: newCreature.id,
+          classId: classId,
+        })),
     });
   }
 
@@ -106,6 +123,17 @@ export const createCreature = async (
       data: creature.features.map((featureId) => ({
         creatureId: newCreature.id,
         featureId: featureId,
+      })),
+    });
+  }
+
+  // Create Creature bespoke features
+  if (creature.bespokeFeatures && creature.bespokeFeatures.length > 0) {
+    await prisma.creatureBespokeFeature.createMany({
+      data: creature.bespokeFeatures.map((feature) => ({
+        creatureId: newCreature.id,
+        name: feature.name,
+        description: feature.description,
       })),
     });
   }
@@ -125,6 +153,8 @@ export const updateCreature = async (id: number, creature: apiCreature) => {
       spirit: creature.spirit,
       wealth: creature.wealth,
       portrait: creature.portrait,
+      type: creature.type,
+      baseHealth: creature.baseHealth,
     },
   });
 

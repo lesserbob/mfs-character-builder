@@ -62,6 +62,16 @@ enum ArmorType {
   HARDENED
 }
 
+enum CreatureType {
+  PLAYER
+  ANTAGONIST
+}
+
+enum FactionType {
+  PLAYER
+  NPC
+}
+
 model Creature {
   id        Int    @id @default(autoincrement())
   name      String
@@ -72,7 +82,9 @@ model Creature {
   spirit    Int    @default(0)
   wealth    Int    @default(0)
   userId    Int
-  portrait  String?
+  portrait      String?
+  type          String @default("PLAYER")
+  baseHealth    Int    @default(0)
 
   // Relationship to CreatureClass
   classes   CreatureClass[]
@@ -85,6 +97,9 @@ model Creature {
 
   // Relationship to CreatureItem
   items         CreatureItem[]
+
+  // Relationship to CreatureBespokeFeature
+  bespokeFeatures CreatureBespokeFeature[]
 }
 
 model CreatureSelectedFeature {
@@ -157,6 +172,16 @@ model ClassFeature {
 
   // Relationship to SelectableFeatureList
   selectableFeatureList SelectableFeatureList? @relation(fields: [selectableFeatureListId], references: [id])
+}
+
+model CreatureBespokeFeature {
+  id                      Int    @id @default(autoincrement())
+  creatureId              Int
+  name                    String
+  description             String
+
+  // Relationship to Creature
+  creature    Creature @relation(fields: [creatureId], references: [id])
 }
 
 model SelectableFeatureList {
@@ -233,4 +258,35 @@ model CreatureItem {
 
     // Relationship to item
   item      Item @relation(fields: [itemId], references: [id])
+}
+
+model Story {
+  id                      Int    @id @default(autoincrement())
+  name                    String
+  description             String
+
+    // Relationship to Faction
+  factions         Faction[]
+}
+
+model Faction {
+  id                      Int    @id @default(autoincrement())
+  name                    String
+  description             String
+  storyId                 Int
+  type                    FactionType
+
+  // Relationship to Story
+  creature  Story         @relation(fields: [storyId], references: [id])
+}
+
+model Actor {
+  id                      Int     @id @default(autoincrement())
+  creatureId              Int
+  storyId                 Int
+  enduranceDamage         Int     @default(0)
+  healthDamage            Int     @default(0)
+  momentumSpent           Int     @default(0)
+  tacticalSurgeToken      Boolean @default(true)
+  acting                  Boolean @default(false)
 }
