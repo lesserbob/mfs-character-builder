@@ -88,7 +88,7 @@ export const CreatureAbiltities = ({
   ) => {
     setIsModalOpen(false);
     if (result) {
-      onCreate(result.name, result.description);
+      onCreate!(result.name, result.description);
     }
   };
 

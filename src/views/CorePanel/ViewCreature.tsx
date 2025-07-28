@@ -158,7 +158,7 @@ const ViewCreature: React.FC = () => {
 
   return (
     <div>
-      <Box className="view-creature-settings-button">
+      {/* <Box className="view-creature-settings-button">
         <IconButton onClick={handleMenuOpen}>
           <SettingsIcon />
         </IconButton>
@@ -183,11 +183,37 @@ const ViewCreature: React.FC = () => {
             {pdfLoading ? 'Generating PDF...' : 'Export PDF'}
           </MenuItem>
         </Menu>
-      </Box>
+      </Box> */}
       <div ref={contentRef} className="view-creature-content">
-        <Typography variant="h5" component="h2">
-          {creature.name}
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Typography variant="h5" component="span">
+            {creature.name}
+          </Typography>
+          <IconButton onClick={handleMenuOpen} sx={{ mt: '2px' }}>
+            <SettingsIcon />
+          </IconButton>
+          <Menu
+            anchorEl={menuAnchorEl}
+            open={Boolean(menuAnchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuItem onClick={handleLevelUp} disabled={!canLevelUp(creature)}>
+              Level Up
+            </MenuItem>
+            <MenuItem onClick={handleChangeGear}>Change Gear</MenuItem>
+            <MenuItem onClick={handleExportPdfFromMenu} disabled={pdfLoading}>
+              {pdfLoading ? 'Generating PDF...' : 'Export PDF'}
+            </MenuItem>
+          </Menu>
+        </Box>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6 }}>
             <Stack spacing={2}>

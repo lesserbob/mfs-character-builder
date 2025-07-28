@@ -18,10 +18,13 @@ import { useAuth } from '../../context/AuthContext';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { SetWealthDialog } from './SearchCreatures/SetWealthDialog';
 
-const SearchCreatures = () => {
+export interface SearchCreatureProps {
+  type: 'PLAYER' | 'ANTAGONIST';
+}
+
+export const SearchCreatures = ({ type }: SearchCreatureProps) => {
   const [creatures, setCreatures] = useState<Creature[]>([]);
   const { classes } = useClasses();
-  const hasFetched = useRef(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isWealthModalOpen, setWealthModalOpen] = useState(false);
   const [currentCreature, setCurrentCreature] = useState<Creature | undefined>(
@@ -31,17 +34,15 @@ const SearchCreatures = () => {
   const { user } = useAuth();
 
   const fetchCreatures = useCallback(() => {
-    if (hasFetched.current) return; // Prevent duplicate calls
-    hasFetched.current = true;
     return apiClient
-      .getCreatures()
+      .getCreatures(type)
       .then((response) => {
         setCreatures(response.data);
       })
       .catch((error) => {
         console.error('Error fetching creatures:', error);
       });
-  }, []);
+  }, [type]);
 
   useEffect(() => {
     fetchCreatures();

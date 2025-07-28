@@ -139,6 +139,19 @@ export async function seedItems(prisma: PrismaClient) {
       sniper: false,
       brace: false,
     },
+    {
+      id: 8,
+      name: 'Weaponised Hockey Stick',
+      type: GearType.MELEE,
+      rank: 1,
+      damageUnarmored: 4,
+      damageArmored: -2,
+      concealable: false,
+      twoHanded: true,
+      reach: true,
+      finesse: false,
+      thrown: false,
+    },
   ];
   for (const item of items) {
     const { id, ...itemData } = item;

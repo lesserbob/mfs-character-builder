@@ -16,6 +16,13 @@ paths:
       summary: Get all creature
       description: Retrieve a list of all creatures
       operationId: getCreatures
+      parameters:
+        - name: type
+          in: query
+          description: Filter by creature type
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: List of creatures

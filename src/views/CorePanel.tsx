@@ -26,10 +26,17 @@ export const CorePanel = (): React.JSX.Element => {
       >
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/createCharacter" element={<CreatePlayerCharacter />} />
-          <Route path="/createAntagonist" element={<CreateAntagonist />} />
+          <Route path="/create-character" element={<CreatePlayerCharacter />} />
+          <Route path="/create-antagonist" element={<CreateAntagonist />} />
           <Route path="/creature/:id" element={<ViewCreature />} />
-          <Route path="/search" element={<SearchCreatures />} />
+          <Route
+            path="/search-character"
+            element={<SearchCreatures type={'PLAYER'} />}
+          />
+          <Route
+            path="/search-antagonist"
+            element={<SearchCreatures type={'ANTAGONIST'} />}
+          />
           <Route path="/levelup/:id/:level" element={<LevelUpCreature />} />
           <Route path="/search-items" element={<SearchItems />} />
           <Route path="/shopping/:id" element={<Shopping />} />

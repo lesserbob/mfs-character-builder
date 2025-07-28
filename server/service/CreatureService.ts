@@ -25,14 +25,22 @@ export const getCreature = async (id: number): Promise<apiCreature> => {
   return result;
 };
 
-export const getCreatures = async (user: any): Promise<apiCreature[]> => {
+export const getCreatures = async (
+  user: any,
+  type: string | null
+): Promise<apiCreature[]> => {
   // export const getCreatures = async (userId: number): Promise<apiCreature[]> => {
   const filterByUserId = user.type === 'PLAYER';
+  const filterByType = type != null;
   const userId = user.id!;
+
+  const filter = {
+    ...(filterByUserId ? { userId: userId } : {}),
+    ...(filterByType ? { type: type } : {}),
+  };
+
   const deCreatures = await prisma.creature.findMany({
-    where: {
-      ...(filterByUserId ? { userId: userId } : {}),
-    },
+    where: filter,
     include: {
       features: true,
       items: true,

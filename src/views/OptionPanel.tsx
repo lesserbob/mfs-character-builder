@@ -11,19 +11,23 @@ const OptionPanel = (): React.JSX.Element => {
   const { isAuthenticated, user } = useAuth();
 
   const handleCreateNewCharacter = () => {
-    navigate('/createCharacter');
+    navigate('/create-character');
   };
 
   const handleCreateNewAntagonist = () => {
-    navigate('/createAntagonist');
+    navigate('/create-antagonist');
   };
 
   const handleHome = () => {
     navigate('/');
   };
 
-  const handleSearchCreatures = () => {
-    navigate('/search');
+  const handleSearchPlayerCharacter = () => {
+    navigate('/search-character');
+  };
+
+  const handleSearchAntagonist = () => {
+    navigate('/search-antagonist');
   };
 
   const handleSearchItems = () => {
@@ -61,7 +65,9 @@ const OptionPanel = (): React.JSX.Element => {
           </Typography>
           <Stack spacing={1} className="option-panel-stack-inner">
             <Button
-              variant={location.pathname === '/create' ? 'contained' : 'text'}
+              variant={
+                location.pathname === '/create-character' ? 'contained' : 'text'
+              }
               fullWidth
               className="option-panel-button"
               onClick={handleCreateNewCharacter}
@@ -70,10 +76,12 @@ const OptionPanel = (): React.JSX.Element => {
               Create New Character
             </Button>
             <Button
-              variant={location.pathname === '/search' ? 'contained' : 'text'}
+              variant={
+                location.pathname === '/search-character' ? 'contained' : 'text'
+              }
               fullWidth
               className="option-panel-button"
-              onClick={handleSearchCreatures}
+              onClick={handleSearchPlayerCharacter}
               disabled={!isAuthenticated}
             >
               Search Characters
@@ -109,7 +117,9 @@ const OptionPanel = (): React.JSX.Element => {
               <Stack spacing={1} className="option-panel-stack-inner">
                 <Button
                   variant={
-                    location.pathname === '/create' ? 'contained' : 'text'
+                    location.pathname === '/create-antagonist'
+                      ? 'contained'
+                      : 'text'
                   }
                   fullWidth
                   className="option-panel-button"
@@ -117,6 +127,19 @@ const OptionPanel = (): React.JSX.Element => {
                   disabled={!isAuthenticated}
                 >
                   Create New Antagonist
+                </Button>
+                <Button
+                  variant={
+                    location.pathname === '/search-antagonist'
+                      ? 'contained'
+                      : 'text'
+                  }
+                  fullWidth
+                  className="option-panel-button"
+                  onClick={handleSearchAntagonist}
+                  disabled={!isAuthenticated}
+                >
+                  Search Antagonist
                 </Button>
               </Stack>
               <Typography
