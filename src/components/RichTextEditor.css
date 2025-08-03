@@ -1,0 +1,7 @@
+.editor-input {
+  min-height: 150px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  outline: none;
+  cursor: text;
+}

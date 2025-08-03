@@ -1,0 +1,16 @@
+.create-story-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-story-button-group {
+  display: flex;
+  gap: 16px;
+  width: 300px; /* fixed width */
+  margin-left: auto; /* push to right */
+}
+
+.create-story-button-group button {
+  flex: 1; /* each button gets equal space */
+}

@@ -100,6 +100,9 @@ model Creature {
 
   // Relationship to CreatureBespokeFeature
   bespokeFeatures CreatureBespokeFeature[]
+
+  // Relationship to Actor
+  actors        Actor[]
 }
 
 model CreatureSelectedFeature {
@@ -265,10 +268,17 @@ model Story {
   name                    String
   description             String
 
-    // Relationship to Faction
+  // Relationship to Faction
   factions         Faction[]
+
+  // Relationship to actors
+  actors            Actor[]
+
+  // Relationship to Locations
+  Locations         Location[]
 }
 
+// A faction is a group within a story. A collective of actors
 model Faction {
   id                      Int    @id @default(autoincrement())
   name                    String
@@ -277,16 +287,83 @@ model Faction {
   type                    FactionType
 
   // Relationship to Story
-  creature  Story         @relation(fields: [storyId], references: [id])
+  story  Story         @relation(fields: [storyId], references: [id])
+
+  // Relationpship to actors
+  actors    Actor[]
 }
 
+// An actor is a single instance of a creature within a story
+// An actor can be a player character, which are enforced singleton
+// An actor can be an antagonist, which allow multiple instances
 model Actor {
   id                      Int     @id @default(autoincrement())
   creatureId              Int
   storyId                 Int
+  factionId               Int
   enduranceDamage         Int     @default(0)
   healthDamage            Int     @default(0)
   momentumSpent           Int     @default(0)
+  actionPoints            Int     @default(0)
+  standardActions         Int     @default(0)
   tacticalSurgeToken      Boolean @default(true)
+  tacticalActionsTaken    Int     @default(0)
   acting                  Boolean @default(false)
+
+  // Relation to story
+  story  Story         @relation(fields: [storyId], references: [id])
+
+  // Relation to creature
+  creature  Creature   @relation(fields: [creatureId], references: [id])
+
+  // Relationship to Faction
+  faction   Faction    @relation(fields: [factionId], references: [id])
+}
+
+// Location is a place with a story
+// Locations contain many zones
+model Location {
+  id                      Int    @id @default(autoincrement())
+  name                    String
+  description             String
+  storyId                 Int
+
+  // Relation to story
+  story  Story         @relation(fields: [storyId], references: [id])
+
+  // Relationshipo to zone
+  zones     Zone[]
+}
+
+// A zone is a single place within a Location
+model Zone {
+  id                      Int    @id @default(autoincrement())
+  name                    String
+  description             String
+
+  // Relationship to Location
+  Locations    Location[]
+
+  // Relationship to ZoneLink (zoneOne)         
+  zoneOneLinks ZoneLink[] @relation("ZoneOne")
+
+  // Relationship to ZoneLink (zoneTwo)         
+  zoneTwoLinks ZoneLink[] @relation("ZoneTwo")
+
+}
+
+// A zone line is an association of one zone with another
+// This basically means a zone can be moved to from another
+model ZoneLink {
+  id                      Int    @id @default(autoincrement())
+  zoneOneId               Int
+  zoneTwoId               Int
+
+  // ZoneOne Relationship to Zone
+  zoneOne   Zone  @relation("ZoneOne", fields: [zoneOneId], references: [id])
+
+  // ZoneTwo Relationship to Zone
+  zoneTwo   Zone  @relation("ZoneTwo", fields: [zoneTwoId], references: [id])
+
+  @@unique([zoneOneId, zoneTwoId]) // Optional: prevent duplicates
 }

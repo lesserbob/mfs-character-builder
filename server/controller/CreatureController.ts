@@ -11,10 +11,6 @@ import {
   updateCreature,
 } from '../service/CreatureService';
 
-router.get('/test', (req, res) => {
-  res.json({ message: 'Test route works! So does the auto build' });
-});
-
 // Public GET endpoints (no authentication required)
 router.get('/creature/:id', async (req, res, next) => {
   try {

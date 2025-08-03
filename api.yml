@@ -202,6 +202,64 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/item'
+  /story:
+    get:
+      summary: Get all stories
+      description: Retrieve a list of all stories
+      operationId: getStories
+      responses:
+        '200':
+          description: List of creatures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/story'
+    post:
+      summary: Create a new story
+      description: Create a new story with basic information
+      operationId: createStory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/storyBase'
+      responses:
+        '201':
+          description: Story created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier for the story
+  /story/{id}:
+    get:
+      summary: Get story by ID
+      description: Retrieve a specific story by their ID
+      operationId: getStoryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Story ID
+      responses:
+        '200':
+          description: Story found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/story'
+        '404':
+          description: creature not found
 components:
   securitySchemes:
     bearerAuth:
@@ -537,3 +595,22 @@ components:
           description: Soak of the item
       required:
         - id
+    story:
+      allOf:
+        - $ref: '#/components/schemas/storyBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the story
+          required:
+            - id
+    storyBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the story
+        description:
+          type: string
+          description: Description of the story

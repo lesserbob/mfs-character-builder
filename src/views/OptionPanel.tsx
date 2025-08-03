@@ -38,6 +38,14 @@ const OptionPanel = (): React.JSX.Element => {
     navigate('/reset-password');
   };
 
+  const handleSearchStories = () => {
+    navigate('/search-stories');
+  };
+
+  const handleCreateStory = () => {
+    navigate('/create-story');
+  };
+
   return (
     <Drawer variant="permanent" anchor="left" className="option-panel-drawer">
       <Box className="option-panel-box">
@@ -164,6 +172,36 @@ const OptionPanel = (): React.JSX.Element => {
               </Stack>
             </>
           )}
+          <Typography
+            variant="subtitle1"
+            className="option-panel-section-title"
+          >
+            Stories
+          </Typography>
+          <Stack spacing={1} className="option-panel-stack-inner">
+            <Button
+              variant={
+                location.pathname === '/search-stories' ? 'contained' : 'text'
+              }
+              fullWidth
+              className="option-panel-button"
+              onClick={handleSearchStories}
+              disabled={!isAuthenticated}
+            >
+              Search Stories
+            </Button>
+            <Button
+              variant={
+                location.pathname === '/create-story' ? 'contained' : 'text'
+              }
+              fullWidth
+              className="option-panel-button"
+              onClick={handleCreateStory}
+              disabled={!isAuthenticated}
+            >
+              Create Story
+            </Button>
+          </Stack>
         </Box>
       </Stack>
     </Drawer>

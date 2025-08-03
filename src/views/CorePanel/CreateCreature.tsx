@@ -11,7 +11,6 @@ import {
   InputLabel,
   Box,
   Tooltip,
-  FormHelperText,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import './CreateCreature.css';
@@ -33,7 +32,6 @@ import SectionBox from '../../components/SectionBox';
 import { Text } from '../../components/Text';
 import { SelectPortait } from './CreateCreature/SelectPortrait';
 import { capitalizeFirst } from '../../util/TextUtils';
-import { BespokeFeatureModal } from './CreateCreature/BespokeFeatureModal';
 
 type FormData = {
   name: string;
@@ -85,7 +83,6 @@ const CreateCreature = ({ mode }: CreateCreatureProps): React.JSX.Element => {
   const [pointAllocationError, setPointAllocationError] =
     useState<boolean>(false);
   const featurePanelRef = useRef<FeatureSelectionPanelHandle>(null);
-  // const [bespokeFeatures, setBespokeFeatures] = useState<[string, string][]>([]);
   const [bespokeFeatures, setBespokeFeatures] = useState<
     CreatureBespokeFeature[]
   >([]);

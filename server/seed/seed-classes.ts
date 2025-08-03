@@ -59,6 +59,11 @@ export async function seedClasses(prisma: PrismaClient) {
       classification: ClassClassification.RACE,
       minAgility: 2,
     },
+    {
+      id: 14,
+      name: 'Investigator',
+      classification: ClassClassification.SPECIALISATION,
+    },
   ];
   for (const cls of classes) {
     const { id, ...classData } = cls;
@@ -129,6 +134,10 @@ export async function seedClasses(prisma: PrismaClient) {
     { id: 42, classId: 13, level: 1, health: 11, statBonus: 0 },
     { id: 43, classId: 13, level: 4, health: 2, statBonus: 2 },
     { id: 44, classId: 13, level: 7, health: 2, statBonus: 3 },
+    // Investigator
+    { id: 45, classId: 14, level: 6, health: 2, statBonus: 0 },
+    { id: 46, classId: 14, level: 9, health: 2, statBonus: 0 },
+    { id: 47, classId: 14, level: 10, health: 2, statBonus: 0 },
   ];
   for (const level of classLevels) {
     const { id, ...levelData } = level;
@@ -846,6 +855,52 @@ export async function seedClasses(prisma: PrismaClient) {
       description:
         'You have no banes to perception checks due to poor lighting, nor would an opposing creature get boon on stealth due to poor lighting vs you',
       classLevelId: 44,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    // Investigator
+    // 45-47
+    {
+      id: 78,
+      name: 'Spot Weakness',
+      description:
+        'When you make an attack you can spend a point of momentum to give yourself +1 Boon on the attack. On hit you also impose one of the following impairments on the target if they dont make a save \nVulnerable (Physique Save)\nDazed (Spirit Save)\nWeakened (Physique Save)\nConfused (Intelect Save)',
+      classLevelId: 45,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 79,
+      name: 'Perceptive',
+      description:
+        'Add +1 Boon to attempts to any form of aptitude check related to gathering information',
+      classLevelId: 45,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 80,
+      name: 'Concealed Armament',
+      description:
+        'Take any one handed weapon that you own. This weapon gains the Concealed property',
+      classLevelId: 46,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 81,
+      name: 'Quick Study',
+      description: 'You can take the study action as a minor action',
+      classLevelId: 46,
+      type: ClassFeatureType.BASE,
+      display: true,
+    },
+    {
+      id: 82,
+      name: 'Alert',
+      description:
+        'You can never be surprised. You are always able to act in the first round of combat',
+      classLevelId: 47,
       type: ClassFeatureType.BASE,
       display: true,
     },

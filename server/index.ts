@@ -11,6 +11,7 @@ import creatureController from './controller/CreatureController';
 import classController from './controller/ClassController';
 import authController from './controller/AuthController';
 import itemController from './controller/ItemController';
+import storyController from './controller/StoryController';
 import { authenticateToken } from './service/AuthService';
 
 const app = express();
@@ -62,6 +63,7 @@ app.use('/api/auth', authController);
 app.use('/api', creatureController);
 app.use('/api', classController);
 app.use('/api', itemController);
+app.use('/api', storyController);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: any) => {

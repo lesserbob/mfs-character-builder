@@ -131,9 +131,6 @@ const ViewCreature: React.FC = () => {
   }
 
   const canLevelUp = (creatute: Creature): boolean => {
-    /* TODO Disabled till specilaist classes available */
-    if (creature!.level === 5) return false;
-
     // Must have enough wealth to cover next level
     const requiredWealth = wealthMap[creature.level + 1];
     if ((creature.wealth ?? 0) < requiredWealth) return false;
@@ -158,32 +155,6 @@ const ViewCreature: React.FC = () => {
 
   return (
     <div>
-      {/* <Box className="view-creature-settings-button">
-        <IconButton onClick={handleMenuOpen}>
-          <SettingsIcon />
-        </IconButton>
-        <Menu
-          anchorEl={menuAnchorEl}
-          open={Boolean(menuAnchorEl)}
-          onClose={handleMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <MenuItem onClick={handleLevelUp} disabled={!canLevelUp(creature)}>
-            Level Up
-          </MenuItem>
-          <MenuItem onClick={handleChangeGear}>Change Gear</MenuItem>
-          <MenuItem onClick={handleExportPdfFromMenu} disabled={pdfLoading}>
-            {pdfLoading ? 'Generating PDF...' : 'Export PDF'}
-          </MenuItem>
-        </Menu>
-      </Box> */}
       <div ref={contentRef} className="view-creature-content">
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Typography variant="h5" component="span">
