@@ -12,7 +12,7 @@ import SectionBox from './SectionBox';
 import './CreatureAbilities.css';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-import { BespokeFeatureModal } from '../views/CorePanel/CreateCreature/BespokeFeatureModal';
+import { SimpleAssetModal } from './SimpleAssetModal';
 
 export interface CreatureAbilityParams {
   // The creature
@@ -94,10 +94,11 @@ export const CreatureAbiltities = ({
 
   return (
     <>
-      <BespokeFeatureModal
+      <SimpleAssetModal
         isModalOpen={isModalOpen}
         closeModal={handleCloseModal}
-      ></BespokeFeatureModal>
+        assetDescription={'Feature'}
+      ></SimpleAssetModal>
       <SectionBox>
         {allowCreate ? (
           <Box

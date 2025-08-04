@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/client';
 import { Story } from '../../api/generated';
+import { SearchLocations } from './ViewStory/SearchLocations';
 
 export const ViewStory = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,9 +21,11 @@ export const ViewStory = () => {
       const response = await apiClient.getStoryById(storyId);
       setStory(response.data);
     } catch (err) {
-      console.error('Error fetching creature:', err);
+      console.error('Error fetching story:', err);
     }
   };
+
+  if (!storyId) return null;
 
   return (
     <>
@@ -30,6 +33,7 @@ export const ViewStory = () => {
         {story?.name}
       </Typography>
       <RichTextEditor readonly={true} initialValue={story?.description} />
+      <SearchLocations storyId={storyId} />
     </>
   );
 };

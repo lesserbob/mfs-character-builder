@@ -1,11 +1,11 @@
-.bespoke-feature-dialog-paper {
+.simple-asset-dialog-paper {
   width: 600px;
   /* max-width: 90vw; */
   padding: 16px;
   border-radius: 12px;
 }
 
-.bespoke-feature-button-group {
+.simple-asset-button-group {
   display: flex;
   gap: 16px;
   /* width: 600px; */
@@ -13,12 +13,12 @@
   flex-direction: row;
 }
 
-.bespoke-feature-stack {
+.simple-asset-stack {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.bespoke-feature-button-group button {
+.simple-asset-button-group button {
   flex: 1;
 }

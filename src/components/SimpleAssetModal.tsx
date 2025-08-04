@@ -5,18 +5,23 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import './BespokeFeatureModal.css';
+import './SimpleAssetModal.css';
 import { useState } from 'react';
 
-export interface BespokeFeatureModalProps {
+export interface SimpleAssetModalProps {
   isModalOpen: boolean;
   closeModal(value: { name: string; description: string } | null): void;
+  assetDescription: string;
 }
 
-export const BespokeFeatureModal = ({
+/**
+ * Modal to allow generic capture/edit of name/description pair data
+ */
+export const SimpleAssetModal = ({
   isModalOpen,
   closeModal,
-}: BespokeFeatureModalProps) => {
+  assetDescription,
+}: SimpleAssetModalProps) => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
@@ -25,13 +30,13 @@ export const BespokeFeatureModal = ({
       open={isModalOpen}
       slotProps={{
         paper: {
-          className: 'bespoke-feature-dialog-paper',
+          className: 'simple-asset-dialog-paper',
         },
       }}
     >
-      <DialogTitle>Feature</DialogTitle>
+      <DialogTitle>{assetDescription}</DialogTitle>
       <DialogContent>
-        <div className="bespoke-feature-stack">
+        <div className="simple-asset-stack">
           <TextField
             label="Name"
             fullWidth
@@ -44,7 +49,7 @@ export const BespokeFeatureModal = ({
             minRows={3}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <div className="bespoke-feature-button-group">
+          <div className="simple-asset-button-group">
             <Button
               type="button"
               variant="contained"

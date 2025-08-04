@@ -1,6 +1,13 @@
 import { Router } from 'express';
 const router = Router();
-import { createStory, getStories, getStory } from '../service/StoryService';
+import {
+  createLocation,
+  createStory,
+  getLocation,
+  getLocations,
+  getStories,
+  getStory,
+} from '../service/StoryService';
 import { authenticateToken } from '../service/AuthService';
 
 // Get a single story by id
@@ -25,9 +32,42 @@ router.get('/story', async (req, res, next) => {
 
 router.post('/story', authenticateToken as any, async (req: any, res, next) => {
   try {
-    // const userId = req.user!.id;
     const newId = await createStory(req.body);
     res.status(201).json({ id: newId });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/story/:storyId/location', async (req, res, next) => {
+  try {
+    const locations = await getLocations(parseInt(req.params.storyId));
+    res.json(locations);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post(
+  '/story/:storyId/location',
+  authenticateToken as any,
+  async (req: any, res, next) => {
+    try {
+      const newId = await createLocation(
+        parseInt(req.params.storyId),
+        req.body
+      );
+      res.status(201).json({ id: newId });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.get('/location/:locationId', async (req, res, next) => {
+  try {
+    const location = await getLocation(parseInt(req.params.locationId));
+    res.json(location);
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { apiStory } from '../types/StoryTypes';
+import { apiLocation, apiStory } from '../types/StoryTypes';
 
 const prisma = new PrismaClient();
 
@@ -49,4 +49,60 @@ export const createStory = async (story: apiStory): Promise<number> => {
   });
 
   return deStory.id;
+};
+
+export const getLocations = async (storyId: number): Promise<apiLocation[]> => {
+  const deLocations = await prisma.location.findMany({
+    where: {
+      storyId: storyId,
+    },
+  });
+
+  return deLocations.map((deLocation) =>
+    mapDeLocationToApiLocation(deLocation)
+  );
+};
+
+export const getLocation = async (id: number): Promise<apiLocation> => {
+  const deLocation = await prisma.location.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!deLocation) {
+    throw new Error(`Location not found for id: ${id}`);
+  }
+
+  return mapDeLocationToApiLocation(deLocation);
+};
+
+const mapDeLocationToApiLocation = (
+  deLocation: Prisma.LocationGetPayload<{}>
+): apiLocation => {
+  const apiLocation = {
+    id: deLocation.id,
+    name: deLocation.name,
+    description: deLocation.description,
+  };
+
+  return apiLocation;
+};
+
+export const createLocation = async (
+  storyId: number,
+  location: apiLocation
+): Promise<number> => {
+  const deLocation = await prisma.location.create({
+    data: {
+      name: location.name,
+      description: location.description,
+      storyId: storyId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return deLocation.id;
 };

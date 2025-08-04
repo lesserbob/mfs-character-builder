@@ -209,7 +209,7 @@ paths:
       operationId: getStories
       responses:
         '200':
-          description: List of creatures
+          description: List of stories
           content:
             application/json:
               schema:
@@ -259,7 +259,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/story'
         '404':
-          description: creature not found
+          description: story not found
+  /story/{storyId}/location:
+    get:
+      summary: Get locations by story ID
+      description: Retrieve all locations for the given story
+      operationId: getLocationsByStoryId
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Story ID
+      responses:
+        '200':
+          description: Locations within story
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/location'
+        '404':
+          description: story not found
+    post:
+      summary: Create a new location
+      parameters:
+        - name: storyId
+          in: path
+          required: true
+          schema:
+            type: integer
+      description: Create a new location with basic information
+      operationId: createLocation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/locationBase'
+      responses:
+        '201':
+          description: Location created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Unique identifier for the location
+  /location/{locationId}:
+    get:
+      summary: Get location by ID
+      description: Retrieve all locations for the given story
+      operationId: getLocationById
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Location ID
+      responses:
+        '200':
+          description: Location within story
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/location'
+        '404':
+          description: story not found
 components:
   securitySchemes:
     bearerAuth:
@@ -614,3 +687,22 @@ components:
         description:
           type: string
           description: Description of the story
+    location:
+      allOf:
+        - $ref: '#/components/schemas/locationBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the location
+          required:
+            - id
+    locationBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the location
+        description:
+          type: string
+          description: Description of the location

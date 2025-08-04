@@ -14,6 +14,7 @@ import { CreateAntagonist } from './CorePanel/CreateAntagonist';
 import { SearchStories } from './CorePanel/SearchStories';
 import { CreateStory } from './CorePanel/CreateStory';
 import { ViewStory } from './CorePanel/ViewStory';
+import { ViewLocation } from './CorePanel/ViewStory/SearchLocations/ViewLocation';
 
 export const CorePanel = (): React.JSX.Element => {
   return (
@@ -48,6 +49,7 @@ export const CorePanel = (): React.JSX.Element => {
           <Route path="/search-stories" element={<SearchStories />} />
           <Route path="/create-story" element={<CreateStory />} />
           <Route path="/view-story/:id" element={<ViewStory />} />
+          <Route path="/view-location/:id" element={<ViewLocation />} />
         </Routes>
       </Box>
     </div>
