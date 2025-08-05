@@ -312,6 +312,33 @@ paths:
                   id:
                     type: integer
                     description: Unique identifier for the location
+  /story/{id}/addActorAgent:
+    post:
+      summary: Agent to add actors to a story
+      description: Agent to add actors to a story
+      operationId: addActors
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Story ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addActorInstruction'
+      responses:
+        '200':
+          description: Story found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/story'
+        '404':
+          description: story not found
   /location/{locationId}:
     get:
       summary: Get location by ID
@@ -333,6 +360,26 @@ paths:
                 $ref: '#/components/schemas/location'
         '404':
           description: story not found
+    put:
+      summary: Update location
+      description: Update an existing location information
+      operationId: updateLocation
+      parameters:
+        - name: locationId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Location ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/location'
+      responses:
+        '200':
+          description: Creature updated successfully
 components:
   securitySchemes:
     bearerAuth:
@@ -706,3 +753,42 @@ components:
         description:
           type: string
           description: Description of the location
+        zones:
+          type: array
+          description: List of zones
+          items:
+            $ref: '#/components/schemas/zone'
+    zone:
+      allOf:
+        - $ref: '#/components/schemas/zoneBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the zone
+          required:
+            - id
+    zoneBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the zone
+        description:
+          type: string
+          description: Description of the zone
+        xpos:
+          type: integer
+          description: relative xposition of the zone
+        ypos:
+          type: integer
+          description: relative yposition of the zone
+    addActorInstruction:
+      type: object
+      properties:
+        creatureId:
+          type: integer
+          description: id of the creature to be added
+        count:
+          type: integer
+          description: count of creatures to add

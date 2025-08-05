@@ -1,12 +1,14 @@
 import { Router } from 'express';
 const router = Router();
 import {
+  addActors,
   createLocation,
   createStory,
   getLocation,
   getLocations,
   getStories,
   getStory,
+  updateLocation,
 } from '../service/StoryService';
 import { authenticateToken } from '../service/AuthService';
 
@@ -72,5 +74,27 @@ router.get('/location/:locationId', async (req, res, next) => {
     next(error);
   }
 });
+
+router.put('/location/:locationId', async (req, res, next) => {
+  try {
+    await updateLocation(parseInt(req.params.locationId), req.body);
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post(
+  '/story/:storyId/addActorAgent',
+  authenticateToken as any,
+  async (req: any, res, next) => {
+    try {
+      await addActors(req.params.storyId, req.body);
+      res.status(204);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

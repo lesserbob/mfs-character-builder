@@ -67,11 +67,6 @@ enum CreatureType {
   ANTAGONIST
 }
 
-enum FactionType {
-  PLAYER
-  NPC
-}
-
 model Creature {
   id        Int    @id @default(autoincrement())
   name      String
@@ -268,29 +263,11 @@ model Story {
   name                    String
   description             String
 
-  // Relationship to Faction
-  factions         Faction[]
-
   // Relationship to actors
   actors            Actor[]
 
   // Relationship to Locations
   Locations         Location[]
-}
-
-// A faction is a group within a story. A collective of actors
-model Faction {
-  id                      Int    @id @default(autoincrement())
-  name                    String
-  description             String
-  storyId                 Int
-  type                    FactionType
-
-  // Relationship to Story
-  story  Story         @relation(fields: [storyId], references: [id])
-
-  // Relationpship to actors
-  actors    Actor[]
 }
 
 // An actor is a single instance of a creature within a story
@@ -300,7 +277,7 @@ model Actor {
   id                      Int     @id @default(autoincrement())
   creatureId              Int
   storyId                 Int
-  factionId               Int
+  zoneId                  Int?
   enduranceDamage         Int     @default(0)
   healthDamage            Int     @default(0)
   momentumSpent           Int     @default(0)
@@ -316,8 +293,8 @@ model Actor {
   // Relation to creature
   creature  Creature   @relation(fields: [creatureId], references: [id])
 
-  // Relationship to Faction
-  faction   Faction    @relation(fields: [factionId], references: [id])
+  // Relationship to Zone
+  zone      Zone?      @relation(fields: [zoneId], references: [id])
 }
 
 // Location is a place with a story
@@ -340,16 +317,21 @@ model Zone {
   id                      Int    @id @default(autoincrement())
   name                    String
   description             String
+  locationId              Int
+  xpos                    Int @default(0)
+  ypos                    Int @default(0)
 
-  // Relationship to Location
-  Locations    Location[]
+  // Relation to Location
+  location  Location         @relation(fields: [locationId], references: [id])
 
-  // Relationship to ZoneLink (zoneOne)         
+  // Relationship to ZoneLink (zoneOne)
   zoneOneLinks ZoneLink[] @relation("ZoneOne")
 
   // Relationship to ZoneLink (zoneTwo)         
   zoneTwoLinks ZoneLink[] @relation("ZoneTwo")
 
+  // Actors
+  actors Actor[]
 }
 
 // A zone line is an association of one zone with another
