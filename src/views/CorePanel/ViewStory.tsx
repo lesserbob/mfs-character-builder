@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { apiClient } from '../../api/client';
 import { Story } from '../../api/generated';
 import { SearchLocations } from './ViewStory/SearchLocations';
+import { SearchActors } from './ViewStory/SearchActors';
+import './ViewStory.css';
 
 export const ViewStory = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,8 +34,11 @@ export const ViewStory = () => {
       <Typography variant="h5" component="h2" className="create-creature-title">
         {story?.name}
       </Typography>
-      <RichTextEditor readonly={true} initialValue={story?.description} />
-      <SearchLocations storyId={storyId} />
+      <div className="view-story-layout">
+        <RichTextEditor readonly={true} initialValue={story?.description} />
+        <SearchLocations storyId={storyId} />
+        <SearchActors storyId={storyId} />
+      </div>
     </>
   );
 };

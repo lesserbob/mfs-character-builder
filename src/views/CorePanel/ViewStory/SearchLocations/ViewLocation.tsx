@@ -7,11 +7,13 @@ import {
   LocationProvider,
   useLocation,
 } from '../../../../context/LocationContext';
-import { GridLayer } from './ViewLocations/GridLayer';
-import { TestDraggableLayer } from './ViewLocations/TestDraggableLayer';
-import { LocationToolbar } from './ViewLocations/LocationToolbar';
+import { GridLayer } from './ViewLocation/GridLayer';
+import { LocationToolbar } from './ViewLocation/LocationToolbar';
 import './ViewLocation.css';
-import { ZoneLayer } from './ViewLocations/ZoneLayer';
+import { ZoneLayer } from './ViewLocation/ZoneLayer';
+import { ActorLayer } from './ViewLocation/ActorLayer';
+import { BackgroundLayer } from './ViewLocation/BackgroundLayer';
+import { EditActor } from './ViewLocation/EditActor';
 
 const ViewLocationInner = ({ locationId }: { locationId: number }) => {
   const { fetchLocation, location } = useLocation();
@@ -22,6 +24,7 @@ const ViewLocationInner = ({ locationId }: { locationId: number }) => {
 
   return (
     <>
+      <EditActor />
       <Typography variant="h5" component="h2">
         {location?.name}
       </Typography>
@@ -29,8 +32,10 @@ const ViewLocationInner = ({ locationId }: { locationId: number }) => {
         <LocationToolbar />
       </div>
       <Stage width={window.innerWidth} height={window.innerHeight}>
+        <BackgroundLayer />
         <GridLayer />
         <ZoneLayer />
+        <ActorLayer />
       </Stage>
     </>
   );

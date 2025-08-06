@@ -4,6 +4,7 @@ import {
   addActors,
   createLocation,
   createStory,
+  getActors,
   getLocation,
   getLocations,
   getStories,
@@ -89,12 +90,21 @@ router.post(
   authenticateToken as any,
   async (req: any, res, next) => {
     try {
-      await addActors(req.params.storyId, req.body);
-      res.status(204);
+      await addActors(parseInt(req.params.storyId), req.body);
+      res.sendStatus(204);
     } catch (error) {
       next(error);
     }
   }
 );
+
+router.get('/story/:storyId/actor', async (req, res, next) => {
+  try {
+    const actors = await getActors(parseInt(req.params.storyId));
+    res.json(actors);
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;

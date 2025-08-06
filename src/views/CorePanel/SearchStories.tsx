@@ -41,7 +41,7 @@ export const SearchStories = () => {
           </TableHead>
           <TableBody>
             {stories?.map((story) => (
-              <TableRow>
+              <TableRow key={story.id}>
                 <TableCell>
                   <Link to={`/view-story/${story.id}`} className="story-link">
                     {story.name}

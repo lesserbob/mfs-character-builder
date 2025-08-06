@@ -3,12 +3,24 @@
  */
 
 import { Group, Layer, Path, Rect, Text } from 'react-konva';
-import { useLocation } from '../../../../../context/LocationContext';
+import {
+  DEFAULT_ZONE_WIDTH,
+  useLocation,
+} from '../../../../../context/LocationContext';
 import { Zone } from '../../../../../api/generated';
 
+/*
+https://fonts.google.com/icons
+Download and look for the pattern in the file d=...
+*/
 const DELETE_SVG =
   'M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z';
+const ADD_ACTOR = 'M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z';
 
+/**
+ *
+ * @returns Renders the basic zones of a location
+ */
 export const ZoneLayer = () => {
   const { location, gridSize, updateZone } = useLocation();
 
@@ -23,10 +35,18 @@ export const ZoneLayer = () => {
     }
   };
 
+  const determineRelativeHeight = (zone: Zone): number => {
+    return Math.max(
+      zone.actors!.filter((actor) => actor.creature!.type === 'PLAYER').length,
+      zone.actors!.filter((actor) => actor.creature!.type != 'PLAYER').length
+    );
+  };
+
   return (
     <Layer>
       {location?.zones?.map((zone) => (
         <Group
+          key={zone.id}
           x={zone.xpos! * gridSize}
           y={zone.ypos! * gridSize}
           draggable
@@ -37,15 +57,16 @@ export const ZoneLayer = () => {
           onDragEnd={(e) => onDragEnd(e, zone)}
         >
           <Rect
-            width={5 * gridSize}
-            height={5 * gridSize}
+            width={DEFAULT_ZONE_WIDTH * gridSize}
+            height={(determineRelativeHeight(zone) + 1) * gridSize}
             stroke="black"
             strokeWidth={2}
             cornerRadius={12}
-            fill="transparent"
+            fill="lightGrey"
+            // fill="transparent"
           />
           <Rect
-            width={5 * gridSize}
+            width={DEFAULT_ZONE_WIDTH * gridSize}
             height={20}
             stroke="black"
             cornerRadius={12}
@@ -56,10 +77,20 @@ export const ZoneLayer = () => {
             data={DELETE_SVG}
             fill="white"
             scale={{ x: 0.02, y: 0.02 }}
-            x={5 * gridSize - 20}
+            x={DEFAULT_ZONE_WIDTH * gridSize - 20}
             y={20}
             onClick={() => {
               console.log('Delete');
+            }}
+          />
+          <Path
+            data={ADD_ACTOR}
+            fill="white"
+            scale={{ x: 0.02, y: 0.02 }}
+            x={5 * gridSize - 40}
+            y={20}
+            onClick={() => {
+              console.log('Add Actor');
             }}
           />
         </Group>

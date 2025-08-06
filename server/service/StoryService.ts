@@ -5,9 +5,37 @@ import {
   apiLocation,
   apiStory,
 } from '../types/StoryTypes';
-import { getCreature } from './CreatureService';
+import {
+  creatureInclude,
+  getCreature,
+  mapDeCreatureToApiCreature,
+} from './CreatureService';
 
 const prisma = new PrismaClient();
+
+export const actorInclude = {
+  creature: {
+    include: creatureInclude,
+  },
+} as const;
+
+export type ActorFromDb = Prisma.ActorGetPayload<{
+  include: typeof actorInclude;
+}>;
+
+export const locationInclude = {
+  zones: {
+    include: {
+      actors: {
+        include: actorInclude,
+      },
+    },
+  },
+} as const;
+
+export type LocationFromDb = Prisma.LocationGetPayload<{
+  include: typeof locationInclude;
+}>;
 
 export const getStory = async (id: number): Promise<apiStory> => {
   const deStory = await prisma.story.findUnique({
@@ -57,14 +85,15 @@ export const createStory = async (story: apiStory): Promise<number> => {
   return deStory.id;
 };
 
+/**
+ * Locations
+ */
 export const getLocations = async (storyId: number): Promise<apiLocation[]> => {
   const deLocations = await prisma.location.findMany({
     where: {
       storyId: storyId,
     },
-    include: {
-      zones: true,
-    },
+    include: locationInclude,
   });
 
   return deLocations.map((deLocation) =>
@@ -77,9 +106,7 @@ export const getLocation = async (id: number): Promise<apiLocation> => {
     where: {
       id: id,
     },
-    include: {
-      zones: true,
-    },
+    include: locationInclude,
   });
 
   if (!deLocation) {
@@ -90,7 +117,7 @@ export const getLocation = async (id: number): Promise<apiLocation> => {
 };
 
 const mapDeLocationToApiLocation = (
-  deLocation: Prisma.LocationGetPayload<{ include: { zones: true } }>,
+  deLocation: LocationFromDb,
   includeZones: boolean
 ): apiLocation => {
   const apiLocation = {
@@ -104,6 +131,7 @@ const mapDeLocationToApiLocation = (
           description: z.description,
           xpos: z.xpos,
           ypos: z.ypos,
+          actors: z.actors.map((actor) => mapDeActorToApiActor(actor)),
         }))
       : [],
   };
@@ -204,20 +232,25 @@ export const updateLocation = async (
   }
 };
 
-export const getActors = async (storyId: number) => {
+/**
+ * Actors from this point
+ */
+export const getActors = async (storyId: number): Promise<apiActor[]> => {
   const deActors = await prisma.actor.findMany({
     where: {
       storyId: storyId,
     },
+    include: actorInclude,
   });
+
+  return deActors.map((a) => mapDeActorToApiActor(a));
 };
 
-const mapDeActorToApiActor = (
-  deActor: Prisma.ActorGetPayload<{}>
-): apiActor => {
+const mapDeActorToApiActor = (deActor: ActorFromDb): apiActor => {
   const apiActor = {
     id: deActor.id,
     creatureId: deActor.creatureId,
+    creature: mapDeCreatureToApiCreature(deActor.creature),
     zoneId: deActor.zoneId ?? undefined,
     enduranceDamage: deActor.enduranceDamage,
     healthDamage: deActor.healthDamage,
@@ -237,12 +270,14 @@ const mapDeActorToApiActor = (
  */
 export const addActors = async (
   storyId: number,
-  instruction: apiAddActorInstruction
+  instruction: apiAddActorInstruction[]
 ) => {
-  const actors = Array.from({ length: instruction.count }, (_, i) => ({
-    creatureId: instruction.creatureId,
-    storyId: storyId,
-  }));
+  const actors = instruction.flatMap((i) => {
+    return Array.from({ length: i.count }, () => ({
+      creatureId: i.creatureId,
+      storyId,
+    }));
+  });
 
   await prisma.actor.createMany({
     data: actors,

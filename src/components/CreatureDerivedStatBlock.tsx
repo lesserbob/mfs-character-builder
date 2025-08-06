@@ -2,6 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { Creature } from '../api/generated';
 import { useClasses } from '../context/ClassContext';
 import SectionBox from './SectionBox';
+import { getHealth, getMomentum } from '../util/CreatureUtils';
 
 export const CreatureDerivedStatBlock = ({
   creature,
@@ -17,23 +18,23 @@ export const CreatureDerivedStatBlock = ({
 
   const createClassFeatures = creatureClassLevels.flatMap((cl) => cl!.features);
 
-  const getHealth = () => {
-    const healthFromClasses: number =
-      creatureClassLevels.reduce(
-        (sum, classLevel) => sum + (classLevel!.health ?? 0),
-        0
-      ) ?? 0;
+  // const getHealth = () => {
+  //   const healthFromClasses: number =
+  //     creatureClassLevels.reduce(
+  //       (sum, classLevel) => sum + (classLevel!.health ?? 0),
+  //       0
+  //     ) ?? 0;
 
-    return (
-      healthFromClasses +
-      Number(creature.baseHealth ?? 0) +
-      Number(creature.might)
-    );
-  };
+  //   return (
+  //     healthFromClasses +
+  //     Number(creature.baseHealth ?? 0) +
+  //     Number(creature.might)
+  //   );
+  // };
 
-  const getMomentum = () => {
-    return Number(creature.spirit) + 2;
-  };
+  // const getMomentum = () => {
+  //   return Number(creature.spirit) + 2;
+  // };
 
   const getTacticalSurgeBonus = () => {
     return Number(creature.intellect);
@@ -75,10 +76,10 @@ export const CreatureDerivedStatBlock = ({
     <SectionBox>
       <div>
         <Typography variant="body2" color="test.primary" sx={{ mt: 1 }}>
-          Health/Endurance: {getHealth()}
+          Health/Endurance: {getHealth(creature, classes)}
         </Typography>
         <Typography variant="body2" color="test.primary" sx={{ mt: 1 }}>
-          Momentum: {getMomentum()}
+          Momentum: {getMomentum(creature)}
         </Typography>
         <Typography variant="body2" color="test.primary" sx={{ mt: 1 }}>
           Tactical Surge Bonus: {getTacticalSurgeBonus()}

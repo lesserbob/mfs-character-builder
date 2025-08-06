@@ -1,3 +1,5 @@
+import { apiCreature } from './CreatureApiTypes';
+
 export interface apiStory {
   id: number;
   name: string;
@@ -18,6 +20,7 @@ export interface apiZone {
   description: string;
   xpos: number;
   ypos: number;
+  actors?: apiActor[];
 }
 
 /**
@@ -32,6 +35,7 @@ export interface apiAddActorInstruction {
 export interface apiActor {
   id: number;
   creatureId: number;
+  creature?: apiCreature;
   zoneId?: number;
   enduranceDamage: number;
   healthDamage: number;

@@ -1,0 +1,6 @@
+.edit-actor-button-group {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+  flex-direction: row;
+}

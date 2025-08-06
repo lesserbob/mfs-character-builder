@@ -8,7 +8,6 @@
 .simple-asset-button-group {
   display: flex;
   gap: 16px;
-  /* width: 600px; */
   margin-left: auto;
   flex-direction: row;
 }

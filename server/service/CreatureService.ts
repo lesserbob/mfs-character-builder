@@ -3,18 +3,24 @@ import { apiCreature } from '../types/CreatureApiTypes';
 
 const prisma = new PrismaClient();
 
+export const creatureInclude = {
+  features: true,
+  items: true,
+  classes: true,
+  bespokeFeatures: true,
+} as const;
+
+export type CreatureFromDb = Prisma.CreatureGetPayload<{
+  include: typeof creatureInclude;
+}>;
+
 // Returns a creature type given id
 export const getCreature = async (id: number): Promise<apiCreature> => {
   const deCreature = await prisma.creature.findUnique({
     where: {
       id: id,
     },
-    include: {
-      features: true,
-      items: true,
-      classes: true,
-      bespokeFeatures: true,
-    },
+    include: creatureInclude,
   });
 
   if (!deCreature) {
@@ -29,7 +35,6 @@ export const getCreatures = async (
   user: any,
   type: string | null
 ): Promise<apiCreature[]> => {
-  // export const getCreatures = async (userId: number): Promise<apiCreature[]> => {
   const filterByUserId = user.type === 'PLAYER';
   const filterByType = type != null;
   const userId = user.id!;
@@ -41,12 +46,7 @@ export const getCreatures = async (
 
   const deCreatures = await prisma.creature.findMany({
     where: filter,
-    include: {
-      features: true,
-      items: true,
-      classes: true,
-      bespokeFeatures: true,
-    },
+    include: creatureInclude,
   });
 
   return deCreatures.map((deCreature) => {
@@ -55,14 +55,7 @@ export const getCreatures = async (
 };
 
 export const mapDeCreatureToApiCreature = (
-  deCreature: Prisma.CreatureGetPayload<{
-    include: {
-      features: true;
-      items: true;
-      classes: true;
-      bespokeFeatures: true;
-    };
-  }>
+  deCreature: CreatureFromDb
 ): apiCreature => {
   const result: apiCreature = {
     id: deCreature.id,

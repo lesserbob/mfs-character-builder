@@ -260,13 +260,13 @@ paths:
                 $ref: '#/components/schemas/story'
         '404':
           description: story not found
-  /story/{storyId}/location:
+  /story/{id}/location:
     get:
       summary: Get locations by story ID
       description: Retrieve all locations for the given story
       operationId: getLocationsByStoryId
       parameters:
-        - name: storyId
+        - name: id
           in: path
           required: true
           schema:
@@ -286,7 +286,7 @@ paths:
     post:
       summary: Create a new location
       parameters:
-        - name: storyId
+        - name: id
           in: path
           required: true
           schema:
@@ -329,7 +329,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/addActorInstruction'
+              type: array
+              items:
+                $ref: '#/components/schemas/addActorInstruction'
       responses:
         '200':
           description: Story found
@@ -337,6 +339,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/story'
+        '404':
+          description: story not found
+  /story/{id}/actor:
+    get:
+      summary: Get actors by story ID
+      description: Retrieve all actors for the given story
+      operationId: getActorsByStoryId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Story ID
+      responses:
+        '200':
+          description: Actors within story
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/actor'
         '404':
           description: story not found
   /location/{locationId}:
@@ -783,6 +808,16 @@ components:
         ypos:
           type: integer
           description: relative yposition of the zone
+        actors:
+          type: array
+          description: List of actors
+          items:
+            $ref: '#/components/schemas/actor'
+      required:
+        - name
+        - xpos
+        - ypos
+        - actors
     addActorInstruction:
       type: object
       properties:
@@ -792,3 +827,54 @@ components:
         count:
           type: integer
           description: count of creatures to add
+    actor:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id of actor
+        creatureId:
+          type: integer
+          description: Creature id of actor
+        creature:
+          description: The creature
+          $ref: '#/components/schemas/creature'
+        zoneId:
+          type: integer
+          description: The zone (if any) the creature is currently in
+        enduranceDamage:
+          type: integer
+          description: The amount of endurance the actor has lost
+        healthDamage:
+          type: integer
+          description: The amount of health the actor has lost
+        momentumSpent:
+          type: integer
+          description: The amount of momentum the actor has lost
+        actionPoints:
+          type: integer
+          description: The amount of action points the actor has
+        standardActions:
+          type: integer
+          description: The amount of standard actions the actor has
+        tacticalSurgeToken:
+          type: boolean
+          description: Whether the acotr can attempt a tactical surge
+        tacticalActionsTaken:
+          type: integer
+          description: The unmber of tactical surges taken this combat
+        acting:
+          type: boolean
+          description: flag to indicate that the actor is currently acting
+      required:
+        - id
+        - creatureId
+        - zoneId
+        - enduranceDamage
+        - healthDamage
+        - momentumSpent
+        - actionPoints
+        - standardActions
+        - tacticalSurgeToken
+        - tacticalActionsTaken
+        - acting

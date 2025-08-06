@@ -15,12 +15,15 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Location, Zone, ZoneBase } from '../api/generated';
+import { Actor, Location, Zone, ZoneBase } from '../api/generated';
 import { apiClient } from '../api/client';
 
 const DEFAULT_GRID_SIZE = 50;
 const DEFAULT_MAP_WIDTH = 10;
 const DEFAULT_MAP_HEIGHT = 10;
+
+export const DEFAULT_ZONE_WIDTH = 7;
+export const DEFAULT_ACTOR_WIDTH = 3;
 
 interface LocationContextType {
   setGridSize(size: number): void;
@@ -37,6 +40,9 @@ interface LocationContextType {
 
   addZone(zone: ZoneBase): void;
   updateZone(zone: Zone): void;
+
+  setEditActor(actor: Actor | undefined): void;
+  editActor: Actor | undefined;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(
@@ -54,6 +60,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
   const [mapWidth, setMapWidth] = useState<number>(DEFAULT_MAP_WIDTH);
   const [mapHeight, setMapHeight] = useState<number>(DEFAULT_MAP_HEIGHT);
   const [location, setLocation] = useState<Location>();
+  const [editActor, setEditActor] = useState<Actor | undefined>(undefined);
 
   const fetchLocation = async (locationId: number) => {
     try {
@@ -115,6 +122,9 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
 
     addZone,
     updateZone,
+
+    setEditActor,
+    editActor,
   };
 
   return (
