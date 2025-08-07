@@ -63,6 +63,9 @@ export const ZoneLayer = () => {
           onDragEnd={(e) => onDragEnd(e, zone)}
         >
           <Rect
+            // These next two are important. Used by drag end when dragging actors
+            name="zone"
+            id={zone.id.toString()}
             width={DEFAULT_ZONE_WIDTH * gridSize}
             height={(determineRelativeHeight(zone) + 1) * gridSize}
             stroke="black"

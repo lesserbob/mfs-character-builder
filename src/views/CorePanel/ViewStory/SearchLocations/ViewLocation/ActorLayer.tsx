@@ -2,7 +2,7 @@
  * Renders actors onto a layer
  */
 
-import { Group, Image, Layer, Rect, Text } from 'react-konva';
+import { Group, Image, Layer, Rect, Stage, Text } from 'react-konva';
 import {
   DEFAULT_ACTOR_WIDTH,
   useLocation,
@@ -16,6 +16,7 @@ import {
   getRemainingMomentum,
 } from '../../../../../util/CreatureUtils';
 import { useClasses } from '../../../../../context/ClassContext';
+import Konva from 'konva';
 
 interface ActorGroup {
   xpos: number;
@@ -47,8 +48,14 @@ const preloadImages = (
 };
 
 export const ActorLayer = () => {
-  const { gridSize, location, setEditActor, getZonePosition, zoneCoordinate } =
-    useLocation();
+  const {
+    gridSize,
+    location,
+    setEditActor,
+    getZonePosition,
+    zoneCoordinate,
+    updateActor,
+  } = useLocation();
   const { classes } = useClasses();
 
   const [actorGroups, setActorGroups] = useState<ActorGroup[]>();
@@ -58,6 +65,9 @@ export const ActorLayer = () => {
   const [lastHoveredActor, setLastHoveredActor] = useState<Actor | undefined>(
     undefined
   );
+
+  const [originalPos, setOriginalPos] = useState({ x: 0, y: 0 });
+  const [dragActor, setDragActor] = useState<Actor | undefined>(undefined);
 
   // Pre cached images by url
   const [imageMap, setImageMap] = useState<Map<string, HTMLImageElement>>(
@@ -143,6 +153,34 @@ export const ActorLayer = () => {
     );
   };
 
+  function handleDragEnd(e: Konva.KonvaEventObject<DragEvent>) {
+    const stage = e.target.getStage();
+    if (!stage) return;
+
+    const pointerPos = stage.getPointerPosition();
+    if (!pointerPos) return;
+
+    const nodesUnderPointer = stage.getAllIntersections(pointerPos);
+
+    // See ZoneLayer. I have nominated one component with "zone" and "Id"
+    const zoneNode = nodesUnderPointer.find((node) => node.hasName('zone'));
+
+    if (
+      dragActor &&
+      zoneNode &&
+      Number(zoneNode.attrs.id) != dragActor.zoneId
+    ) {
+      const newActor = { ...dragActor, zoneId: Number(zoneNode.attrs.id) };
+      updateActor(newActor);
+    } else {
+      // Move the draggable back to where it started (if invalid drop)
+      e.target.position(originalPos);
+      e.target.getLayer()?.batchDraw();
+    }
+
+    setDragActor(undefined);
+  }
+
   return (
     <Layer>
       {actorGroups?.map((ag, index) => (
@@ -160,30 +198,47 @@ export const ActorLayer = () => {
                 fill="transparent"
               />
               {actor.creature?.portrait && (
-                <Image
-                  image={imageMap.get(actor.creature?.portrait)}
-                  x={PADDING * gridSize * 2}
-                  y={PADDING * gridSize * 2}
-                  width={gridSize - gridSize * PADDING * 4}
-                  height={gridSize - gridSize * PADDING * 4}
-                  onMouseEnter={(e) => {
-                    setLastHoveredActor(actor);
-                    setHovered(true);
-                    const stage = e.target.getStage();
-                    const pointerPos = stage?.getPointerPosition();
-                    if (pointerPos) setTooltipPos(pointerPos);
-                  }}
-                  onMouseMove={(e) => {
-                    const stage = e.target.getStage();
-                    const pointerPos = stage?.getPointerPosition();
-                    if (pointerPos) setTooltipPos(pointerPos);
-                  }}
-                  onMouseLeave={() => setHovered(false)}
-                  onDblClick={() => {
-                    setEditActor(actor);
-                  }}
-                  draggable
-                />
+                <>
+                  <Image
+                    image={imageMap.get(actor.creature?.portrait)}
+                    x={PADDING * gridSize * 2}
+                    y={PADDING * gridSize * 2}
+                    width={gridSize - gridSize * PADDING * 4}
+                    height={gridSize - gridSize * PADDING * 4}
+                  />
+                  <Image
+                    image={imageMap.get(actor.creature?.portrait)}
+                    x={PADDING * gridSize * 2}
+                    y={PADDING * gridSize * 2}
+                    width={gridSize - gridSize * PADDING * 4}
+                    height={gridSize - gridSize * PADDING * 4}
+                    draggable
+                    opacity={0.5}
+                    onDragStart={(e) => {
+                      setHovered(false);
+                      setDragActor(actor);
+                      const { x, y } = e.target.position();
+                      setOriginalPos({ x, y });
+                    }}
+                    onDragEnd={(e) => handleDragEnd(e)}
+                    onMouseEnter={(e) => {
+                      setLastHoveredActor(actor);
+                      setHovered(true);
+                      const stage = e.target.getStage();
+                      const pointerPos = stage?.getPointerPosition();
+                      if (pointerPos) setTooltipPos(pointerPos);
+                    }}
+                    onMouseMove={(e) => {
+                      const stage = e.target.getStage();
+                      const pointerPos = stage?.getPointerPosition();
+                      if (pointerPos) setTooltipPos(pointerPos);
+                    }}
+                    onMouseLeave={() => setHovered(false)}
+                    onDblClick={() => {
+                      setEditActor(actor);
+                    }}
+                  />
+                </>
               )}
               <Rect
                 x={gridSize + PADDING * gridSize}

@@ -60,7 +60,6 @@ const ViewLocationInner = ({ locationId }: { locationId: number }) => {
       </div>
       <Stage width={window.innerWidth} height={window.innerHeight}>
         <BackgroundLayer />
-        <GridLayer />
         <ZoneLayer />
         <ActorLayer />
       </Stage>
