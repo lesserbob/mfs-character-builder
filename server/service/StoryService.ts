@@ -283,3 +283,19 @@ export const addActors = async (
     data: actors,
   });
 };
+
+export const updateActor = async (actorId: number, actor: apiActor) => {
+  await prisma.actor.update({
+    where: { id: actorId },
+    data: {
+      zoneId: actor.zoneId,
+      enduranceDamage: actor.enduranceDamage,
+      healthDamage: actor.healthDamage,
+      momentumSpent: actor.momentumSpent,
+      actionPoints: actor.actionPoints,
+      standardActions: actor.standardActions,
+      tacticalSurgeToken: actor.tacticalSurgeToken,
+      tacticalActionsTaken: actor.tacticalActionsTaken,
+    },
+  });
+};

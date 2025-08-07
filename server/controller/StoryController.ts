@@ -9,6 +9,7 @@ import {
   getLocations,
   getStories,
   getStory,
+  updateActor,
   updateLocation,
 } from '../service/StoryService';
 import { authenticateToken } from '../service/AuthService';
@@ -102,6 +103,15 @@ router.get('/story/:storyId/actor', async (req, res, next) => {
   try {
     const actors = await getActors(parseInt(req.params.storyId));
     res.json(actors);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/actor/:actorId', async (req, res, next) => {
+  try {
+    const actors = await updateActor(parseInt(req.params.actorId), req.body);
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }

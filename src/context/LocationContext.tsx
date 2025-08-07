@@ -43,6 +43,7 @@ interface LocationContextType {
 
   setEditActor(actor: Actor | undefined): void;
   editActor: Actor | undefined;
+  updateActor(actor: Actor): void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(
@@ -71,14 +72,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     }
   };
 
-  // TODO for testing...remove
-  // useEffect(() => {
-  //   console.log(location);
-  // }, [location]);
-
   const addZone = (zone: ZoneBase) => {
-    // TODO Probably want to push this to server, the re-treive the location
-    // For now, just insert into location
     if (!location) return;
 
     updateLocation({
@@ -107,6 +101,11 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     });
   };
 
+  const updateActor = async (actor: Actor) => {
+    await apiClient.updateActor(actor?.id!, actor);
+    fetchLocation(location!.id);
+  };
+
   const value: LocationContextType = {
     setGridSize,
     gridSize,
@@ -125,6 +124,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
 
     setEditActor,
     editActor,
+    updateActor,
   };
 
   return (

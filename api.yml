@@ -404,7 +404,28 @@ paths:
               $ref: '#/components/schemas/location'
       responses:
         '200':
-          description: Creature updated successfully
+          description: Location updated successfully
+  /actor/{actorId}:
+    put:
+      summary: Update actor
+      description: Update an existing actor information
+      operationId: updateActor
+      parameters:
+        - name: actorId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Location ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/actor'
+      responses:
+        '200':
+          description: Actor updated successfully
 components:
   securitySchemes:
     bearerAuth:

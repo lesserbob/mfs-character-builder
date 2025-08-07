@@ -17,8 +17,9 @@ import {
 } from '../../../../../util/CreatureUtils';
 import { useClasses } from '../../../../../context/ClassContext';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, get, useForm } from 'react-hook-form';
 import './EditActor.css';
+import { Actor } from '../../../../../api/generated';
 
 type FormData = {
   remainingHealth: number;
@@ -30,14 +31,13 @@ type FormData = {
 };
 
 export const EditActor = () => {
-  const { editActor, setEditActor } = useLocation();
+  const { editActor, setEditActor, updateActor } = useLocation();
   const { classes } = useClasses();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset,
     watch,
     setValue,
   } = useForm<FormData>({
@@ -51,6 +51,13 @@ export const EditActor = () => {
     },
   });
 
+  const remainingHealth = watch('remainingHealth');
+  const remainingEndurance = watch('remainingEndurance');
+  const remainingMomentum = watch('remainingMomentum');
+  const remainingActionPoints = watch('remainingActionPoints');
+  const tacticalSurgeToken = watch('tacticalSurgeToken');
+  const tacticalActionsTaken = watch('tacticalActionsTaken');
+
   useEffect(() => {
     if (editActor) {
       setValue('remainingHealth', getRemainingHealth(editActor, classes));
@@ -62,19 +69,33 @@ export const EditActor = () => {
     }
   }, [editActor, classes, setValue]);
 
-  const onSubmit = async (data: any) => {};
+  const onSubmit = async (data: any) => {
+    const actor = {
+      ...editActor,
+      healthDamage: getHealth(editActor?.creature!, classes) - remainingHealth,
+      enduranceDamage:
+        getHealth(editActor?.creature!, classes) - remainingEndurance,
+      momentumSpent: getMomentum(editActor?.creature!) - remainingMomentum,
+      actionPoints: Number(remainingActionPoints),
+      tacticalSurgeToken: tacticalSurgeToken,
+      tacticalActionsTaken: Number(tacticalActionsTaken),
+    } as Actor;
+
+    updateActor(actor);
+    setEditActor(undefined);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Dialog
-        open={!!editActor}
-        slotProps={{
-          paper: {
-            className: 'simple-asset-dialog-paper',
-          },
-        }}
-      >
-        <DialogTitle>{editActor?.creature!.name}</DialogTitle>
+    <Dialog
+      open={!!editActor}
+      slotProps={{
+        paper: {
+          className: 'simple-asset-dialog-paper',
+        },
+      }}
+    >
+      <DialogTitle>{editActor?.creature!.name}</DialogTitle>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
           <Grid container spacing={2}>
             <Grid size={{ xs: 4 }}>Health</Grid>
@@ -126,11 +147,13 @@ export const EditActor = () => {
               <Controller
                 name="tacticalSurgeToken"
                 control={control}
-                render={({ field }) => (
+                render={({ field: { value, onChange, ...rest } }) => (
                   <Checkbox
-                    {...field}
+                    checked={!!value}
+                    onChange={(e, checked) => onChange(checked)}
                     size="small"
-                    sx={{ padding: 0, margin: 0 }}
+                    sx={{ p: 0, m: 0 }}
+                    {...rest}
                   />
                 )}
               />
@@ -163,14 +186,7 @@ export const EditActor = () => {
           </Grid>
         </DialogContent>
         <div className="edit-actor-button-group">
-          <Button
-            type="button"
-            variant="contained"
-            fullWidth
-            onClick={() => {
-              setEditActor(undefined);
-            }}
-          >
+          <Button type="submit" variant="contained" fullWidth>
             Save
           </Button>
           <Button
@@ -184,7 +200,7 @@ export const EditActor = () => {
             Close
           </Button>
         </div>
-      </Dialog>
-    </form>
+      </form>
+    </Dialog>
   );
 };
