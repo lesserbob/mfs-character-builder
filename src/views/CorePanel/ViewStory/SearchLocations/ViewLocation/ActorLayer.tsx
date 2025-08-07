@@ -47,7 +47,8 @@ const preloadImages = (
 };
 
 export const ActorLayer = () => {
-  const { gridSize, location, setEditActor } = useLocation();
+  const { gridSize, location, setEditActor, getZonePosition, zoneCoordinate } =
+    useLocation();
   const { classes } = useClasses();
 
   const [actorGroups, setActorGroups] = useState<ActorGroup[]>();
@@ -74,16 +75,19 @@ export const ActorLayer = () => {
     const ag: ActorGroup[] = [];
     if (location) {
       for (const zone of location?.zones!) {
+        const zonePosition = getZonePosition(zone.id);
+
         const pro = {
-          xpos: zone.xpos * gridSize,
-          ypos: zone.ypos * gridSize + gridSize * 0.5,
+          xpos: zonePosition.xpos * gridSize,
+          ypos: zonePosition.ypos * gridSize + gridSize * 0.5,
           actors: zone.actors.filter((a) => a.creature?.type === 'PLAYER'),
         };
         ag.push(pro);
 
         const ant = {
-          xpos: zone.xpos * gridSize + (DEFAULT_ACTOR_WIDTH + 1) * gridSize,
-          ypos: zone.ypos * gridSize + gridSize * 0.5,
+          xpos:
+            zonePosition.xpos * gridSize + (DEFAULT_ACTOR_WIDTH + 1) * gridSize,
+          ypos: zonePosition.ypos * gridSize + gridSize * 0.5,
           actors: zone.actors.filter((a) => a.creature?.type === 'ANTAGONIST'),
         };
         ag.push(ant);
@@ -104,7 +108,7 @@ export const ActorLayer = () => {
     preloadImages(urls).then(setImageMap);
 
     setActorGroups(ag);
-  }, [location, gridSize]);
+  }, [location, gridSize, zoneCoordinate]);
 
   const hpBarHeight = HP_BAR_HEIGHT_MULTIPLIER * gridSize;
   const healthOuterBarWidth =
@@ -178,6 +182,7 @@ export const ActorLayer = () => {
                   onDblClick={() => {
                     setEditActor(actor);
                   }}
+                  draggable
                 />
               )}
               <Rect

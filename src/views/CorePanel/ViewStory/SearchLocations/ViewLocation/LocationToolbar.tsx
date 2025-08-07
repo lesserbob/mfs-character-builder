@@ -13,7 +13,7 @@ export const LocationToolbar = () => {
     mapWidth,
     setMapHeight,
     mapHeight,
-    addZone,
+    setPromptForNewZone,
   } = useLocation();
 
   return (
@@ -53,7 +53,7 @@ export const LocationToolbar = () => {
       </label>
       <button
         onClick={() => {
-          addZone({ name: 'Test name', description: 'Test Description' });
+          setPromptForNewZone(true);
         }}
         className={'location-toolbar-button'}
       >

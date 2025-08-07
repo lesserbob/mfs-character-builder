@@ -8,13 +8,7 @@ variable pool
 ...this is going to get complex
  */
 
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 import { Actor, Location, Zone, ZoneBase } from '../api/generated';
 import { apiClient } from '../api/client';
 
@@ -35,11 +29,17 @@ interface LocationContextType {
   setMapHeight(height: number): void;
   mapHeight: number;
 
+  setPromptForNewZone(newZone: boolean): void;
+  promptForNewZone: boolean;
+
   fetchLocation(locationId: number): void;
   location: Location | undefined;
 
   addZone(zone: ZoneBase): void;
   updateZone(zone: Zone): void;
+  setZonePosition(zoneId: number, xpos: number, ypos: number): void;
+  zoneCoordinate: any; // only exposed so components can detect state change
+  getZonePosition(zoneId: number): Coordinate;
 
   setEditActor(actor: Actor | undefined): void;
   editActor: Actor | undefined;
@@ -54,14 +54,25 @@ interface LocationProviderProps {
   children: ReactNode;
 }
 
+export interface Coordinate {
+  xpos: number;
+  ypos: number;
+}
+
 export const LocationProvider: React.FC<LocationProviderProps> = ({
   children,
 }) => {
   const [gridSize, setGridSize] = useState<number>(DEFAULT_GRID_SIZE);
   const [mapWidth, setMapWidth] = useState<number>(DEFAULT_MAP_WIDTH);
   const [mapHeight, setMapHeight] = useState<number>(DEFAULT_MAP_HEIGHT);
+  const [promptForNewZone, setPromptForNewZone] = useState<boolean>(false);
+
   const [location, setLocation] = useState<Location>();
   const [editActor, setEditActor] = useState<Actor | undefined>(undefined);
+
+  const [zoneCoordinate, setZoneCoordinate] = useState<Map<number, Coordinate>>(
+    new Map()
+  );
 
   const fetchLocation = async (locationId: number) => {
     try {
@@ -106,6 +117,34 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     fetchLocation(location!.id);
   };
 
+  /**
+   * This set TEMP zone position.
+   * Intended to avoid visual quirks while dragging zone
+   */
+  const setZonePosition = (zoneId: number, xpos: number, ypos: number) => {
+    // Calm down the refreshes. Only set state when change detected
+    const existingTempCoordinate = zoneCoordinate.get(zoneId);
+    if (
+      existingTempCoordinate &&
+      existingTempCoordinate.xpos == xpos &&
+      existingTempCoordinate.ypos == ypos
+    )
+      return;
+
+    const newCoordinate = { xpos: xpos, ypos: ypos };
+    setZoneCoordinate((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(zoneId, newCoordinate);
+      return newMap;
+    });
+  };
+
+  const getZonePosition = (zoneId: number): Coordinate => {
+    if (zoneCoordinate.has(zoneId)) return zoneCoordinate.get(zoneId)!;
+    const zone = location?.zones?.find((z) => z.id === zoneId);
+    return { xpos: zone?.xpos!, ypos: zone?.ypos! };
+  };
+
   const value: LocationContextType = {
     setGridSize,
     gridSize,
@@ -116,11 +155,17 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     setMapHeight,
     mapHeight,
 
+    setPromptForNewZone,
+    promptForNewZone,
+
     fetchLocation,
     location,
 
     addZone,
     updateZone,
+    setZonePosition,
+    zoneCoordinate,
+    getZonePosition,
 
     setEditActor,
     editActor,
