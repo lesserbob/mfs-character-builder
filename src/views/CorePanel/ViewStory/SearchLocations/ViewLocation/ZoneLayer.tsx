@@ -22,7 +22,13 @@ const ADD_ACTOR = 'M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z';
  * @returns Renders the basic zones of a location
  */
 export const ZoneLayer = () => {
-  const { location, gridSize, updateZone, setZonePosition } = useLocation();
+  const {
+    location,
+    gridSize,
+    updateZone,
+    setZonePosition,
+    setZoneToAddActorTo,
+  } = useLocation();
 
   const onDragEnd = (e: any, zone: Zone) => {
     const node = e.target;
@@ -98,7 +104,7 @@ export const ZoneLayer = () => {
             x={DEFAULT_ZONE_WIDTH * gridSize - 40}
             y={20}
             onClick={() => {
-              console.log('Add Actor');
+              setZoneToAddActorTo(zone);
             }}
           />
         </Group>

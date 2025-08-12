@@ -5,11 +5,8 @@ import {
   apiLocation,
   apiStory,
 } from '../types/StoryTypes';
-import {
-  creatureInclude,
-  getCreature,
-  mapDeCreatureToApiCreature,
-} from './CreatureService';
+import { creatureInclude, mapDeCreatureToApiCreature } from './CreatureService';
+import { apiCreature } from '../types/CreatureApiTypes';
 
 const prisma = new PrismaClient();
 
@@ -124,6 +121,7 @@ const mapDeLocationToApiLocation = (
     id: deLocation.id,
     name: deLocation.name,
     description: deLocation.description,
+    storyId: deLocation.storyId,
     zones: includeZones
       ? deLocation.zones.map((z) => ({
           id: z.id,
@@ -270,18 +268,79 @@ const mapDeActorToApiActor = (deActor: ActorFromDb): apiActor => {
  */
 export const addActors = async (
   storyId: number,
-  instruction: apiAddActorInstruction[]
+  instructions: apiAddActorInstruction[]
 ) => {
-  const actors = instruction.flatMap((i) => {
-    return Array.from({ length: i.count }, () => ({
-      creatureId: i.creatureId,
-      storyId,
-    }));
-  });
+  // Create array of actors from map
 
-  await prisma.actor.createMany({
-    data: actors,
-  });
+  /*
+  There are 3 scenarios I need to think about
+  
+  NOTE: We will always have a story id and each element will always have a creature id
+
+  a. Adding player to story
+  There will not be a count
+  There will not be a zone id
+
+  This is an ordinary create of a single actor
+
+  b. Adding player already in the story to a zone
+  There will not be a count
+  There will be a zone id
+
+  This is an update of an actor
+  We therefore need to lookup the single actor (given story and creature)
+  Then update it
+
+  c. Adding antagonists to zone
+  There will be a count
+  There will be a zone id
+
+  This is the creation of a number of actors of the given count+creature+story
+  */
+  // const actors = instruction.flatMap((i) => {
+  //   return Array.from({ length: i.count }, () => ({
+  //     creatureId: i.creatureId,
+  //     storyId,
+  //   }));
+  // });
+
+  // await prisma.actor.createMany({
+  //   data: actors,
+  // });
+  for (const instruction of instructions) {
+    if (!instruction.count && !instruction.zoneId) {
+      // Case a
+      await prisma.actor.create({
+        data: { creatureId: instruction.creatureId, storyId: storyId },
+      });
+    }
+
+    if (!instruction.count && instruction.zoneId) {
+      // Case b
+      await prisma.actor.updateMany({
+        where: {
+          creatureId: instruction.creatureId,
+          storyId: storyId,
+        },
+        data: {
+          zoneId: instruction.zoneId,
+        },
+      });
+    }
+
+    if (instruction.count && instruction.zoneId) {
+      // Case c
+      for (let i = 1; i <= instruction.count; i++) {
+        await prisma.actor.create({
+          data: {
+            creatureId: instruction.creatureId,
+            storyId: storyId,
+            zoneId: instruction.zoneId,
+          },
+        });
+      }
+    }
+  }
 };
 
 export const updateActor = async (actorId: number, actor: apiActor) => {
@@ -297,5 +356,49 @@ export const updateActor = async (actorId: number, actor: apiActor) => {
       tacticalSurgeToken: actor.tacticalSurgeToken,
       tacticalActionsTaken: actor.tacticalActionsTaken,
     },
+  });
+};
+
+/**
+ * Search creatures specifically for the purpose of Adding players OR antagonists to a zone
+ * This covers player characters, but ONLY those that are already allocated to the story
+ * This covers antagonists. In this case, it doesnt matter that they arent already allocated to the story
+ *
+ * Relative to this, when adding player characters, its just a case of updating the existing actor row
+ * When adding antagonists, its a case of creating a new actor every time, and this time we also allow
+ * the user to stipulate a count of actors to add
+ *
+ * This follows a philosophy
+ * Player actors exist persistent through the story
+ * Antagonist actors exist only for the duration of the location (...there extras!)
+ */
+export const searchCreaturesForAddToZone = async (
+  storyId: number
+): Promise<apiCreature[]> => {
+  const deCreatures = await prisma.creature.findMany({
+    where: {
+      OR: [
+        {
+          AND: [
+            {
+              type: 'PLAYER',
+              actors: {
+                some: {
+                  storyId: storyId,
+                },
+              },
+            },
+          ],
+        },
+        {
+          type: 'ANTAGONIST',
+        },
+      ],
+    },
+    include: creatureInclude,
+  });
+
+  return deCreatures.map((deCreature) => {
+    return mapDeCreatureToApiCreature(deCreature);
   });
 };

@@ -44,6 +44,9 @@ interface LocationContextType {
   setEditActor(actor: Actor | undefined): void;
   editActor: Actor | undefined;
   updateActor(actor: Actor): void;
+
+  zoneToAddActorTo: Zone | undefined;
+  setZoneToAddActorTo(zone: Zone | undefined): void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(
@@ -72,6 +75,10 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
 
   const [zoneCoordinate, setZoneCoordinate] = useState<Map<number, Coordinate>>(
     new Map()
+  );
+
+  const [zoneToAddActorTo, setZoneToAddActorTo] = useState<Zone | undefined>(
+    undefined
   );
 
   const fetchLocation = async (locationId: number) => {
@@ -170,6 +177,9 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     setEditActor,
     editActor,
     updateActor,
+
+    zoneToAddActorTo,
+    setZoneToAddActorTo,
   };
 
   return (

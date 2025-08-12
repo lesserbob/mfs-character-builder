@@ -15,6 +15,7 @@ import { ActorLayer } from './ViewLocation/ActorLayer';
 import { BackgroundLayer } from './ViewLocation/BackgroundLayer';
 import { EditActor } from './ViewLocation/EditActor';
 import { SimpleAssetModal } from '../../../../components/SimpleAssetModal';
+import { AddActorModal } from '../SearchActors/AddActorModal';
 
 const ViewLocationInner = ({ locationId }: { locationId: number }) => {
   const {
@@ -23,6 +24,8 @@ const ViewLocationInner = ({ locationId }: { locationId: number }) => {
     promptForNewZone,
     setPromptForNewZone,
     addZone,
+    zoneToAddActorTo,
+    setZoneToAddActorTo,
   } = useLocation();
 
   useEffect(() => {
@@ -47,6 +50,12 @@ const ViewLocationInner = ({ locationId }: { locationId: number }) => {
   return (
     <>
       <EditActor />
+      <AddActorModal
+        isModalOpen={!!zoneToAddActorTo}
+        closeModal={() => setZoneToAddActorTo(undefined)}
+        storyId={location?.storyId!}
+        zoneId={zoneToAddActorTo?.id}
+      />
       <SimpleAssetModal
         isModalOpen={promptForNewZone}
         assetDescription="New Zone"

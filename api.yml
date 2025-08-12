@@ -364,6 +364,27 @@ paths:
                   $ref: '#/components/schemas/actor'
         '404':
           description: story not found
+  /story/{id}/searchForActorAgent:
+    get:
+      summary: Search for creatures appropriate for adding to a story zone
+      description: Search for creatures appropriate for adding to a story zone
+      operationId: getCreaturesForStory
+      parameters:
+        - name: id
+          in: path
+          description: Story to add creatures to
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of creatures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/creature'
   /location/{locationId}:
     get:
       summary: Get location by ID
@@ -799,6 +820,9 @@ components:
         description:
           type: string
           description: Description of the location
+        storyId:
+          type: number
+          description: Story this location belongs to
         zones:
           type: array
           description: List of zones
@@ -848,6 +872,9 @@ components:
         count:
           type: integer
           description: count of creatures to add
+        zoneId:
+          type: integer
+          description: Zone id when adding to zone
     actor:
       type: object
       properties:

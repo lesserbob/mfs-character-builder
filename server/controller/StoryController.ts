@@ -9,6 +9,7 @@ import {
   getLocations,
   getStories,
   getStory,
+  searchCreaturesForAddToZone,
   updateActor,
   updateLocation,
 } from '../service/StoryService';
@@ -103,6 +104,17 @@ router.get('/story/:storyId/actor', async (req, res, next) => {
   try {
     const actors = await getActors(parseInt(req.params.storyId));
     res.json(actors);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/story/:storyId/searchForActorAgent', async (req, res, next) => {
+  try {
+    const creatures = await searchCreaturesForAddToZone(
+      parseInt(req.params.storyId)
+    );
+    res.json(creatures);
   } catch (error) {
     next(error);
   }

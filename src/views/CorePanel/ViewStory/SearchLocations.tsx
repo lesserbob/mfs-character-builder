@@ -83,7 +83,7 @@ export const SearchLocations = ({ storyId }: SearchLocationsProps) => {
           </TableHead>
           <TableBody>
             {locations?.map((location) => (
-              <TableRow>
+              <TableRow key={location.id}>
                 <TableCell>
                   <Link
                     to={`/view-location/${location.id}`}

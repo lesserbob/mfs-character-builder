@@ -11,6 +11,7 @@ export interface apiLocation {
   id: number;
   name: string;
   description: string;
+  storyId: number;
   zones: apiZone[];
 }
 
@@ -29,7 +30,8 @@ export interface apiZone {
  */
 export interface apiAddActorInstruction {
   creatureId: number;
-  count: number;
+  count?: number;
+  zoneId?: number;
 }
 
 export interface apiActor {

@@ -1,0 +1,41 @@
+.search-actor-modal-paper {
+  width: 600px;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.search-actor-modal-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.search-actor-modal-button-group {
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+  flex-direction: row;
+}
+
+.search-actor-modal-button-group button {
+  flex: 1;
+}
+
+.search-actor-modal-wrapper .MuiTableCell-head {
+  background-color: #1976d2 !important; /* force blue background */
+  color: white;
+  font-weight: bold;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  height: 32px;
+  z-index: 10; /* make sure sticky cells appear above rows */
+  position: sticky; /* ensure sticky position if not already */
+  top: 0; /* stick to top */
+}
+
+.mui-table td,
+.mui-table th {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  line-height: 1.2; /* Helps reduce total row height */
+}
