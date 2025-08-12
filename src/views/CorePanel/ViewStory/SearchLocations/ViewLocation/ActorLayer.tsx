@@ -17,6 +17,7 @@ import {
 } from '../../../../../util/CreatureUtils';
 import { useClasses } from '../../../../../context/ClassContext';
 import Konva from 'konva';
+import { useAuth } from '../../../../../context/AuthContext';
 
 interface ActorGroup {
   xpos: number;
@@ -73,6 +74,8 @@ export const ActorLayer = () => {
   const [imageMap, setImageMap] = useState<Map<string, HTMLImageElement>>(
     new Map()
   );
+
+  const { isAuthenticated, user } = useAuth();
 
   // When location changes, build list of pro and ant agonist
   useEffect(() => {
@@ -131,7 +134,9 @@ export const ActorLayer = () => {
 
   const fontSize = gridSize * 0.2;
 
-  const composeCharacterInformation = (actor: Actor): string => {
+  const composeCharacterInformation = (actor: Actor | undefined): string => {
+    if (!actor) return '';
+
     return (
       actor.creature?.name +
       '\n' +
@@ -150,6 +155,22 @@ export const ActorLayer = () => {
       '\n' +
       'Action points: ' +
       actor.actionPoints
+    );
+  };
+
+  const showHoverText = (): boolean => {
+    return (
+      hovered &&
+      !!lastHoveredActor &&
+      isAuthenticated &&
+      (user?.type === 'GM' || lastHoveredActor.creature?.type === 'PLAYER')
+    );
+  };
+
+  const canActionActor = (actor: Actor): boolean => {
+    return (
+      isAuthenticated &&
+      (user?.type === 'GM' || actor.creature?.type === 'PLAYER')
     );
   };
 
@@ -212,7 +233,7 @@ export const ActorLayer = () => {
                     y={PADDING * gridSize * 2}
                     width={gridSize - gridSize * PADDING * 4}
                     height={gridSize - gridSize * PADDING * 4}
-                    draggable
+                    draggable={canActionActor(actor)}
                     opacity={0.5}
                     onDragStart={(e) => {
                       setHovered(false);
@@ -235,7 +256,7 @@ export const ActorLayer = () => {
                     }}
                     onMouseLeave={() => setHovered(false)}
                     onDblClick={() => {
-                      setEditActor(actor);
+                      canActionActor(actor) && setEditActor(actor);
                     }}
                   />
                 </>
@@ -292,7 +313,7 @@ export const ActorLayer = () => {
           ))}
         </Group>
       ))}
-      {hovered && lastHoveredActor && (
+      {showHoverText() && (
         <Group x={tooltipPos.x + 10} y={tooltipPos.y + 10}>
           <Rect
             width={200}

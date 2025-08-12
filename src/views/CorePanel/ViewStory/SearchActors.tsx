@@ -14,6 +14,7 @@ import { apiClient } from '../../../api/client';
 import { Actor } from '../../../api/generated';
 import AddIcon from '@mui/icons-material/Add';
 import { AddActorModal } from './SearchActors/AddActorModal';
+import { useAuth } from '../../../context/AuthContext';
 
 export interface SearchActorsProps {
   storyId: number;
@@ -22,6 +23,8 @@ export interface SearchActorsProps {
 export const SearchActors = ({ storyId }: SearchActorsProps) => {
   const [actors, setActors] = useState<Actor[]>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     fetchActors();
@@ -62,12 +65,14 @@ export const SearchActors = ({ storyId }: SearchActorsProps) => {
                   justifyContent="space-between"
                 >
                   Actors
-                  <IconButton
-                    onClick={() => setIsModalOpen(true)}
-                    color="primary"
-                  >
-                    <AddIcon />
-                  </IconButton>
+                  {isAuthenticated && user?.type === 'GM' && (
+                    <IconButton
+                      onClick={() => setIsModalOpen(true)}
+                      color="primary"
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  )}
                 </Box>
               </TableCell>
             </TableRow>

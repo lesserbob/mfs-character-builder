@@ -15,6 +15,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 import { SimpleAssetModal } from '../../../components/SimpleAssetModal';
+import { useAuth } from '../../../context/AuthContext';
 
 interface SearchLocationsProps {
   storyId: number;
@@ -23,6 +24,8 @@ interface SearchLocationsProps {
 export const SearchLocations = ({ storyId }: SearchLocationsProps) => {
   const [locations, setLocations] = useState<Location[]>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const { isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     fetchLocations();
@@ -69,14 +72,16 @@ export const SearchLocations = ({ storyId }: SearchLocationsProps) => {
                   justifyContent="space-between"
                 >
                   Locations
-                  <IconButton
-                    onClick={() => {
-                      setIsModalOpen(true);
-                    }}
-                    color="primary"
-                  >
-                    <AddIcon />
-                  </IconButton>
+                  {isAuthenticated && user?.type === 'GM' && (
+                    <IconButton
+                      onClick={() => {
+                        setIsModalOpen(true);
+                      }}
+                      color="primary"
+                    >
+                      <AddIcon />
+                    </IconButton>
+                  )}
                 </Box>
               </TableCell>
             </TableRow>

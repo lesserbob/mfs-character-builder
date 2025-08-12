@@ -234,9 +234,15 @@ export const updateLocation = async (
  * Actors from this point
  */
 export const getActors = async (storyId: number): Promise<apiActor[]> => {
+  // This is currently used for one point only which is the list of actors on
+  // front of sotry, where we only want to show players
+
   const deActors = await prisma.actor.findMany({
     where: {
       storyId: storyId,
+      creature: {
+        type: 'PLAYER',
+      },
     },
     include: actorInclude,
   });
@@ -297,16 +303,6 @@ export const addActors = async (
 
   This is the creation of a number of actors of the given count+creature+story
   */
-  // const actors = instruction.flatMap((i) => {
-  //   return Array.from({ length: i.count }, () => ({
-  //     creatureId: i.creatureId,
-  //     storyId,
-  //   }));
-  // });
-
-  // await prisma.actor.createMany({
-  //   data: actors,
-  // });
   for (const instruction of instructions) {
     if (!instruction.count && !instruction.zoneId) {
       // Case a

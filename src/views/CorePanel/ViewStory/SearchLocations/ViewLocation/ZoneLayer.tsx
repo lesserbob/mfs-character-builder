@@ -8,6 +8,7 @@ import {
   useLocation,
 } from '../../../../../context/LocationContext';
 import { Zone } from '../../../../../api/generated';
+import { useAuth } from '../../../../../context/AuthContext';
 
 /*
 https://fonts.google.com/icons
@@ -29,6 +30,8 @@ export const ZoneLayer = () => {
     setZonePosition,
     setZoneToAddActorTo,
   } = useLocation();
+
+  const { isAuthenticated, user } = useAuth();
 
   const onDragEnd = (e: any, zone: Zone) => {
     const node = e.target;
@@ -55,7 +58,7 @@ export const ZoneLayer = () => {
           key={zone.id}
           x={zone.xpos! * gridSize}
           y={zone.ypos! * gridSize}
-          draggable
+          draggable={isAuthenticated && user?.type === 'GM'}
           dragBoundFunc={(pos) => ({
             x: Math.round(pos.x / gridSize) * gridSize,
             y: Math.round(pos.y / gridSize) * gridSize,
@@ -87,26 +90,30 @@ export const ZoneLayer = () => {
             fill="fill"
           />
           <Text x={4} y={4} text={zone.name} fontSize={12} fill="white" />
-          <Path
-            data={DELETE_SVG}
-            fill="white"
-            scale={{ x: 0.02, y: 0.02 }}
-            x={DEFAULT_ZONE_WIDTH * gridSize - 20}
-            y={20}
-            onClick={() => {
-              console.log('Delete');
-            }}
-          />
-          <Path
-            data={ADD_ACTOR}
-            fill="white"
-            scale={{ x: 0.02, y: 0.02 }}
-            x={DEFAULT_ZONE_WIDTH * gridSize - 40}
-            y={20}
-            onClick={() => {
-              setZoneToAddActorTo(zone);
-            }}
-          />
+          {isAuthenticated && user?.type === 'GM' && (
+            <>
+              <Path
+                data={DELETE_SVG}
+                fill="white"
+                scale={{ x: 0.02, y: 0.02 }}
+                x={DEFAULT_ZONE_WIDTH * gridSize - 20}
+                y={20}
+                onClick={() => {
+                  console.log('Delete');
+                }}
+              />
+              <Path
+                data={ADD_ACTOR}
+                fill="white"
+                scale={{ x: 0.02, y: 0.02 }}
+                x={DEFAULT_ZONE_WIDTH * gridSize - 40}
+                y={20}
+                onClick={() => {
+                  setZoneToAddActorTo(zone);
+                }}
+              />
+            </>
+          )}
         </Group>
       ))}
     </Layer>
