@@ -12,6 +12,7 @@ export default defineConfig({
     //   key: fs.readFileSync(path.join(process.cwd(), 'ssl/private-key.pem')),
     //   cert: fs.readFileSync(path.join(process.cwd(), 'ssl/certificate.pem')),
     // },
+    host: true,
     port: 5173,
   },
 });

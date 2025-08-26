@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 // Use environment variable for API calls to the backend
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://localhost:3443/api';
+const apiBaseUrl = `https://${window.location.hostname}:3443/api`;
+const API_BASE_URL = import.meta.env.VITE_API_URL || apiBaseUrl;
+// const API_BASE_URL =
+//   import.meta.env.VITE_API_URL || 'https://localhost:3443/api';
 
 interface LoginRequest {
   username: string;

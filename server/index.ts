@@ -5,6 +5,7 @@ import { open, Database } from 'sqlite';
 import cors from 'cors';
 import helmet from 'helmet';
 import https from 'https';
+import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import creatureController from './controller/CreatureController';
@@ -13,6 +14,9 @@ import authController from './controller/AuthController';
 import itemController from './controller/ItemController';
 import storyController from './controller/StoryController';
 import { authenticateToken } from './service/AuthService';
+import { WebSocketServer } from 'ws';
+import { createWebSocketController } from './controller/WebsocketController';
+import { all } from 'axios';
 
 const app = express();
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
@@ -22,14 +26,20 @@ const httpsPort = 3443;
 app.use(helmet());
 
 // Configure CORS with specific options
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',')
-  : [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://localhost:5173',
-      'https://localhost:3000',
-    ];
+const allowedOrigins =
+  process.env.NODE_ENV === 'production'
+    ? process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(',')
+      : [
+          'http://localhost:5173',
+          'http://localhost:3000',
+          'https://localhost:5173',
+          'https://localhost:3000',
+        ]
+    : true; // Allow all origins in development
+
+console.log('Allowed Origins:' + allowedOrigins);
+
 app.use(
   cors({
     origin: allowedOrigins,
@@ -56,10 +66,10 @@ let db: Database;
   });
 })();
 
-// Public routes (no authentication required)
+// Public routes
 app.use('/api/auth', authController);
 
-// Mount controllers (authentication will be added to specific routes)
+// Mount controllers
 app.use('/api', creatureController);
 app.use('/api', classController);
 app.use('/api', itemController);
@@ -76,14 +86,17 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// HTTP server (for development and production)
-app.listen(port, () => {
-  console.log(`HTTP Server listening at http://localhost:${port}`);
+// Create HTTP server
+const httpServer = http.createServer(app);
+createWebSocketController(httpServer);
+httpServer.listen(port, '0.0.0.0', () => {
+  console.log(`HTTP Server listening at http://0.0.0.0:${port}`);
+  console.log(`HTTP Server accessible at http://localhost:${port}`);
 });
 
-// HTTPS server (for development and production when SSL is available)
+// HTTPS server
+let httpsServer: https.Server | undefined;
 try {
-  // In production, EB might provide SSL certificates at a different path
   const sslPath =
     process.env.NODE_ENV === 'production'
       ? '/etc/pki/tls/certs'
@@ -103,10 +116,12 @@ try {
   const certificate = fs.readFileSync(certificatePath, 'utf8');
 
   const credentials = { key: privateKey, cert: certificate };
-  const httpsServer = https.createServer(credentials, app);
 
-  httpsServer.listen(httpsPort, () => {
-    console.log(`HTTPS Server listening at https://localhost:${httpsPort}`);
+  httpsServer = https.createServer(credentials, app);
+  createWebSocketController(httpsServer);
+  httpsServer.listen(httpsPort, '0.0.0.0', () => {
+    console.log(`HTTPS Server listening at https://0.0.0.0:${httpsPort}`);
+    console.log(`HTTPS Server accessible at https://localhost:${httpsPort}`);
   });
 } catch (error) {
   console.log('SSL certificates not found. HTTPS server not started.');

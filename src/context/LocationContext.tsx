@@ -8,9 +8,16 @@ variable pool
 ...this is going to get complex
  */
 
-import { createContext, ReactNode, useContext, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { Actor, Location, Zone, ZoneBase } from '../api/generated';
 import { apiClient } from '../api/client';
+import { useWebSocket } from './WebSocketContext';
 
 const DEFAULT_GRID_SIZE = 50;
 const DEFAULT_MAP_WIDTH = 10;
@@ -73,6 +80,8 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
   const [location, setLocation] = useState<Location>();
   const [editActor, setEditActor] = useState<Actor | undefined>(undefined);
 
+  const { sendMessage, lastMessage } = useWebSocket();
+
   const [zoneCoordinate, setZoneCoordinate] = useState<Map<number, Coordinate>>(
     new Map()
   );
@@ -103,7 +112,9 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
   // the local image of location and that the server is updated
   const updateLocation = async (location: Location) => {
     await apiClient.updateLocation(location.id, location);
-    fetchLocation(location.id);
+    //    fetchLocation(location.id);
+
+    sendMessage({ type: 'refresh_location', payload: location?.id.toString() });
   };
 
   const updateZone = (zone: Zone) => {
@@ -121,8 +132,29 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
 
   const updateActor = async (actor: Actor) => {
     await apiClient.updateActor(actor?.id!, actor);
-    fetchLocation(location!.id);
+    // fetchLocation(location!.id);
+
+    sendMessage({ type: 'refresh_location', payload: location?.id.toString() });
   };
+
+  /**
+   * Update in respone to a location change
+   */
+  useEffect(() => {
+    console.log('last message trigger');
+    if (!location) return;
+    if (!lastMessage) return;
+
+    console.log(lastMessage);
+    console.log(Number(lastMessage!.payload) === location.id);
+    if (
+      lastMessage.type === 'refresh_location' &&
+      Number(lastMessage.payload) === location.id
+    ) {
+      console.log('trigger');
+      fetchLocation(location.id);
+    }
+  }, [lastMessage]); // NOTE : Dont add location. It creates an infinite loop
 
   /**
    * This set TEMP zone position.

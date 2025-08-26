@@ -4,14 +4,9 @@ import { CorePanel } from './views/CorePanel';
 import { ClassProvider } from './context/ClassContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ItemProvider } from './context/ItemContext';
+import { WebSocketProvider } from './context/WebSocketContext';
 
 const AppContent: React.FC = () => {
-  // const { isAuthenticated } = useAuth();
-
-  // if (!isAuthenticated) {
-  //   return <LoginForm />;
-  // }
-
   return (
     <ClassProvider>
       <ItemProvider>
@@ -26,7 +21,9 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <WebSocketProvider>
+        <AppContent />
+      </WebSocketProvider>
     </AuthProvider>
   );
 }

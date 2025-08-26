@@ -207,7 +207,7 @@ export const ActorLayer = () => {
       {actorGroups?.map((ag, index) => (
         <Group key={index} x={ag.xpos} y={ag.ypos}>
           {ag.actors.map((actor, index) => (
-            <Group x={0} y={index * gridSize}>
+            <Group x={0} y={index * gridSize} key={index}>
               <Rect
                 key={1000 + actor.id}
                 x={gridSize * PADDING}

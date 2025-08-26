@@ -10,7 +10,7 @@ interface TextProps {
  * @returns
  */
 export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
-  ({ children }, ref) => {
+  ({ children, ...props }, ref) => {
     return (
       <Typography
         ref={ref}
@@ -18,6 +18,7 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
         color="text.primary"
         sx={{ mt: 1 }}
         display="inline"
+        {...props}
       >
         {children}
       </Typography>
