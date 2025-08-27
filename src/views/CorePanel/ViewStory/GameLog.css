@@ -1,0 +1,5 @@
+.game-log-panel-drawer {
+  width: 240px;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+}

@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 import OptionPanel from './OptionPanel';
 import CreateCreature from './CorePanel/CreateCreature';
 import ViewCreature from './CorePanel/ViewCreature';
@@ -17,15 +18,18 @@ import { ViewStory } from './CorePanel/ViewStory';
 import { ViewLocation } from './CorePanel/ViewStory/SearchLocations/ViewLocation';
 
 export const CorePanel = (): React.JSX.Element => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+
   return (
     <div>
-      <OptionPanel />
+      <OptionPanel onDrawerStateChange={setIsDrawerOpen} />
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          marginLeft: '240px',
+          marginLeft: isDrawerOpen ? '240px' : '80px',
           padding: 3,
+          transition: 'margin-left 0.3s ease',
         }}
       >
         <Routes>

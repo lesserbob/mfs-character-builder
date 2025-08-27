@@ -13,10 +13,8 @@ import classController from './controller/ClassController';
 import authController from './controller/AuthController';
 import itemController from './controller/ItemController';
 import storyController from './controller/StoryController';
-import { authenticateToken } from './service/AuthService';
-import { WebSocketServer } from 'ws';
+import gameLogController from './controller/GameLogController';
 import { createWebSocketController } from './controller/WebsocketController';
-import { all } from 'axios';
 
 const app = express();
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
@@ -74,6 +72,7 @@ app.use('/api', creatureController);
 app.use('/api', classController);
 app.use('/api', itemController);
 app.use('/api', storyController);
+app.use('/api', gameLogController);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: any) => {

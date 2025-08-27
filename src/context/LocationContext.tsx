@@ -141,17 +141,13 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
    * Update in respone to a location change
    */
   useEffect(() => {
-    console.log('last message trigger');
     if (!location) return;
     if (!lastMessage) return;
 
-    console.log(lastMessage);
-    console.log(Number(lastMessage!.payload) === location.id);
     if (
       lastMessage.type === 'refresh_location' &&
       Number(lastMessage.payload) === location.id
     ) {
-      console.log('trigger');
       fetchLocation(location.id);
     }
   }, [lastMessage]); // NOTE : Dont add location. It creates an infinite loop

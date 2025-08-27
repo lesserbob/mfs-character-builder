@@ -1,14 +1,34 @@
-import React from 'react';
-import { Drawer, Box, Typography, Button, Stack } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Drawer,
+  Box,
+  Typography,
+  Button,
+  Stack,
+  IconButton,
+} from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import './OptionPanel.css';
 
-const OptionPanel = (): React.JSX.Element => {
+interface OptionPanelProps {
+  onDrawerStateChange?: (isOpen: boolean) => void;
+}
+
+const OptionPanel: React.FC<OptionPanelProps> = ({ onDrawerStateChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(true);
 
   const { isAuthenticated, user } = useAuth();
+
+  const toggleDrawer = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+    onDrawerStateChange?.(newState);
+  };
 
   const handleCreateNewCharacter = () => {
     navigate('/create-character');
@@ -47,11 +67,24 @@ const OptionPanel = (): React.JSX.Element => {
   };
 
   return (
-    <Drawer variant="permanent" anchor="left" className="option-panel-drawer">
+    <Drawer
+      variant="permanent"
+      anchor="left"
+      className={`option-panel-drawer ${isOpen ? 'open' : 'closed'}`}
+    >
       <Box className="option-panel-box">
-        <Typography variant="h6" component="div">
-          Character Builder
-        </Typography>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Typography variant="h6" component="div" className="drawer-title">
+            Character Builder
+          </Typography>
+          <IconButton
+            onClick={toggleDrawer}
+            size="small"
+            className="drawer-toggle-button"
+          >
+            {isOpen ? <ChevronLeftIcon /> : <MenuIcon />}
+          </IconButton>
+        </Box>
       </Box>
       <Stack spacing={2} className="option-panel-stack">
         <Box>

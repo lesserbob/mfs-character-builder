@@ -86,7 +86,7 @@ function handleMessage(ws: WebSocket, msg: Message) {
   }
 }
 
-function broadcast(message: Message) {
+export function broadcast(message: Message) {
   const json = JSON.stringify(message);
   for (const client of clients) {
     if (client.readyState === WebSocket.OPEN) {

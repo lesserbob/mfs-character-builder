@@ -447,6 +447,33 @@ paths:
       responses:
         '200':
           description: Actor updated successfully
+  /gameLog:
+    post:
+      summary: Create a new log message
+      description: Create a new log message
+      operationId: postLogMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/logMessage'
+      responses:
+        '200':
+          description: Log message added
+    get:
+      summary: Get messages
+      description: Retrieve all messages
+      operationId: getLogMessages
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/logMessage'
 components:
   securitySchemes:
     bearerAuth:
@@ -926,3 +953,15 @@ components:
         - tacticalSurgeToken
         - tacticalActionsTaken
         - acting
+    logMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: id of message
+        userName:
+          type: string
+          description: name of originating user
+        logMessage:
+          type: string
+          description: the message

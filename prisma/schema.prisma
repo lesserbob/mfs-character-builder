@@ -349,3 +349,9 @@ model ZoneLink {
 
   @@unique([zoneOneId, zoneTwoId]) // Optional: prevent duplicates
 }
+
+model GameLog {
+    id                      Int    @id @default(autoincrement())
+    userName                String?
+    logMessage              String
+}

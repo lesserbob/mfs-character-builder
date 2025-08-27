@@ -1,15 +1,30 @@
 .option-panel-drawer {
   width: 240px;
   flex-shrink: 0;
+  transition: width 0.3s ease;
+}
+
+.option-panel-drawer.closed {
+  width: 80px;
 }
 
 .option-panel-drawer .MuiDrawer-paper {
   width: 240px;
   box-sizing: border-box;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+}
+
+.option-panel-drawer.closed .MuiDrawer-paper {
+  width: 80px;
 }
 
 .option-panel-box {
   padding: 16px;
+}
+
+.option-panel-drawer.closed .option-panel-box {
+  padding: 8px;
 }
 
 .option-panel-stack {
@@ -36,4 +51,45 @@
   text-align: left !important;
   width: 100%;
   display: flex;
+}
+
+/* Hide content when drawer is closed */
+.option-panel-drawer.closed .option-panel-stack,
+.option-panel-drawer.closed .option-panel-section-title,
+.option-panel-drawer.closed .option-panel-stack-inner {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.option-panel-drawer.closed .drawer-title {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Keep toggle button visible when drawer is closed */
+.drawer-toggle-button {
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+/* Ensure button fits in collapsed drawer */
+.option-panel-drawer.closed .drawer-toggle-button {
+  min-width: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+/* Center the toggle button when drawer is closed */
+.option-panel-drawer.closed .option-panel-box > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
