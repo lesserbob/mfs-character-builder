@@ -28,6 +28,7 @@ type FormData = {
   remainingActionPoints: number;
   tacticalSurgeToken: boolean;
   tacticalActionsTaken: number;
+  acting: boolean;
 };
 
 export const EditActor = () => {
@@ -48,6 +49,7 @@ export const EditActor = () => {
       remainingActionPoints: 0,
       tacticalSurgeToken: false,
       tacticalActionsTaken: 0,
+      acting: false,
     },
   });
 
@@ -57,6 +59,7 @@ export const EditActor = () => {
   const remainingActionPoints = watch('remainingActionPoints');
   const tacticalSurgeToken = watch('tacticalSurgeToken');
   const tacticalActionsTaken = watch('tacticalActionsTaken');
+  const acting = watch('acting');
 
   useEffect(() => {
     if (editActor) {
@@ -66,6 +69,7 @@ export const EditActor = () => {
       setValue('remainingActionPoints', editActor.actionPoints);
       setValue('tacticalSurgeToken', editActor.tacticalSurgeToken);
       setValue('tacticalActionsTaken', editActor.tacticalActionsTaken);
+      setValue('acting', editActor.acting);
     }
   }, [editActor, classes, setValue]);
 
@@ -79,6 +83,7 @@ export const EditActor = () => {
       actionPoints: Number(remainingActionPoints),
       tacticalSurgeToken: tacticalSurgeToken,
       tacticalActionsTaken: Number(tacticalActionsTaken),
+      acting: acting,
     } as Actor;
 
     updateActor(actor);
@@ -97,6 +102,24 @@ export const EditActor = () => {
       <DialogTitle>{editActor?.creature!.name}</DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 4 }}>Acting</Grid>
+            <Grid size={{ xs: 1 }}>
+              <Controller
+                name="acting"
+                control={control}
+                render={({ field: { value, onChange, ...rest } }) => (
+                  <Checkbox
+                    checked={!!value}
+                    onChange={(e, checked) => onChange(checked)}
+                    size="small"
+                    sx={{ p: 0, m: 0 }}
+                    {...rest}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
           <Grid container spacing={2}>
             <Grid size={{ xs: 4 }}>Health</Grid>
             <Grid size={{ xs: 1 }}>

@@ -1,14 +1,20 @@
 .location-toolbar {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 0.5rem;
   background: #f4f4f4;
-  align-items: center;
+}
+
+.location-toolbar-row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-wrap: wrap; /* allow wrapping on smaller screens */
 }
 
 .location-toolbar-button {
-  margin-left: auto;
   padding: 0.25rem 0.5rem; /* Smaller padding */
   font-size: 0.875rem; /* Slightly smaller text */
   background: #0077cc;

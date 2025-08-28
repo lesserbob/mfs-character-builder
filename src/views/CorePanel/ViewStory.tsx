@@ -7,7 +7,6 @@ import { Story } from '../../api/generated';
 import { SearchLocations } from './ViewStory/SearchLocations';
 import { SearchActors } from './ViewStory/SearchActors';
 import './ViewStory.css';
-import { GameLog } from './ViewStory/GameLog';
 
 export const ViewStory = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,7 +39,6 @@ export const ViewStory = () => {
         <SearchLocations storyId={storyId} />
         <SearchActors storyId={storyId} />
       </div>
-      <GameLog />
     </>
   );
 };

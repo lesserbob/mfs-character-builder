@@ -13,6 +13,7 @@ export interface apiLocation {
   description: string;
   storyId: number;
   zones: apiZone[];
+  actingFaction: string | null;
 }
 
 export interface apiZone {

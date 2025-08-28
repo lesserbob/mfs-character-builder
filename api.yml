@@ -855,6 +855,10 @@ components:
           description: List of zones
           items:
             $ref: '#/components/schemas/zone'
+        actingFaction:
+          type: string
+          description: which faction is currently acting
+          nullable: true
     zone:
       allOf:
         - $ref: '#/components/schemas/zoneBase'

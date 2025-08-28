@@ -27,6 +27,7 @@ interface ActorGroup {
 
 const PADDING = 0.05;
 const HP_BAR_HEIGHT_MULTIPLIER = 0.1;
+const TEXT_HEIGHT_MULTIPLIER = 0.2;
 
 const preloadImages = (
   urls: string[]
@@ -46,6 +47,63 @@ const preloadImages = (
         })
     )
   ).then(() => map);
+};
+
+/**
+ * Draw pips onto the panel to represent the action points the creature has available
+ */
+const ActionBar = ({
+  actor,
+  xpos,
+  ypos,
+}: {
+  actor: Actor;
+  xpos: number;
+  ypos: number;
+}) => {
+  const pipWidth = 15;
+  const pipHeight = 6;
+  const pipGap = 2;
+  return (
+    <>
+      <Group x={0} y={0}>
+        <Rect
+          x={xpos}
+          y={ypos}
+          width={pipWidth}
+          height={pipHeight}
+          stroke="black"
+          strokeWidth={1}
+          fill={actor.actionPoints < 1 ? 'black' : 'gold'}
+          cornerRadius={2}
+        />
+        <Rect
+          x={xpos + pipGap + pipWidth}
+          y={ypos}
+          width={pipWidth}
+          height={pipHeight}
+          stroke="black"
+          strokeWidth={1}
+          fill={actor.actionPoints < 2 ? 'black' : 'gold'}
+          cornerRadius={2}
+        />
+        {actor.actionPoints > 2 &&
+          Array.from({ length: actor.actionPoints - 2 }).map((_, i) => (
+            <Rect
+              key={i}
+              x={xpos + (i + 2) * (pipGap + pipWidth)}
+              y={ypos}
+              width={pipWidth}
+              height={pipHeight}
+              stroke="black"
+              strokeWidth={1}
+              fill="gold"
+              cornerRadius={2}
+            />
+          ))}
+      </Group>
+    </>
+  );
 };
 
 export const ActorLayer = () => {
@@ -132,6 +190,8 @@ export const ActorLayer = () => {
   const healthInnerBarWidth = healthOuterBarWidth - 2; // i.e. 1 pixel in
   const healthInnerBarHeight = healthOuterBarHeight - 2;
 
+  const textHeight = TEXT_HEIGHT_MULTIPLIER * gridSize;
+
   const fontSize = gridSize * 0.2;
 
   const composeCharacterInformation = (actor: Actor | undefined): string => {
@@ -208,6 +268,19 @@ export const ActorLayer = () => {
         <Group key={index} x={ag.xpos} y={ag.ypos}>
           {ag.actors.map((actor, index) => (
             <Group x={0} y={index * gridSize} key={index}>
+              {/* {actor.acting && (
+                <Rect
+                  x={gridSize * PADDING - 1}
+                  y={gridSize * PADDING - 1}
+                  width={
+                    DEFAULT_ACTOR_WIDTH * gridSize - gridSize * PADDING * 2 + 2
+                  }
+                  height={gridSize - gridSize * PADDING * 2 + 2}
+                  stroke="red"
+                  strokeWidth={1}
+                  fill="transparent"
+                />
+              )} */}
               <Rect
                 key={1000 + actor.id}
                 x={gridSize * PADDING}
@@ -216,7 +289,7 @@ export const ActorLayer = () => {
                 height={gridSize - gridSize * PADDING * 2}
                 stroke="black"
                 strokeWidth={1}
-                fill="transparent"
+                fill={actor.acting ? 'orange' : 'transparent'}
               />
               {actor.creature?.portrait && (
                 <>
@@ -306,8 +379,14 @@ export const ActorLayer = () => {
                 width={
                   gridSize * (DEFAULT_ACTOR_WIDTH - 1) + gridSize * PADDING * 4
                 }
+                height={textHeight}
                 text={actor.creature!.name}
                 fontSize={fontSize}
+              />
+              <ActionBar
+                actor={actor}
+                xpos={gridSize + gridSize * PADDING}
+                ypos={hpBarHeight + textHeight + gridSize * PADDING * 2}
               />
             </Group>
           ))}

@@ -47,6 +47,7 @@ interface LocationContextType {
   setZonePosition(zoneId: number, xpos: number, ypos: number): void;
   zoneCoordinate: any; // only exposed so components can detect state change
   getZonePosition(zoneId: number): Coordinate;
+  setActingFaction(actingFaction: string | null): void;
 
   setEditActor(actor: Actor | undefined): void;
   editActor: Actor | undefined;
@@ -105,6 +106,15 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     updateLocation({
       ...location!,
       zones: [...(location!.zones ?? []), { ...zone, id: 1, xpos: 0, ypos: 0 }],
+    });
+  };
+
+  const setActingFaction = (actingFaction: string | null) => {
+    if (!location) return;
+
+    updateLocation({
+      ...location!,
+      actingFaction: actingFaction,
     });
   };
 
@@ -201,6 +211,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
     setZonePosition,
     zoneCoordinate,
     getZonePosition,
+    setActingFaction,
 
     setEditActor,
     editActor,

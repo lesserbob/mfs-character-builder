@@ -35,7 +35,6 @@ export const GameLog = () => {
     return apiClient
       .getLogMessages()
       .then((response) => {
-        console.log('Fetched messages:', response.data);
         setLogMessages(response.data);
       })
       .catch((error) => {
@@ -53,10 +52,7 @@ export const GameLog = () => {
       apiClient
         .postLogMessage({ logMessage: newMessage })
         .then(() => {
-          console.log('Message sent successfully');
           setNewMessage('');
-          // Refresh messages after sending
-          //   fetchMessages();
         })
         .catch((error) => {
           console.error('Error sending message:', error);

@@ -7,6 +7,7 @@ import {
 } from '../types/StoryTypes';
 import { creatureInclude, mapDeCreatureToApiCreature } from './CreatureService';
 import { apiCreature } from '../types/CreatureApiTypes';
+import { parseLocationUpdate } from '../utils/LocationUtils';
 
 const prisma = new PrismaClient();
 
@@ -132,6 +133,7 @@ const mapDeLocationToApiLocation = (
           actors: z.actors.map((actor) => mapDeActorToApiActor(actor)),
         }))
       : [],
+    actingFaction: deLocation.actingFaction,
   };
 
   return apiLocation;
@@ -159,6 +161,13 @@ export const updateLocation = async (
   locationId: number,
   location: apiLocation
 ) => {
+  // We need to examine what is updating.
+  // Pre load the location so we have some ability to compare
+  const currentLocation = await getLocation(locationId);
+
+  const updatedActors = parseLocationUpdate(currentLocation, location);
+  await Promise.all(updatedActors.map((actor) => updateActor(actor.id, actor)));
+
   await prisma.location.update({
     where: {
       id: locationId,
@@ -166,6 +175,7 @@ export const updateLocation = async (
     data: {
       name: location.name,
       description: location.description,
+      actingFaction: location.actingFaction,
     },
   });
 
@@ -340,6 +350,7 @@ export const addActors = async (
 };
 
 export const updateActor = async (actorId: number, actor: apiActor) => {
+  // TODO Pre check. Only one creature can be acting
   await prisma.actor.update({
     where: { id: actorId },
     data: {
@@ -351,6 +362,7 @@ export const updateActor = async (actorId: number, actor: apiActor) => {
       standardActions: actor.standardActions,
       tacticalSurgeToken: actor.tacticalSurgeToken,
       tacticalActionsTaken: actor.tacticalActionsTaken,
+      acting: actor.acting,
     },
   });
 };

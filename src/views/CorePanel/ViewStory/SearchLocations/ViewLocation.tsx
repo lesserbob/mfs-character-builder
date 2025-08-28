@@ -16,6 +16,7 @@ import { BackgroundLayer } from './ViewLocation/BackgroundLayer';
 import { EditActor } from './ViewLocation/EditActor';
 import { SimpleAssetModal } from '../../../../components/SimpleAssetModal';
 import { AddActorModal } from '../SearchActors/AddActorModal';
+import { GameLog } from '../GameLog';
 
 const ViewLocationInner = ({ locationId }: { locationId: number }) => {
   const {
@@ -72,6 +73,7 @@ const ViewLocationInner = ({ locationId }: { locationId: number }) => {
         <ZoneLayer />
         <ActorLayer />
       </Stage>
+      <GameLog />
     </>
   );
 };
